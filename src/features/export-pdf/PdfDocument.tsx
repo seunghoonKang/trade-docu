@@ -1,10 +1,24 @@
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
+
+Font.register({
+  family: "NotoSansKR",
+  fonts: [
+    {
+      src: "https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-400-normal.ttf",
+      fontWeight: "normal",
+    },
+    {
+      src: "https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf",
+      fontWeight: "bold",
+    },
+  ],
+});
 import type { Invoice } from "../../entities/invoice/model";
 
 type PdfData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
 const s = StyleSheet.create({
-  page: { padding: 40, fontSize: 9, fontFamily: "Helvetica", lineHeight: 1.4 },
+  page: { padding: 40, fontSize: 9, fontFamily: "NotoSansKR", lineHeight: 1.4 },
   header: { flexDirection: "row", justifyContent: "space-between", marginBottom: 16 },
   title: { textAlign: "center", fontSize: 14, fontWeight: "bold", letterSpacing: 1, marginBottom: 16, borderBottomWidth: 1, borderBottomColor: "#333", paddingBottom: 8 },
   label: { fontSize: 7, color: "#888" },
