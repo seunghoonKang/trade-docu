@@ -9,11 +9,11 @@ export function InvoicePage() {
 
   return (
     <Layout toolbar={<ExportToolbar formData={invoiceForm.form} />}>
-      <div className="flex h-[calc(100vh-57px)]">
-        <div className="w-1/2 overflow-y-auto border-r border-gray-200">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-57px)]">
+        <div className="w-full lg:w-1/2 overflow-y-auto border-r border-gray-200">
           <InvoiceForm {...invoiceForm} />
         </div>
-        <div id="invoice-preview" className="w-1/2 overflow-y-auto bg-gray-50 p-6">
+        <div id="invoice-preview" className="hidden lg:block w-1/2 overflow-y-auto bg-gray-50 p-6">
           <InvoicePreview data={invoiceForm.form} />
         </div>
       </div>

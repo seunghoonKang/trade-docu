@@ -21,8 +21,8 @@ export function ExportToolbar({ formData }: Props) {
 
   return (
     <div className="flex items-center justify-between">
-      <h1 className="text-lg font-bold text-gray-900">{t("app.title")}</h1>
-      <div className="flex items-center gap-3">
+      <h1 className="text-lg font-bold text-gray-900 whitespace-nowrap">{t("app.title")}</h1>
+      <div className="flex items-center gap-2 overflow-x-auto">
         <Button variant="secondary" size="sm" onClick={() => generatePdf(formData, t)}>
           {t("export.pdf")}
         </Button>
@@ -32,8 +32,10 @@ export function ExportToolbar({ formData }: Props) {
         <Button variant="secondary" size="sm" onClick={() => window.print()}>
           {t("export.print")}
         </Button>
-        <div className="w-px h-6 bg-gray-200" />
-        <LanguageSwitcher />
+        <div className="w-px h-6 bg-gray-200 hidden sm:block" />
+        <div className="hidden sm:flex">
+          <LanguageSwitcher />
+        </div>
         <div className="w-px h-6 bg-gray-200" />
         {user ? (
           <Button variant="ghost" size="sm" onClick={() => logout()}>
