@@ -1,5 +1,10 @@
-function App() {
-  return <div className="min-h-screen bg-white">PI App</div>;
-}
+import { Providers } from "./providers";
+import { AppRouter } from "./router";
 
-export default App;
+export default function App() {
+  return (
+    <Providers>
+      <AppRouter />
+    </Providers>
+  );
+}
