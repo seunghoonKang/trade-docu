@@ -4,12 +4,12 @@ import { FormSection } from "../../shared/ui/FormSection";
 import type { AdditionalCharge } from "../../entities/invoice/model";
 
 interface Props {
-  charges: AdditionalCharge[]; currency: string;
+  charges: AdditionalCharge[];
   onUpdateCharge: (index: number, field: keyof AdditionalCharge, value: string | number) => void;
   onAddCharge: () => void; onRemoveCharge: (index: number) => void;
 }
 
-export function AdditionalChargesSection({ charges, currency, onUpdateCharge, onAddCharge, onRemoveCharge }: Props) {
+export function AdditionalChargesSection({ charges, onUpdateCharge, onAddCharge, onRemoveCharge }: Props) {
   const { t } = useTranslation();
   return (
     <FormSection title={t("form.additionalCharges")}>

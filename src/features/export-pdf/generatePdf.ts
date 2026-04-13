@@ -23,7 +23,7 @@ export async function generatePdf(data: FormData, t: TFunction) {
     bankSwift: t("form.bankSwift"), accountNo: t("form.accountNo"),
     accountee: t("form.accountee"), bankAddress: t("form.bankAddress"),
   };
-  const doc = createElement(PdfDocument, { data, labels });
+  const doc = createElement(PdfDocument, { data, labels }) as any;
   const blob = await pdf(doc).toBlob();
   const filename = `PI_${data.invoiceNo || "draft"}_${data.date || "undated"}.pdf`;
   saveAs(blob, filename);

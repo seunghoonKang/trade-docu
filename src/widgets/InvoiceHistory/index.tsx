@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useAuth } from "../../app/providers/AuthProvider";
 import { listInvoices, deleteInvoice } from "../../features/invoice-crud/api";
 import { Button } from "../../shared/ui/Button";
@@ -11,7 +10,6 @@ interface Props {
 }
 
 export function InvoiceHistory({ onLoad, onClose }: Props) {
-  const { t } = useTranslation();
   const { user } = useAuth();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
 

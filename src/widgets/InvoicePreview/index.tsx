@@ -1,13 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { calcSubtotal, calcAdditionalChargesTotal } from "../../entities/invoice/lib";
 import type { Invoice } from "../../entities/invoice/model";
 
 type PreviewData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
 export function InvoicePreview({ data }: { data: PreviewData }) {
   const { t } = useTranslation();
-  const subtotal = calcSubtotal(data.items);
-  const chargesTotal = calcAdditionalChargesTotal(data.additionalCharges);
 
   return (
     <div className="bg-white border border-gray-200 rounded p-8 text-sm leading-relaxed print:border-none print:p-0">
