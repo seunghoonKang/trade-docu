@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Button } from "../../shared/ui/Button";
+import { Input } from "../../shared/ui/Input";
 import { FormSection } from "../../shared/ui/FormSection";
 import { calcSubtotal } from "../../entities/invoice/lib";
 import type { InvoiceItem } from "../../entities/invoice/model";
@@ -10,13 +11,54 @@ interface Props {
   onAddItem: () => void; onRemoveItem: (index: number) => void;
 }
 
+function ItemCard({ item, index, total, t, onUpdateItem, onRemoveItem }: {
+  item: InvoiceItem; index: number; total: number;
+  t: (key: string) => string;
+  onUpdateItem: Props["onUpdateItem"]; onRemoveItem: Props["onRemoveItem"];
+}) {
+  return (
+    <div className="border border-gray-200 rounded-lg p-4 space-y-3">
+      <div className="flex justify-between items-center">
+        <span className="text-sm font-semibold text-gray-500">#{index + 1}</span>
+        {total > 1 && (
+          <Button variant="ghost" size="sm" onClick={() => onRemoveItem(index)}>
+            {t("form.removeItem")}
+          </Button>
+        )}
+      </div>
+      <Input label={t("form.description")} value={item.description} onChange={(e) => onUpdateItem(index, "description", e.target.value)} />
+      <div className="grid grid-cols-2 gap-3">
+        <Input label={t("form.hsCode")} value={item.hsCode} onChange={(e) => onUpdateItem(index, "hsCode", e.target.value)} />
+        <Input label={t("form.unit")} value={item.unit} onChange={(e) => onUpdateItem(index, "unit", e.target.value)} />
+        <Input label={t("form.qty")} type="number" min="0" value={item.qty || ""} onChange={(e) => onUpdateItem(index, "qty", Number(e.target.value))} />
+        <Input label={t("form.unitPrice")} type="number" min="0" step="0.01" value={item.unitPrice || ""} onChange={(e) => onUpdateItem(index, "unitPrice", Number(e.target.value))} />
+      </div>
+      <Input label={t("form.remarks")} value={item.remarks} onChange={(e) => onUpdateItem(index, "remarks", e.target.value)} />
+      <div className="text-right text-base font-semibold text-gray-700">
+        {t("form.amount")}: {item.amount.toFixed(2)}
+      </div>
+    </div>
+  );
+}
+
 export function ItemsTableSection({ items, currency, onUpdateItem, onAddItem, onRemoveItem }: Props) {
   const { t } = useTranslation();
   const subtotal = calcSubtotal(items);
 
   return (
     <FormSection title={t("form.items")}>
-      <div className="overflow-x-auto">
+      {/* Mobile: Cards */}
+      <div className="md:hidden space-y-3">
+        {items.map((item, i) => (
+          <ItemCard
+            key={i} item={item} index={i} total={items.length}
+            t={t} onUpdateItem={onUpdateItem} onRemoveItem={onRemoveItem}
+          />
+        ))}
+      </div>
+
+      {/* Desktop: Table */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-base">
           <thead>
             <tr className="border-b-2 border-gray-900 text-left">
@@ -46,6 +88,7 @@ export function ItemsTableSection({ items, currency, onUpdateItem, onAddItem, on
           </tbody>
         </table>
       </div>
+
       <div className="flex justify-between items-center pt-2">
         <Button variant="secondary" size="sm" onClick={onAddItem}>+ {t("form.addItem")}</Button>
         <div className="text-base text-gray-600">{t("form.subtotal")}: {currency} {subtotal.toFixed(2)}</div>
