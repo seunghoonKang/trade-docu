@@ -36,15 +36,15 @@ export function InvoiceHistory({ onLoad, onClose }: Props) {
           <Button variant="ghost" size="sm" onClick={onClose}>Close</Button>
         </div>
         {invoices.length === 0 ? (
-          <p className="text-sm text-gray-400">No saved invoices.</p>
+          <p className="text-base text-gray-400">No saved invoices.</p>
         ) : (
           <ul className="space-y-2">
             {invoices.map((inv) => (
               <li key={inv.id} className="flex items-center justify-between border border-gray-100 rounded p-3">
                 <div>
-                  <p className="text-sm font-medium">{inv.invoiceNo || "No number"}</p>
-                  <p className="text-xs text-gray-500">{inv.date} — {inv.buyerSnapshot.companyName || "No buyer"}</p>
-                  <p className="text-xs text-gray-400">{inv.currency} {inv.totalAmount.toFixed(2)}</p>
+                  <p className="text-base font-medium">{inv.invoiceNo || "No number"}</p>
+                  <p className="text-sm text-gray-500">{inv.date} — {inv.buyerSnapshot.companyName || "No buyer"}</p>
+                  <p className="text-sm text-gray-400">{inv.currency} {inv.totalAmount.toFixed(2)}</p>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="secondary" size="sm" onClick={() => handleLoad(inv)}>Load</Button>

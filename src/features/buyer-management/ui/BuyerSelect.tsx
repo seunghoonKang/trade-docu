@@ -21,7 +21,7 @@ export function BuyerSelect({ onSelect }: Props) {
 
   return (
     <select
-      className="w-full px-3 py-2 text-sm border border-gray-200 rounded mb-3"
+      className="w-full px-3 py-2 text-base border border-gray-200 rounded mb-3"
       defaultValue=""
       onChange={(e) => {
         const buyer = buyers.find((b) => b.id === e.target.value);

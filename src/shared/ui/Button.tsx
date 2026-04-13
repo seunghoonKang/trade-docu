@@ -19,8 +19,8 @@ export function Button({
         variant === "primary" && "bg-gray-900 text-white hover:bg-gray-800",
         variant === "secondary" && "bg-gray-100 text-gray-900 hover:bg-gray-200",
         variant === "ghost" && "text-gray-600 hover:text-gray-900 hover:bg-gray-50",
-        size === "sm" && "px-3 py-1.5 text-sm",
-        size === "md" && "px-4 py-2 text-sm",
+        size === "sm" && "px-3 py-1.5 text-base",
+        size === "md" && "px-4 py-2 text-base",
         className
       )}
       {...props}
