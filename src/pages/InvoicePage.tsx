@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Layout } from "../shared/ui/Layout";
 import { InvoiceForm } from "../widgets/InvoiceForm";
 import { InvoicePreview } from "../widgets/InvoicePreview";
 import { ExportToolbar } from "../widgets/ExportToolbar";
+import { InvoiceHistory } from "../widgets/InvoiceHistory";
 import { useInvoiceForm } from "../widgets/InvoiceForm/useInvoiceForm";
 import { useAuth } from "../app/providers/AuthProvider";
 import { getSeller } from "../features/seller-management/api";
@@ -10,6 +11,7 @@ import { getSeller } from "../features/seller-management/api";
 export function InvoicePage() {
   const invoiceForm = useInvoiceForm();
   const { user } = useAuth();
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -33,7 +35,7 @@ export function InvoicePage() {
   }, [user]);
 
   return (
-    <Layout toolbar={<ExportToolbar formData={invoiceForm.form} />}>
+    <Layout toolbar={<ExportToolbar formData={invoiceForm.form} onShowHistory={() => setShowHistory(true)} />}>
       <div className="flex flex-col lg:flex-row h-[calc(100vh-57px)]">
         <div className="w-full lg:w-1/2 overflow-y-auto border-r border-gray-200">
           <InvoiceForm {...invoiceForm} />
@@ -42,6 +44,12 @@ export function InvoicePage() {
           <InvoicePreview data={invoiceForm.form} />
         </div>
       </div>
+      {showHistory && (
+        <InvoiceHistory
+          onLoad={(data) => invoiceForm.loadForm(data)}
+          onClose={() => setShowHistory(false)}
+        />
+      )}
     </Layout>
   );
 }

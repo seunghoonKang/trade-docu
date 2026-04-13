@@ -7,14 +7,16 @@ import { logout } from "../../features/auth/api";
 import type { Invoice } from "../../entities/invoice/model";
 import { generatePdf } from "../../features/export-pdf/generatePdf";
 import { generateExcel } from "../../features/export-excel/generateExcel";
+import { saveInvoice } from "../../features/invoice-crud/api";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
 interface Props {
   formData: FormData;
+  onShowHistory?: () => void;
 }
 
-export function ExportToolbar({ formData }: Props) {
+export function ExportToolbar({ formData, onShowHistory }: Props) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -32,6 +34,20 @@ export function ExportToolbar({ formData }: Props) {
         <Button variant="secondary" size="sm" onClick={() => window.print()}>
           {t("export.print")}
         </Button>
+        {user && (
+          <>
+            <div className="w-px h-6 bg-gray-200" />
+            <Button variant="secondary" size="sm" onClick={async () => {
+              await saveInvoice(user.id, formData);
+              alert("Saved!");
+            }}>
+              Save
+            </Button>
+            <Button variant="ghost" size="sm" onClick={onShowHistory}>
+              History
+            </Button>
+          </>
+        )}
         <div className="w-px h-6 bg-gray-200 hidden sm:block" />
         <div className="hidden sm:flex">
           <LanguageSwitcher />
