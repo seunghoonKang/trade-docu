@@ -1,30 +1,75 @@
-import { pdf } from "@react-pdf/renderer";
-import { createElement } from "react";
-import { saveAs } from "file-saver";
-import { PdfDocument } from "./PdfDocument";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 import type { Invoice } from "../../entities/invoice/model";
-import type { TFunction } from "i18next";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
-export async function generatePdf(data: FormData, t: TFunction) {
-  const labels = {
-    to: t("invoice.to"), proformaInvoice: t("invoice.proformaInvoice"),
-    faithfully: t("invoice.faithfully"), date: t("form.date"),
-    refNo: t("form.refNo"), orderNo: t("form.orderNo"),
-    invoiceNo: t("form.invoiceNo"), delivery: t("form.delivery"),
-    paymentTerms: t("form.paymentTerms"), packing: t("form.packing"),
-    validity: t("form.validity"), incoterms: t("form.incoterms"),
-    remarks: t("form.remarks"), commodity: t("form.commodity"),
-    description: t("form.description"), hsCode: t("form.hsCode"),
-    qty: t("form.qty"), unit: t("form.unit"), unitPrice: t("form.unitPrice"),
-    amount: t("form.amount"), total: t("form.total"),
-    bankInfo: t("form.bankInfo"), bankName: t("form.bankName"),
-    bankSwift: t("form.bankSwift"), accountNo: t("form.accountNo"),
-    accountee: t("form.accountee"), bankAddress: t("form.bankAddress"),
+function resolveOklchColors(element: HTMLElement) {
+  const all = [element, ...Array.from(element.querySelectorAll("*"))] as HTMLElement[];
+  const overrides: { el: HTMLElement; prop: string; original: string }[] = [];
+
+  for (const el of all) {
+    const computed = getComputedStyle(el);
+    for (const prop of ["color", "background-color", "border-color", "border-top-color", "border-bottom-color", "border-left-color", "border-right-color"]) {
+      const value = computed.getPropertyValue(prop);
+      if (value.includes("oklch")) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        const ctx = canvas.getContext("2d")!;
+        ctx.fillStyle = value;
+        ctx.fillRect(0, 0, 1, 1);
+        const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+        const rgb = a < 255 ? `rgba(${r},${g},${b},${(a / 255).toFixed(2)})` : `rgb(${r},${g},${b})`;
+        const camelProp = prop.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+        overrides.push({ el, prop: camelProp, original: el.style[camelProp as any] });
+        (el.style as any)[camelProp] = rgb;
+      }
+    }
+  }
+
+  return () => {
+    for (const { el, prop, original } of overrides) {
+      (el.style as any)[prop] = original;
+    }
   };
-  const doc = createElement(PdfDocument, { data, labels }) as any;
-  const blob = await pdf(doc).toBlob();
-  const filename = `PI_${data.invoiceNo || "draft"}_${data.date || "undated"}.pdf`;
-  saveAs(blob, filename);
+}
+
+export async function generatePdf(data: FormData) {
+  const element = document.getElementById("invoice-preview");
+  if (!element) return;
+
+  const restore = resolveOklchColors(element);
+
+  try {
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+    const imgWidth = 210;
+    const pageHeight = 297;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    const pdf = new jsPDF("p", "mm", "a4");
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+      position -= pageHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    const filename = `PI_${data.invoiceNo || "draft"}_${data.date || "undated"}.pdf`;
+    pdf.save(filename);
+  } finally {
+    restore();
+  }
 }

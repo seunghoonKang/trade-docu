@@ -8,6 +8,7 @@ import type { Invoice } from "../../entities/invoice/model";
 import { generatePdf } from "../../features/export-pdf/generatePdf";
 import { generateExcel } from "../../features/export-excel/generateExcel";
 import { saveInvoice } from "../../features/invoice-crud/api";
+import { triggerPrint } from "../../features/print/triggerPrint";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -25,13 +26,13 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
     <div className="flex items-center justify-between">
       <h1 className="text-lg font-bold text-gray-900 whitespace-nowrap">{t("app.title")}</h1>
       <div className="flex items-center gap-2 overflow-x-auto">
-        <Button variant="secondary" size="sm" onClick={() => generatePdf(formData, t)}>
+        <Button variant="secondary" size="sm" onClick={() => generatePdf(formData)}>
           {t("export.pdf")}
         </Button>
         <Button variant="secondary" size="sm" onClick={() => generateExcel(formData, t)}>
           {t("export.excel")}
         </Button>
-        <Button variant="secondary" size="sm" onClick={() => window.print()}>
+        <Button variant="secondary" size="sm" onClick={() => triggerPrint()}>
           {t("export.print")}
         </Button>
         {user && (
