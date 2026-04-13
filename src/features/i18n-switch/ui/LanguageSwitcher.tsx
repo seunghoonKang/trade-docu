@@ -10,7 +10,7 @@ const LANGUAGES = [
 export function LanguageSwitcher() {
   const { i18n } = useTranslation();
   return (
-    <div className="flex gap-1">
+    <div className="flex flex-row flex-wrap gap-1">
       {LANGUAGES.map((lang) => (
         <button
           key={lang.code}
