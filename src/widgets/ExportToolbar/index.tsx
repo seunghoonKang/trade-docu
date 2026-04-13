@@ -6,6 +6,7 @@ import { useAuth } from "../../app/providers/AuthProvider";
 import { logout } from "../../features/auth/api";
 import type { Invoice } from "../../entities/invoice/model";
 import { generatePdf } from "../../features/export-pdf/generatePdf";
+import { generateExcel } from "../../features/export-excel/generateExcel";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -25,7 +26,7 @@ export function ExportToolbar({ formData }: Props) {
         <Button variant="secondary" size="sm" onClick={() => generatePdf(formData, t)}>
           {t("export.pdf")}
         </Button>
-        <Button variant="secondary" size="sm" onClick={() => alert("Excel — coming soon")}>
+        <Button variant="secondary" size="sm" onClick={() => generateExcel(formData, t)}>
           {t("export.excel")}
         </Button>
         <Button variant="secondary" size="sm" onClick={() => window.print()}>
