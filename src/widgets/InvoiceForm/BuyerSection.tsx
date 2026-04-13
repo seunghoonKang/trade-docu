@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { Input } from "../../shared/ui/Input";
 import { FormSection } from "../../shared/ui/FormSection";
+import { BuyerSelect } from "../../features/buyer-management/ui/BuyerSelect";
+import type { Buyer } from "../../entities/buyer/model";
 
 interface Props {
   companyName: string; address: string; tel: string; contactPerson: string;
@@ -11,6 +13,12 @@ export function BuyerSection({ companyName, address, tel, contactPerson, onUpdat
   const { t } = useTranslation();
   return (
     <FormSection title={t("form.buyer")}>
+      <BuyerSelect onSelect={(buyer: Buyer) => {
+        onUpdate("companyName", buyer.companyName);
+        onUpdate("address", buyer.address);
+        onUpdate("tel", buyer.tel);
+        onUpdate("contactPerson", buyer.contactPerson);
+      }} />
       <div className="grid grid-cols-2 gap-3">
         <Input label={t("form.companyName")} value={companyName} onChange={(e) => onUpdate("companyName", e.target.value)} />
         <Input label={t("form.contactPerson")} value={contactPerson} onChange={(e) => onUpdate("contactPerson", e.target.value)} />
