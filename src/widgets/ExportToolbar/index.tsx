@@ -5,6 +5,7 @@ import { LanguageSwitcher } from "../../features/i18n-switch/ui/LanguageSwitcher
 import { useAuth } from "../../app/providers/AuthProvider";
 import { logout } from "../../features/auth/api";
 import type { Invoice } from "../../entities/invoice/model";
+import { generatePdf } from "../../features/export-pdf/generatePdf";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -21,7 +22,7 @@ export function ExportToolbar({ formData }: Props) {
     <div className="flex items-center justify-between">
       <h1 className="text-lg font-bold text-gray-900">{t("app.title")}</h1>
       <div className="flex items-center gap-3">
-        <Button variant="secondary" size="sm" onClick={() => alert("PDF — coming soon")}>
+        <Button variant="secondary" size="sm" onClick={() => generatePdf(formData, t)}>
           {t("export.pdf")}
         </Button>
         <Button variant="secondary" size="sm" onClick={() => alert("Excel — coming soon")}>
