@@ -63,6 +63,20 @@
     "switchToSignup": "没有账号？注册",
     "switchToLogin": "已有账号？登录",
     "loginSuccess": "登录成功",
-    "signupSuccess": "账号创建成功"
+    "signupSuccess": "账号创建成功",
+    "loginFailed": "登录失败",
+    "signupFailed": "注册失败"
+  },
+  "history": {
+    "title": "发票历史",
+    "close": "关闭",
+    "noInvoices": "没有已保存的发票。",
+    "noNumber": "无编号",
+    "noBuyer": "无买方",
+    "load": "加载",
+    "delete": "删除",
+    "save": "保存",
+    "saved": "已保存！",
+    "history": "历史"
   }
 }

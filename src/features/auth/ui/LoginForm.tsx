@@ -21,7 +21,7 @@ export function LoginForm({ onSwitchToSignup }: { onSwitchToSignup: () => void }
       await login(email, password);
       navigate("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : t("auth.loginFailed"));
     } finally {
       setLoading(false);
     }

@@ -63,6 +63,20 @@
     "switchToSignup": "계정이 없으신가요? 회원가입",
     "switchToLogin": "이미 계정이 있으신가요? 로그인",
     "loginSuccess": "로그인 성공",
-    "signupSuccess": "계정이 생성되었습니다"
+    "signupSuccess": "계정이 생성되었습니다",
+    "loginFailed": "로그인 실패",
+    "signupFailed": "회원가입 실패"
+  },
+  "history": {
+    "title": "인보이스 이력",
+    "close": "닫기",
+    "noInvoices": "저장된 인보이스가 없습니다.",
+    "noNumber": "번호 없음",
+    "noBuyer": "구매자 없음",
+    "load": "불러오기",
+    "delete": "삭제",
+    "save": "저장",
+    "saved": "저장되었습니다!",
+    "history": "이력"
   }
 }

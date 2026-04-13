@@ -39,12 +39,12 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
             <div className="w-px h-6 bg-gray-200" />
             <Button variant="secondary" size="sm" onClick={async () => {
               await saveInvoice(user.id, formData);
-              alert("Saved!");
+              alert(t("history.saved"));
             }}>
-              Save
+              {t("history.save")}
             </Button>
             <Button variant="ghost" size="sm" onClick={onShowHistory}>
-              History
+              {t("history.history")}
             </Button>
           </>
         )}

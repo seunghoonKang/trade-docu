@@ -63,6 +63,20 @@
     "switchToSignup": "Don't have an account? Sign up",
     "switchToLogin": "Already have an account? Login",
     "loginSuccess": "Logged in successfully",
-    "signupSuccess": "Account created successfully"
+    "signupSuccess": "Account created successfully",
+    "loginFailed": "Login failed",
+    "signupFailed": "Signup failed"
+  },
+  "history": {
+    "title": "Invoice History",
+    "close": "Close",
+    "noInvoices": "No saved invoices.",
+    "noNumber": "No number",
+    "noBuyer": "No buyer",
+    "load": "Load",
+    "delete": "Delete",
+    "save": "Save",
+    "saved": "Saved!",
+    "history": "History"
   }
 }

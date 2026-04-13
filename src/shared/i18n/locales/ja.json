@@ -63,6 +63,20 @@
     "switchToSignup": "アカウントをお持ちでない方はこちら",
     "switchToLogin": "アカウントをお持ちの方はこちら",
     "loginSuccess": "ログインしました",
-    "signupSuccess": "アカウントが作成されました"
+    "signupSuccess": "アカウントが作成されました",
+    "loginFailed": "ログインに失敗しました",
+    "signupFailed": "登録に失敗しました"
+  },
+  "history": {
+    "title": "インボイス履歴",
+    "close": "閉じる",
+    "noInvoices": "保存済みインボイスはありません。",
+    "noNumber": "番号なし",
+    "noBuyer": "買主なし",
+    "load": "読み込み",
+    "delete": "削除",
+    "save": "保存",
+    "saved": "保存しました！",
+    "history": "履歴"
   }
 }
