@@ -65,7 +65,11 @@
     "loginSuccess": "登录成功",
     "signupSuccess": "账号创建成功",
     "loginFailed": "登录失败",
-    "signupFailed": "注册失败"
+    "signupFailed": "注册失败",
+    "verifyEmailTitle": "邮箱验证",
+    "verifyEmailMessage": "我们已向 {{email}} 发送了验证邮件，请查收。",
+    "verifyEmailSpam": "如果没有收到邮件，请检查垃圾邮件文件夹。",
+    "goToMain": "前往主页"
   },
   "history": {
     "title": "发票历史",

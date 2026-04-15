@@ -65,7 +65,11 @@
     "loginSuccess": "로그인 성공",
     "signupSuccess": "계정이 생성되었습니다",
     "loginFailed": "로그인 실패",
-    "signupFailed": "회원가입 실패"
+    "signupFailed": "회원가입 실패",
+    "verifyEmailTitle": "이메일 인증 안내",
+    "verifyEmailMessage": "{{email}}로 인증 메일을 발송했습니다. 메일함을 확인해 주세요.",
+    "verifyEmailSpam": "메일이 보이지 않는다면 스팸 메일함을 확인해 주세요.",
+    "goToMain": "메인 페이지로 이동"
   },
   "history": {
     "title": "인보이스 이력",

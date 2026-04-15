@@ -65,7 +65,11 @@
     "loginSuccess": "Logged in successfully",
     "signupSuccess": "Account created successfully",
     "loginFailed": "Login failed",
-    "signupFailed": "Signup failed"
+    "signupFailed": "Signup failed",
+    "verifyEmailTitle": "Email Verification",
+    "verifyEmailMessage": "We've sent a verification email to {{email}}. Please check your inbox.",
+    "verifyEmailSpam": "If you don't see the email, please check your spam folder.",
+    "goToMain": "Go to Main Page"
   },
   "history": {
     "title": "Invoice History",
