@@ -25,6 +25,7 @@ dist-ssr
 
 # Superpowers
 .superpowers/
+docs/superpowers/
 
 # OMC state
 .omc/
