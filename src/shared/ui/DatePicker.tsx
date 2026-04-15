@@ -1,4 +1,4 @@
-import { format, parse, isValid } from "date-fns";
+import { format, parse, isValid, type Locale } from "date-fns";
 import { ko, enUS, zhCN, ja } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { CalendarIcon } from "lucide-react";
