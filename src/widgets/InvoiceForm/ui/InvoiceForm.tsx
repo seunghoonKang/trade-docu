@@ -6,7 +6,7 @@ import { TradeTermsSection } from "./TradeTermsSection";
 import { ItemsTableSection } from "./ItemsTableSection";
 import { AdditionalChargesSection } from "./AdditionalChargesSection";
 import { BankInfoSection } from "./BankInfoSection";
-import type { useInvoiceForm } from "./useInvoiceForm";
+import type { useInvoiceForm } from "../lib/useInvoiceForm";
 
 type InvoiceFormProps = ReturnType<typeof useInvoiceForm>;
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/app/providers/AuthProvider";
-import { listInvoices, deleteInvoice } from "@/features/invoice-crud/api";
+import { listInvoices, deleteInvoice } from "@/features/invoice-crud";
 import { Button } from "@/shared/ui";
 import type { Invoice } from "@/entities/invoice/model";
 

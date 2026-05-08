@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Input } from "@/shared/ui";
 import { FormSection } from "@/shared/ui";
-import { BuyerSelect } from "@/features/buyer-management/ui/BuyerSelect";
+import { BuyerSelect } from "@/features/buyer-management";
 import type { Buyer } from "@/entities/buyer/model";
 
 interface Props {

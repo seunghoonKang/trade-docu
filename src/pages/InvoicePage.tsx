@@ -4,9 +4,9 @@ import { InvoiceForm } from "@/widgets/InvoiceForm";
 import { InvoicePreview } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { InvoiceHistory } from "@/widgets/InvoiceHistory";
-import { useInvoiceForm } from "@/widgets/InvoiceForm/useInvoiceForm";
+import { useInvoiceForm } from "@/widgets/InvoiceForm";
 import { useAuth } from "@/app/providers/AuthProvider";
-import { getSeller } from "@/features/seller-management/api";
+import { getSeller } from "@/features/seller-management";
 
 export function InvoicePage() {
   const invoiceForm = useInvoiceForm();

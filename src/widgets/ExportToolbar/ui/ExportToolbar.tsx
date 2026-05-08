@@ -3,14 +3,14 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/shared/ui";
-import { LanguageSwitcher } from "@/features/i18n-switch/ui/LanguageSwitcher";
+import { LanguageSwitcher } from "@/features/i18n-switch";
 import { useAuth } from "@/app/providers/AuthProvider";
-import { logout } from "@/features/auth/api";
+import { logout } from "@/features/auth";
 import type { Invoice } from "@/entities/invoice/model";
-import { generatePdf } from "@/features/export-pdf/generatePdf";
-import { generateExcel } from "@/features/export-excel/generateExcel";
-import { saveInvoice } from "@/features/invoice-crud/api";
-import { triggerPrint } from "@/features/print/triggerPrint";
+import { generatePdf } from "@/features/export-pdf";
+import { generateExcel } from "@/features/export-excel";
+import { saveInvoice } from "@/features/invoice-crud";
+import { triggerPrint } from "@/features/print";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
