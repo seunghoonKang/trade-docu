@@ -1,9 +1,13 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { I18nextProvider } from "react-i18next";
 import i18n from "@/shared/i18n/config";
 import { ItemsTableSection } from "./ItemsTableSection";
 import { createEmptyItem } from "@/entities/invoice/model";
+
+beforeEach(() => {
+  i18n.changeLanguage("en");
+});
 
 function renderComponent(overrides = {}) {
   const props = {
@@ -42,6 +46,7 @@ describe("ItemsTableSection", () => {
 
   it("shows remove button when multiple items", () => {
     renderComponent({ items: [createEmptyItem(), createEmptyItem()] });
-    expect(screen.getAllByText(/remove/i)).toHaveLength(2);
+    // 2 items × (mobile card + desktop table row) = 4 remove buttons in JSDOM
+    expect(screen.getAllByText(/remove/i)).toHaveLength(4);
   });
 });
