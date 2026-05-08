@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../shared/ui/Button";
-import { LanguageSwitcher } from "../../features/i18n-switch/ui/LanguageSwitcher";
-import { useAuth } from "../../app/providers/AuthProvider";
-import { logout } from "../../features/auth/api";
-import type { Invoice } from "../../entities/invoice/model";
-import { generatePdf } from "../../features/export-pdf/generatePdf";
-import { generateExcel } from "../../features/export-excel/generateExcel";
-import { saveInvoice } from "../../features/invoice-crud/api";
-import { triggerPrint } from "../../features/print/triggerPrint";
+import { toast } from "sonner";
+import { Button } from "@/shared/ui";
+import { LanguageSwitcher } from "@/features/i18n-switch/ui/LanguageSwitcher";
+import { useAuth } from "@/app/providers/AuthProvider";
+import { logout } from "@/features/auth/api";
+import type { Invoice } from "@/entities/invoice/model";
+import { generatePdf } from "@/features/export-pdf/generatePdf";
+import { generateExcel } from "@/features/export-excel/generateExcel";
+import { saveInvoice } from "@/features/invoice-crud/api";
+import { triggerPrint } from "@/features/print/triggerPrint";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -23,6 +24,11 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  async function handleLogout() {
+    await logout();
+    toast.success(t("auth.logoutSuccess"));
+  }
 
   const menuItems = (
     <>
@@ -56,7 +62,7 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
       <div className="w-full h-px bg-gray-200 my-1 md:hidden" />
       <div className="md:hidden">
         {user ? (
-          <Button variant="ghost" size="sm" onClick={() => { logout(); setMenuOpen(false); }}>
+          <Button variant="ghost" size="sm" onClick={() => { handleLogout(); setMenuOpen(false); }}>
             {t("nav.logout")}
           </Button>
         ) : (
@@ -101,7 +107,7 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
         <LanguageSwitcher />
         <div className="w-px h-6 bg-gray-200" />
         {user ? (
-          <Button variant="ghost" size="sm" onClick={() => logout()}>
+          <Button variant="ghost" size="sm" onClick={handleLogout}>
             {t("nav.logout")}
           </Button>
         ) : (

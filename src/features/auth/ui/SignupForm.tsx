@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Input } from "../../../shared/ui/Input";
-import { Button } from "../../../shared/ui/Button";
+import { toast } from "sonner";
+import { Input } from "@/shared/ui";
+import { Button } from "@/shared/ui";
 import { signup } from "../api";
+import { OtpVerifyModal } from "./OtpVerifyModal";
 
 export function SignupForm({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [company, setCompany] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
@@ -17,19 +23,19 @@ export function SignupForm({ onSwitchToLogin }: { onSwitchToLogin: () => void })
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    if (password !== confirmPassword) {
+      setError(t("auth.passwordMismatch"));
+      return;
+    }
     setLoading(true);
     try {
-      await signup(email, password);
+      await signup({ email, password, name, company: company.trim() || undefined });
       setShowVerifyModal(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.signupFailed"));
     } finally {
       setLoading(false);
     }
-  }
-
-  function handleGoToMain() {
-    navigate("/");
   }
 
   return (
@@ -39,19 +45,31 @@ export function SignupForm({ onSwitchToLogin }: { onSwitchToLogin: () => void })
         {error && <p className="text-base text-red-500">{error}</p>}
         <Input label={t("auth.email")} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <Input label={t("auth.password")} type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
-        <Button type="submit" disabled={loading} className="w-full">{t("auth.signupButton")}</Button>
+        <Input label={t("auth.confirmPassword")} type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required minLength={6} />
+        <Input label={t("auth.name")} type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+        <Input label={t("auth.companyOptional")} type="text" value={company} onChange={(e) => setCompany(e.target.value)} />
+        <label className="flex items-start gap-2 text-base text-gray-700 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-1 h-4 w-4"
+          />
+          <span>{t("auth.agreeToTerms")}</span>
+        </label>
+        <Button type="submit" disabled={loading || !agreed} className="w-full">{t("auth.signupButton")}</Button>
         <button type="button" onClick={onSwitchToLogin} className="text-base text-gray-500 hover:text-gray-700">{t("auth.switchToLogin")}</button>
       </form>
 
       {showVerifyModal && (
-        <div className="fixed inset-0 z-20 bg-black/30 flex items-center justify-center" onClick={handleGoToMain}>
-          <div className="bg-white rounded-lg border border-gray-200 w-full max-w-md p-6 text-center" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">{t("auth.verifyEmailTitle")}</h2>
-            <p className="text-base text-gray-700 mb-2">{t("auth.verifyEmailMessage", { email })}</p>
-            <p className="text-sm text-gray-500 mb-6">{t("auth.verifyEmailSpam")}</p>
-            <Button onClick={handleGoToMain} className="w-full">{t("auth.goToMain")}</Button>
-          </div>
-        </div>
+        <OtpVerifyModal
+          email={email}
+          onSuccess={() => {
+            toast.success(t("auth.signupSuccess"));
+            navigate("/");
+          }}
+          onClose={() => setShowVerifyModal(false)}
+        />
       )}
     </>
   );
