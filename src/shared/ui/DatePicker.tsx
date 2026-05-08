@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/shared/ui";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 const localeMap: Record<string, Locale> = {
   ko,
