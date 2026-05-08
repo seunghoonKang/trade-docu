@@ -6,7 +6,7 @@ import {
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "@/components/ui";
+} from "@/shared/ui";
 import { Button } from "@/shared/ui";
 import { resendSignupOtp, verifySignupOtp } from "../api";
 

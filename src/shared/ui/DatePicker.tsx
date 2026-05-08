@@ -2,12 +2,12 @@ import { format, parse, isValid, type Locale } from "date-fns";
 import { ko, enUS, zhCN, ja } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui";
+import { Calendar } from "@/shared/ui";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui";
+} from "@/shared/ui";
 import { cn } from "@/lib/utils";
 
 const localeMap: Record<string, Locale> = {

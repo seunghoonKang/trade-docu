@@ -1,5 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
-import { Toaster } from "@/components/ui";
+import { Toaster } from "@/shared/ui";
 import { AuthProvider } from "./AuthProvider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
