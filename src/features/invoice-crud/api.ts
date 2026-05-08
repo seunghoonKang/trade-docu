@@ -1,5 +1,5 @@
-import { supabase } from "../../shared/lib/supabase";
-import type { Invoice } from "../../entities/invoice/model";
+import { supabase } from "@/shared/lib/supabase";
+import type { Invoice } from "@/entities/invoice/model";
 
 type InvoiceData = Omit<Invoice, "id" | "userId" | "createdAt">;
 

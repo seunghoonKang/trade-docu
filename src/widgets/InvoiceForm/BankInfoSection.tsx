@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Input } from "../../shared/ui/Input";
-import { FormSection } from "../../shared/ui/FormSection";
-import type { BankInfo } from "../../entities/bank-info/model";
+import { Input } from "@/shared/ui";
+import { FormSection } from "@/shared/ui";
+import type { BankInfo } from "@/entities/bank-info/model";
 
 interface Props {
   bankInfo: BankInfo;

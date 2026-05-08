@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-import type { Invoice } from "../../entities/invoice/model";
+import type { Invoice } from "@/entities/invoice/model";
 import type { TFunction } from "i18next";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;

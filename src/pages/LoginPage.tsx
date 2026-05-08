@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { LoginForm } from "../features/auth/ui/LoginForm";
-import { SignupForm } from "../features/auth/ui/SignupForm";
+import { LoginForm } from "@/features/auth/ui/LoginForm";
+import { SignupForm } from "@/features/auth/ui/SignupForm";
 
 export function LoginPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");

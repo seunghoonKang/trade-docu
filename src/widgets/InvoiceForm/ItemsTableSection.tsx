@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { Button } from "../../shared/ui/Button";
-import { Input } from "../../shared/ui/Input";
-import { FormSection } from "../../shared/ui/FormSection";
-import { calcSubtotal } from "../../entities/invoice/lib";
-import type { InvoiceItem } from "../../entities/invoice/model";
+import { Button } from "@/shared/ui";
+import { Input } from "@/shared/ui";
+import { FormSection } from "@/shared/ui";
+import { calcSubtotal } from "@/entities/invoice/lib";
+import type { InvoiceItem } from "@/entities/invoice/model";
 
 interface Props {
   items: InvoiceItem[]; currency: string;

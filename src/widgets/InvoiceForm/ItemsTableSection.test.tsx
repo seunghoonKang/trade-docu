@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { I18nextProvider } from "react-i18next";
-import i18n from "../../shared/i18n/config";
+import i18n from "@/shared/i18n/config";
 import { ItemsTableSection } from "./ItemsTableSection";
-import { createEmptyItem } from "../../entities/invoice/model";
+import { createEmptyItem } from "@/entities/invoice/model";
 
 function renderComponent(overrides = {}) {
   const props = {

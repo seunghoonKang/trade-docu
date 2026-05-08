@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../app/providers/AuthProvider";
-import { listInvoices, deleteInvoice } from "../../features/invoice-crud/api";
-import { Button } from "../../shared/ui/Button";
-import type { Invoice } from "../../entities/invoice/model";
+import { useAuth } from "@/app/providers/AuthProvider";
+import { listInvoices, deleteInvoice } from "@/features/invoice-crud/api";
+import { Button } from "@/shared/ui";
+import type { Invoice } from "@/entities/invoice/model";
 
 interface Props {
   onLoad: (invoice: Omit<Invoice, "id" | "userId" | "createdAt">) => void;

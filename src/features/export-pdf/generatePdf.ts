@@ -1,6 +1,6 @@
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
-import type { Invoice } from "../../entities/invoice/model";
+import type { Invoice } from "@/entities/invoice/model";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../../app/providers/AuthProvider";
+import { useAuth } from "@/app/providers/AuthProvider";
 import { listProducts } from "../api";
-import type { Product } from "../../../entities/product/model";
+import type { Product } from "@/entities/product/model";
 
 interface Props {
   onSelect: (product: Product) => void;

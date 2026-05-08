@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Button } from "../../shared/ui/Button";
-import { FormSection } from "../../shared/ui/FormSection";
-import type { AdditionalCharge } from "../../entities/invoice/model";
+import { Button } from "@/shared/ui";
+import { FormSection } from "@/shared/ui";
+import type { AdditionalCharge } from "@/entities/invoice/model";
 
 interface Props {
   charges: AdditionalCharge[];

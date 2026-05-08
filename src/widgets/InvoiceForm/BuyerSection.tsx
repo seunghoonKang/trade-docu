@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { Input } from "../../shared/ui/Input";
-import { FormSection } from "../../shared/ui/FormSection";
-import { BuyerSelect } from "../../features/buyer-management/ui/BuyerSelect";
-import type { Buyer } from "../../entities/buyer/model";
+import { Input } from "@/shared/ui";
+import { FormSection } from "@/shared/ui";
+import { BuyerSelect } from "@/features/buyer-management/ui/BuyerSelect";
+import type { Buyer } from "@/entities/buyer/model";
 
 interface Props {
   companyName: string; address: string; tel: string; contactPerson: string;

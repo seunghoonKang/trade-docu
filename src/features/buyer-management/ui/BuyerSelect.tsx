@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../../app/providers/AuthProvider";
+import { useAuth } from "@/app/providers/AuthProvider";
 import { listBuyers } from "../api";
-import type { Buyer } from "../../../entities/buyer/model";
+import type { Buyer } from "@/entities/buyer/model";
 
 interface Props {
   onSelect: (buyer: Buyer) => void;

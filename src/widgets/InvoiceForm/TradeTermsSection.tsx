@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Input } from "../../shared/ui/Input";
-import { Select } from "../../shared/ui/Select";
-import { FormSection } from "../../shared/ui/FormSection";
+import { Input } from "@/shared/ui";
+import { Select } from "@/shared/ui";
+import { FormSection } from "@/shared/ui";
 
 interface Props {
   commodity: string; currency: string; paymentTerms: string; incoterms: string;

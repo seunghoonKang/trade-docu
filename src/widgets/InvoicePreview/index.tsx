@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { Invoice } from "../../entities/invoice/model";
+import type { Invoice } from "@/entities/invoice/model";
 
 type PreviewData = Omit<Invoice, "id" | "userId" | "createdAt">;
 

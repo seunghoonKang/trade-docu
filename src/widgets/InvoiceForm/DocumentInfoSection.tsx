@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Input } from "../../shared/ui/Input";
-import { DatePicker } from "../../shared/ui/DatePicker";
-import { FormSection } from "../../shared/ui/FormSection";
+import { Input } from "@/shared/ui";
+import { DatePicker } from "@/shared/ui";
+import { FormSection } from "@/shared/ui";
 
 interface Props {
   invoiceNo: string; refNo: string; orderNo: string; date: string; validity: string;
