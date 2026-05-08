@@ -2,13 +2,13 @@ import { format, parse, isValid, type Locale } from "date-fns";
 import { ko, enUS, zhCN, ja } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "@/components/ui";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "../lib/cn";
+} from "@/components/ui";
+import { cn } from "@/lib/utils";
 
 const localeMap: Record<string, Locale> = {
   ko,
@@ -45,10 +45,10 @@ export function DatePicker({ label, value, onChange, className }: DatePickerProp
         <PopoverTrigger
           id={inputId}
           className={cn(
-            "w-full px-3 py-2 text-base text-left border border-gray-200 rounded",
-            "flex items-center justify-between",
-            "hover:bg-gray-50 cursor-pointer",
-            "focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400",
+            "w-full px-3 py-2 text-base text-left bg-white border border-gray-300 rounded-md transition-colors",
+            "flex items-center justify-between cursor-pointer",
+            "hover:border-gray-400",
+            "focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-500",
             !displayValue && "text-gray-300"
           )}
         >

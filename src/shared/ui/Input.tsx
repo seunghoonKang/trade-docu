@@ -1,4 +1,4 @@
-import { cn } from "../lib/cn";
+import { cn } from "@/lib/utils";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -16,8 +16,9 @@ export function Input({ label, className, id, ...props }: InputProps) {
       <input
         id={inputId}
         className={cn(
-          "w-full px-3 py-2 text-base border border-gray-200 rounded",
-          "focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400",
+          "w-full px-3 py-2 text-base bg-white border border-gray-300 rounded-md transition-colors",
+          "hover:border-gray-400",
+          "focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-500",
           "placeholder:text-gray-300",
           className
         )}

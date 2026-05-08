@@ -1,29 +1,25 @@
 import { useTranslation } from "react-i18next";
+import { Select } from "@/shared/ui";
 
 const LANGUAGES = [
-  { code: "ko", label: "한국어" },
-  { code: "en", label: "EN" },
-  { code: "zh", label: "中文" },
-  { code: "ja", label: "日本語" },
+  { value: "ko", label: "한국어" },
+  { value: "en", label: "English" },
+  { value: "zh", label: "中文" },
+  { value: "ja", label: "日本語" },
 ];
 
 export function LanguageSwitcher() {
   const { i18n } = useTranslation();
+  const current = i18n.language.split("-")[0];
+  const value = LANGUAGES.some((l) => l.value === current) ? current : "ko";
   return (
-    <div className="flex flex-row flex-wrap gap-1">
-      {LANGUAGES.map((lang) => (
-        <button
-          key={lang.code}
-          onClick={() => i18n.changeLanguage(lang.code)}
-          className={`px-2 py-1 text-sm rounded transition-colors ${
-            i18n.language === lang.code
-              ? "bg-gray-900 text-white"
-              : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-          }`}
-        >
-          {lang.label}
-        </button>
-      ))}
+    <div className="w-full md:w-32">
+      <Select
+        aria-label="Language"
+        options={LANGUAGES}
+        value={value}
+        onChange={(e) => i18n.changeLanguage(e.target.value)}
+      />
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { Layout } from "../shared/ui/Layout";
-import { InvoiceForm } from "../widgets/InvoiceForm";
-import { InvoicePreview } from "../widgets/InvoicePreview";
-import { ExportToolbar } from "../widgets/ExportToolbar";
-import { InvoiceHistory } from "../widgets/InvoiceHistory";
-import { useInvoiceForm } from "../widgets/InvoiceForm/useInvoiceForm";
-import { useAuth } from "../app/providers/AuthProvider";
-import { getSeller } from "../features/seller-management/api";
+import { Layout } from "@/shared/ui";
+import { InvoiceForm } from "@/widgets/InvoiceForm";
+import { InvoicePreview } from "@/widgets/InvoicePreview";
+import { ExportToolbar } from "@/widgets/ExportToolbar";
+import { InvoiceHistory } from "@/widgets/InvoiceHistory";
+import { useInvoiceForm } from "@/widgets/InvoiceForm/useInvoiceForm";
+import { useAuth } from "@/app/providers/AuthProvider";
+import { getSeller } from "@/features/seller-management/api";
 
 export function InvoicePage() {
   const invoiceForm = useInvoiceForm();
@@ -37,7 +37,7 @@ export function InvoicePage() {
   return (
     <Layout toolbar={<ExportToolbar formData={invoiceForm.form} onShowHistory={() => setShowHistory(true)} />}>
       <div className="flex flex-col lg:flex-row h-[calc(100vh-57px)]">
-        <div className="w-full lg:w-1/2 overflow-y-auto border-r border-gray-200">
+        <div className="w-full lg:w-1/2 overflow-y-auto bg-white border-r border-gray-200">
           <InvoiceForm {...invoiceForm} />
         </div>
         <div id="invoice-preview" className="hidden lg:block w-1/2 overflow-y-auto bg-gray-50 p-6">
