@@ -86,6 +86,17 @@
     "verifyLater": "後で認証する",
     "goToMain": "メインページへ移動"
   },
+  "profile": {
+    "title": "自社情報",
+    "subtitle": "一度保存すれば、すべてのインボイスに自動入力されます。",
+    "companyInfo": "会社情報",
+    "save": "保存",
+    "saved": "プロフィールを保存しました！",
+    "saveFailed": "保存に失敗しました。",
+    "back": "← インボイスへ",
+    "nav": "自社情報",
+    "loginRequired": "ログインが必要です。"
+  },
   "history": {
     "title": "インボイス履歴",
     "close": "閉じる",

@@ -86,6 +86,17 @@
     "verifyLater": "나중에 인증하기",
     "goToMain": "메인 페이지로 이동"
   },
+  "profile": {
+    "title": "내 회사 정보",
+    "subtitle": "한 번 저장하면 모든 인보이스에 자동으로 채워집니다.",
+    "companyInfo": "회사 정보",
+    "save": "저장",
+    "saved": "프로필이 저장되었습니다!",
+    "saveFailed": "저장에 실패했습니다.",
+    "back": "← 인보이스로",
+    "nav": "내 회사 정보",
+    "loginRequired": "로그인이 필요합니다."
+  },
   "history": {
     "title": "인보이스 이력",
     "close": "닫기",

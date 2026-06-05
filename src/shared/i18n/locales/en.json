@@ -86,6 +86,17 @@
     "verifyLater": "Verify later",
     "goToMain": "Go to Main Page"
   },
+  "profile": {
+    "title": "My Company Info",
+    "subtitle": "Save once and it auto-fills every invoice.",
+    "companyInfo": "Company Info",
+    "save": "Save",
+    "saved": "Profile saved!",
+    "saveFailed": "Failed to save.",
+    "back": "← Back to invoice",
+    "nav": "My Company Info",
+    "loginRequired": "Login required."
+  },
   "history": {
     "title": "Invoice History",
     "close": "Close",

@@ -53,6 +53,9 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
           <Button variant="ghost" size="sm" onClick={() => { onShowHistory?.(); setMenuOpen(false); }}>
             {t("history.history")}
           </Button>
+          <Button variant="ghost" size="sm" onClick={() => { navigate("/profile"); setMenuOpen(false); }}>
+            {t("profile.nav")}
+          </Button>
         </>
       )}
       <div className="w-full h-px bg-gray-200 my-1 md:hidden" />
@@ -100,6 +103,9 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
             </Button>
             <Button variant="ghost" size="sm" onClick={onShowHistory}>
               {t("history.history")}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
+              {t("profile.nav")}
             </Button>
           </>
         )}
