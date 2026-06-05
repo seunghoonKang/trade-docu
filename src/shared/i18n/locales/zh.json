@@ -86,6 +86,31 @@
     "verifyLater": "稍后验证",
     "goToMain": "前往主页"
   },
+  "draft": {
+    "title": "您有一张正在编辑的发票。",
+    "restore": "恢复",
+    "discard": "新建"
+  },
+  "validation": {
+    "blockedTitle": "必填项尚未填写",
+    "invoiceNo": "发票号",
+    "buyerCompanyName": "买方公司名称",
+    "items": "商品(品名·数量·单价)",
+    "bankInfo": "银行信息为空 (可选)"
+  },
+  "profile": {
+    "title": "我的公司信息",
+    "subtitle": "保存一次，自动填入每张发票。",
+    "companyInfo": "公司信息",
+    "save": "保存",
+    "saved": "资料已保存！",
+    "saveFailed": "保存失败。",
+    "back": "← 返回发票",
+    "nav": "我的公司信息",
+    "loginRequired": "需要登录。",
+    "nudgeMessage": "填写公司信息后，每张发票都会自动填入。",
+    "completeCta": "完善资料"
+  },
   "history": {
     "title": "发票历史",
     "close": "关闭",

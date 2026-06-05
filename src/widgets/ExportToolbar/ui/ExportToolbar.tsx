@@ -7,10 +7,12 @@ import { LanguageSwitcher } from "@/features/i18n-switch";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { logout } from "@/features/auth";
 import type { Invoice } from "@/entities/invoice/model";
+import { validateInvoice } from "@/entities/invoice/validate";
 import { generatePdf } from "@/features/export-pdf";
 import { generateExcel } from "@/features/export-excel";
 import { saveInvoice } from "@/features/invoice-crud";
 import { triggerPrint } from "@/features/print";
+import { clearDraft } from "@/features/draft-autosave";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -30,28 +32,58 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
     toast.success(t("auth.logoutSuccess"));
   }
 
+  // Block export/save when core fields are missing; warn-but-allow for the rest.
+  function passesValidation(): boolean {
+    const { blocking, warnings } = validateInvoice(formData);
+    if (blocking.length > 0) {
+      toast.error(
+        `${t("validation.blockedTitle")}: ${blocking.map((k) => t(`validation.${k}`)).join(", ")}`,
+      );
+      return false;
+    }
+    if (warnings.length > 0) {
+      toast.warning(warnings.map((k) => t(`validation.${k}`)).join(", "));
+    }
+    return true;
+  }
+
+  function handlePdf() {
+    if (passesValidation()) generatePdf(formData);
+  }
+  function handleExcel() {
+    if (passesValidation()) generateExcel(formData, t);
+  }
+  function handlePrint() {
+    if (passesValidation()) triggerPrint();
+  }
+  async function handleSave() {
+    if (!user || !passesValidation()) return;
+    await saveInvoice(user.id, formData);
+    clearDraft();
+    toast.success(t("history.saved"));
+  }
+
   const menuItems = (
     <>
-      <Button variant="secondary" size="sm" onClick={() => { generatePdf(formData); setMenuOpen(false); }}>
+      <Button variant="secondary" size="sm" onClick={() => { handlePdf(); setMenuOpen(false); }}>
         {t("export.pdf")}
       </Button>
-      <Button variant="secondary" size="sm" onClick={() => { generateExcel(formData, t); setMenuOpen(false); }}>
+      <Button variant="secondary" size="sm" onClick={() => { handleExcel(); setMenuOpen(false); }}>
         {t("export.excel")}
       </Button>
-      <Button variant="secondary" size="sm" onClick={() => { triggerPrint(); setMenuOpen(false); }}>
+      <Button variant="secondary" size="sm" onClick={() => { handlePrint(); setMenuOpen(false); }}>
         {t("export.print")}
       </Button>
       {user && (
         <>
-          <Button variant="secondary" size="sm" onClick={async () => {
-            await saveInvoice(user.id, formData);
-            alert(t("history.saved"));
-            setMenuOpen(false);
-          }}>
+          <Button variant="secondary" size="sm" onClick={() => { handleSave(); setMenuOpen(false); }}>
             {t("history.save")}
           </Button>
           <Button variant="ghost" size="sm" onClick={() => { onShowHistory?.(); setMenuOpen(false); }}>
             {t("history.history")}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => { navigate("/profile"); setMenuOpen(false); }}>
+            {t("profile.nav")}
           </Button>
         </>
       )}
@@ -80,26 +112,26 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
 
       {/* Desktop */}
       <div className="hidden md:flex items-center gap-2">
-        <Button variant="secondary" size="sm" onClick={() => generatePdf(formData)}>
+        <Button variant="secondary" size="sm" onClick={handlePdf}>
           {t("export.pdf")}
         </Button>
-        <Button variant="secondary" size="sm" onClick={() => generateExcel(formData, t)}>
+        <Button variant="secondary" size="sm" onClick={handleExcel}>
           {t("export.excel")}
         </Button>
-        <Button variant="secondary" size="sm" onClick={() => triggerPrint()}>
+        <Button variant="secondary" size="sm" onClick={handlePrint}>
           {t("export.print")}
         </Button>
         {user && (
           <>
             <div className="w-px h-6 bg-gray-200" />
-            <Button variant="secondary" size="sm" onClick={async () => {
-              await saveInvoice(user.id, formData);
-              alert(t("history.saved"));
-            }}>
+            <Button variant="secondary" size="sm" onClick={handleSave}>
               {t("history.save")}
             </Button>
             <Button variant="ghost" size="sm" onClick={onShowHistory}>
               {t("history.history")}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/profile")}>
+              {t("profile.nav")}
             </Button>
           </>
         )}
