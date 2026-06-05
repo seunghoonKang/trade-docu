@@ -12,6 +12,7 @@ import { generatePdf } from "@/features/export-pdf";
 import { generateExcel } from "@/features/export-excel";
 import { saveInvoice } from "@/features/invoice-crud";
 import { triggerPrint } from "@/features/print";
+import { clearDraft } from "@/features/draft-autosave";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -58,6 +59,7 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
   async function handleSave() {
     if (!user || !passesValidation()) return;
     await saveInvoice(user.id, formData);
+    clearDraft();
     toast.success(t("history.saved"));
   }
 

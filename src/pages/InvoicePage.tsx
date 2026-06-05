@@ -7,11 +7,21 @@ import { InvoiceHistory } from "@/widgets/InvoiceHistory";
 import { useInvoiceForm } from "@/widgets/InvoiceForm";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { getSeller } from "@/features/seller-management";
+import { createEmptyInvoice } from "@/entities/invoice/model";
+import {
+  loadDraft,
+  saveDraft,
+  clearDraft,
+  isEmptyDraft,
+  DraftRestoreBanner,
+  type InvoiceDraft,
+} from "@/features/draft-autosave";
 
 export function InvoicePage() {
   const invoiceForm = useInvoiceForm();
   const { user } = useAuth();
   const [showHistory, setShowHistory] = useState(false);
+  const [pendingDraft, setPendingDraft] = useState<InvoiceDraft | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -34,8 +44,37 @@ export function InvoicePage() {
     }
   }, [user]);
 
+  // Offer to restore a previous draft once, without auto-overwriting the form.
+  useEffect(() => {
+    const draft = loadDraft();
+    if (draft && !isEmptyDraft(draft)) setPendingDraft(draft);
+  }, []);
+
+  // Auto-save the working draft (debounced). Paused while a restore banner is
+  // pending so an ignored prompt can't clobber the saved draft.
+  useEffect(() => {
+    if (pendingDraft) return;
+    const id = setTimeout(() => {
+      if (!isEmptyDraft(invoiceForm.form)) saveDraft(invoiceForm.form);
+    }, 500);
+    return () => clearTimeout(id);
+  }, [invoiceForm.form, pendingDraft]);
+
   return (
     <Layout toolbar={<ExportToolbar formData={invoiceForm.form} onShowHistory={() => setShowHistory(true)} />}>
+      {pendingDraft && (
+        <DraftRestoreBanner
+          onRestore={() => {
+            invoiceForm.loadForm(pendingDraft);
+            setPendingDraft(null);
+          }}
+          onDiscard={() => {
+            invoiceForm.loadForm(createEmptyInvoice());
+            clearDraft();
+            setPendingDraft(null);
+          }}
+        />
+      )}
       <div className="flex flex-col lg:flex-row h-[calc(100vh-57px)]">
         <div className="w-full lg:w-1/2 overflow-y-auto bg-white border-r border-gray-200">
           <InvoiceForm {...invoiceForm} />

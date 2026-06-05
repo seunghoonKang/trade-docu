@@ -86,6 +86,11 @@
     "verifyLater": "나중에 인증하기",
     "goToMain": "메인 페이지로 이동"
   },
+  "draft": {
+    "title": "이전에 작업하던 PI가 있어요.",
+    "restore": "복원",
+    "discard": "새로 시작"
+  },
   "validation": {
     "blockedTitle": "필수 항목이 비어 있어요",
     "invoiceNo": "인보이스 번호",

@@ -86,6 +86,11 @@
     "verifyLater": "稍后验证",
     "goToMain": "前往主页"
   },
+  "draft": {
+    "title": "您有一张正在编辑的发票。",
+    "restore": "恢复",
+    "discard": "新建"
+  },
   "validation": {
     "blockedTitle": "必填项尚未填写",
     "invoiceNo": "发票号",

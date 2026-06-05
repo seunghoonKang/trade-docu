@@ -86,6 +86,11 @@
     "verifyLater": "Verify later",
     "goToMain": "Go to Main Page"
   },
+  "draft": {
+    "title": "You have a PI you were working on.",
+    "restore": "Restore",
+    "discard": "Start new"
+  },
   "validation": {
     "blockedTitle": "Required fields are missing",
     "invoiceNo": "Invoice No.",
