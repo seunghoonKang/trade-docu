@@ -86,6 +86,13 @@
     "verifyLater": "後で認証する",
     "goToMain": "メインページへ移動"
   },
+  "validation": {
+    "blockedTitle": "必須項目が未入力です",
+    "invoiceNo": "インボイス番号",
+    "buyerCompanyName": "買主の会社名",
+    "items": "品目(品名・数量・単価)",
+    "bankInfo": "銀行情報が未入力です (任意)"
+  },
   "profile": {
     "title": "自社情報",
     "subtitle": "一度保存すれば、すべてのインボイスに自動入力されます。",

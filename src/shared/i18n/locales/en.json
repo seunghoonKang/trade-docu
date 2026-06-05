@@ -86,6 +86,13 @@
     "verifyLater": "Verify later",
     "goToMain": "Go to Main Page"
   },
+  "validation": {
+    "blockedTitle": "Required fields are missing",
+    "invoiceNo": "Invoice No.",
+    "buyerCompanyName": "Buyer company name",
+    "items": "Item (name, qty, unit price)",
+    "bankInfo": "Bank info is empty (optional)"
+  },
   "profile": {
     "title": "My Company Info",
     "subtitle": "Save once and it auto-fills every invoice.",

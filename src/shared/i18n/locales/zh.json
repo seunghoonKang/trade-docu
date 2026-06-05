@@ -86,6 +86,13 @@
     "verifyLater": "稍后验证",
     "goToMain": "前往主页"
   },
+  "validation": {
+    "blockedTitle": "必填项尚未填写",
+    "invoiceNo": "发票号",
+    "buyerCompanyName": "买方公司名称",
+    "items": "商品(品名·数量·单价)",
+    "bankInfo": "银行信息为空 (可选)"
+  },
   "profile": {
     "title": "我的公司信息",
     "subtitle": "保存一次，自动填入每张发票。",

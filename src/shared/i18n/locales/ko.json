@@ -86,6 +86,13 @@
     "verifyLater": "나중에 인증하기",
     "goToMain": "메인 페이지로 이동"
   },
+  "validation": {
+    "blockedTitle": "필수 항목이 비어 있어요",
+    "invoiceNo": "인보이스 번호",
+    "buyerCompanyName": "구매자 회사명",
+    "items": "품목(품명·수량·단가)",
+    "bankInfo": "은행 정보가 비어 있어요 (선택)"
+  },
   "profile": {
     "title": "내 회사 정보",
     "subtitle": "한 번 저장하면 모든 인보이스에 자동으로 채워집니다.",
