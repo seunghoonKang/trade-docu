@@ -22,6 +22,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # `vercel build` runs the project's build off-Vercel, so the package
+      # manager it detects (pnpm, from pnpm-lock.yaml) must be on PATH.
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
