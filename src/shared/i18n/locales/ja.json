@@ -107,7 +107,9 @@
     "saveFailed": "保存に失敗しました。",
     "back": "← インボイスへ",
     "nav": "自社情報",
-    "loginRequired": "ログインが必要です。"
+    "loginRequired": "ログインが必要です。",
+    "nudgeMessage": "自社情報を登録すると、毎回自動で入力されます。",
+    "completeCta": "プロフィールを完成"
   },
   "history": {
     "title": "インボイス履歴",

@@ -107,7 +107,9 @@
     "saveFailed": "저장에 실패했습니다.",
     "back": "← 인보이스로",
     "nav": "내 회사 정보",
-    "loginRequired": "로그인이 필요합니다."
+    "loginRequired": "로그인이 필요합니다.",
+    "nudgeMessage": "내 회사 정보를 채우면 매번 자동으로 들어갑니다.",
+    "completeCta": "프로필 완성"
   },
   "history": {
     "title": "인보이스 이력",

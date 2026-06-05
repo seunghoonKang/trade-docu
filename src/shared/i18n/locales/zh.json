@@ -107,7 +107,9 @@
     "saveFailed": "保存失败。",
     "back": "← 返回发票",
     "nav": "我的公司信息",
-    "loginRequired": "需要登录。"
+    "loginRequired": "需要登录。",
+    "nudgeMessage": "填写公司信息后，每张发票都会自动填入。",
+    "completeCta": "完善资料"
   },
   "history": {
     "title": "发票历史",

@@ -107,7 +107,9 @@
     "saveFailed": "Failed to save.",
     "back": "← Back to invoice",
     "nav": "My Company Info",
-    "loginRequired": "Login required."
+    "loginRequired": "Login required.",
+    "nudgeMessage": "Fill in your company info once and it auto-fills every invoice.",
+    "completeCta": "Complete profile"
   },
   "history": {
     "title": "Invoice History",
