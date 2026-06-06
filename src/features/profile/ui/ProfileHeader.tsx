@@ -7,7 +7,8 @@ import { useAuth } from "@/app/providers/AuthProvider";
 import { Button } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 import { removeAvatar, uploadAvatar } from "../api/avatar";
-import { getAvatarUrl, hasCustomAvatar } from "../lib/avatar";
+import { useResolvedAvatarUrl } from "../hooks/useResolvedAvatarUrl";
+import { hasCustomAvatar } from "../lib/avatar";
 
 interface ProfileHeaderProps {
   profile: SellerProfile;
@@ -47,12 +48,13 @@ export function ProfileHeader({ profile, className }: ProfileHeaderProps) {
     setPreviewUrl(null);
   }, [user?.id, user?.user_metadata?.avatar_url]);
 
+  const { src: avatarUrl, handleError: handleAvatarError } = useResolvedAvatarUrl(user, previewUrl);
+
   if (!user) return null;
 
   const displayName = getDisplayName(user, profile);
   const initials = getInitials(displayName);
   const subtitle = profile.companyName || user.email || "";
-  const avatarUrl = previewUrl ?? getAvatarUrl(user);
   const canRemove = hasCustomAvatar(user) || previewUrl !== null;
   const busy = uploading || removing;
 
@@ -119,7 +121,7 @@ export function ProfileHeader({ profile, className }: ProfileHeaderProps) {
               src={avatarUrl}
               alt=""
               className="size-full object-cover"
-              onError={() => setPreviewUrl(null)}
+              onError={handleAvatarError}
             />
           ) : initials ? (
             <span className="text-2xl font-semibold text-primary">{initials}</span>

@@ -1,5 +1,13 @@
 import { supabase } from "@/shared/lib/supabase";
-import { AVATAR_BUCKET, getAvatarStoragePath, getAvatarStoragePaths } from "../lib/avatar";
+import {
+  AVATAR_BUCKET,
+  AVATAR_STORAGE_FILE,
+  getAvatarStoragePath,
+  getAvatarStoragePaths,
+  hasCustomAvatar,
+} from "../lib/avatar";
+import { getStoredAvatarPublicUrl } from "../lib/avatarStorage";
+import type { User } from "@supabase/supabase-js";
 import { AVATAR_OUTPUT_TYPE, prepareAvatarFile } from "../lib/optimizeAvatar";
 
 export async function uploadAvatar(userId: string, file: File): Promise<string> {
@@ -24,6 +32,24 @@ export async function uploadAvatar(userId: string, file: File): Promise<string> 
   return (
     (authData.user.user_metadata?.avatar_url as string | undefined) ?? publicUrl
   );
+}
+
+export async function restoreAvatarMetadataIfNeeded(user: User): Promise<boolean> {
+  if (hasCustomAvatar(user)) return false;
+
+  const { data: files, error } = await supabase.storage
+    .from(AVATAR_BUCKET)
+    .list(user.id, { limit: 10 });
+
+  if (error || !files?.some((file) => file.name === AVATAR_STORAGE_FILE)) {
+    return false;
+  }
+
+  const { error: updateError } = await supabase.auth.updateUser({
+    data: { avatar_url: `${getStoredAvatarPublicUrl(user.id)}?t=${Date.now()}` },
+  });
+
+  return !updateError;
 }
 
 export async function removeAvatar(userId: string): Promise<void> {

@@ -1,4 +1,5 @@
 export { Button } from "./primitives/button";
+export { Skeleton } from "./primitives/skeleton";
 export { Input } from "./input";
 export { Select } from "./select";
 export { FormSection } from "./form-section";

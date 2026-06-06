@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Building2, Info, Landmark, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button, Input } from "@/shared/ui";
 import { useAuth } from "@/app/providers/AuthProvider";
-import { reloadLinkedIdentities } from "@/features/auth/api";
 import { clearOAuthLinkCallbackUrl, consumeOAuthLinkCallback } from "@/features/auth/lib/oauthLinkCallback";
+import i18n from "@/shared/i18n/config";
 import { LinkedAuthMethods } from "@/features/auth/ui/LinkedAuthMethods";
-import { ProfileHeader, ProfilePageHeader, ProfileSectionCard } from "@/features/profile";
+import { restoreAvatarMetadataIfNeeded } from "@/features/profile/api/avatar";
+import { ProfileHeader, ProfilePageHeader, ProfilePageSkeleton, ProfileSectionCard } from "@/features/profile";
 import {
   getSeller,
   upsertSeller,
   seedSellerFromMetadata,
   type SellerProfile,
 } from "@/features/seller-management";
+import { AppSidebar } from "@/widgets/AppSidebar";
+import { cn } from "@/shared/lib/utils";
 
 interface ProfileFormFieldsProps {
   profile: SellerProfile;
@@ -105,39 +108,46 @@ function BankFields({ profile, onUpdate }: ProfileFormFieldsProps) {
 
 export function ProfilePage() {
   const { t } = useTranslation();
-  const { user, loading } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<SellerProfile | null>(null);
   const [saving, setSaving] = useState(false);
+  const oauthLinkCallbackHandled = useRef(false);
+  const avatarRestoredForUserRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
-    getSeller(user.id).then((seller) => {
-      setProfile(seedSellerFromMetadata(user, seller));
+    if (avatarRestoredForUserRef.current === user.id) return;
+    avatarRestoredForUserRef.current = user.id;
+
+    void restoreAvatarMetadataIfNeeded(user).then((restored) => {
+      if (restored) void refreshUser();
     });
-  }, [user]);
+  }, [user?.id, refreshUser, user]);
 
   useEffect(() => {
     if (!user) return;
-    const result = consumeOAuthLinkCallback(user, t);
+    const currentUser = user;
+    getSeller(user.id).then((seller) => {
+      setProfile(seedSellerFromMetadata(currentUser, seller));
+    });
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!user || oauthLinkCallbackHandled.current) return;
+
+    const result = consumeOAuthLinkCallback(user, i18n.t.bind(i18n));
     if (!result) return;
 
-    async function handleLinkCallback() {
-      if (result!.type === "success") {
-        try {
-          await reloadLinkedIdentities();
-        } catch {
-          // Non-blocking: LinkedAuthMethods also reloads identities on mount.
-        }
-        toast.success(result!.message);
-      } else {
-        toast.error(result!.message);
-      }
-      clearOAuthLinkCallbackUrl();
-    }
+    oauthLinkCallbackHandled.current = true;
+    clearOAuthLinkCallbackUrl();
 
-    void handleLinkCallback();
-  }, [user, t]);
+    if (result.type === "success") {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+  }, [user]);
 
   function update(key: keyof SellerProfile, value: string) {
     setProfile((prev) => (prev ? { ...prev, [key]: value } : prev));
@@ -175,9 +185,8 @@ export function ProfilePage() {
     }
   }
 
-  if (loading) return null;
-  if (!user) return <Navigate to="/login" replace />;
-  if (!profile) return null;
+  if (!loading && !user) return <Navigate to="/login" replace />;
+  if (loading || !user || !profile) return <ProfilePageSkeleton />;
 
   const saveButton = (className?: string) => (
     <Button
@@ -200,8 +209,14 @@ export function ProfilePage() {
         onBack={() => navigate("/")}
         onSave={handleSave}
       />
+      <AppSidebar />
 
-      <main className="max-w-4xl mx-auto px-4 py-6 md:p-8 space-y-6 md:space-y-8 mt-16 md:mt-0 pb-28 md:pb-8">
+      <div className="md:pl-[72px]">
+        <main
+          className={cn(
+            "max-w-4xl mx-auto px-4 py-6 md:p-8 space-y-6 md:space-y-8 mt-16 md:mt-0 pb-28 md:pb-8",
+          )}
+        >
         <p className="text-sm text-muted-foreground hidden md:block">{t("profile.subtitle")}</p>
 
         <ProfileHeader profile={profile} />
@@ -257,7 +272,8 @@ export function ProfilePage() {
         <div className="hidden md:flex justify-end gap-3 pt-8 mt-2 border-t border-border">
           {saveButton("shadow-lg font-semibold gap-2 px-6")}
         </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

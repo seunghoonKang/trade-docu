@@ -1,6 +1,6 @@
 import { User } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
-import { getAvatarUrl } from "@/features/profile";
+import { useResolvedAvatarUrl } from "@/features/profile/hooks/useResolvedAvatarUrl";
 import { cn } from "@/shared/lib/utils";
 
 interface AvatarThumbnailProps {
@@ -10,7 +10,7 @@ interface AvatarThumbnailProps {
 }
 
 export function AvatarThumbnail({ user, className, onClick }: AvatarThumbnailProps) {
-  const avatarUrl = getAvatarUrl(user);
+  const { src: avatarUrl, handleError } = useResolvedAvatarUrl(user);
   const name =
     (user.user_metadata?.name as string | undefined) ??
     user.email?.split("@")[0] ??
@@ -21,6 +21,7 @@ export function AvatarThumbnail({ user, className, onClick }: AvatarThumbnailPro
       src={avatarUrl}
       alt=""
       className="size-full object-cover"
+      onError={handleError}
     />
   ) : (
     (() => {
