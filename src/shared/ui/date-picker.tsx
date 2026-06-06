@@ -39,6 +39,10 @@ export function DatePicker({ label, required, value, onChange, className, varian
   const inputId = label?.toLowerCase().replace(/\s+/g, "-");
 
   const isEditor = variant === "editor";
+  const currentYear = new Date().getFullYear();
+  const calendarStartMonth = new Date(currentYear - 20, 0);
+  const calendarEndMonth = new Date(currentYear + 5, 11);
+  const initialMonth = selected && isValid(selected) ? selected : new Date();
 
   return (
     <div className={cn("flex flex-col", isEditor ? "gap-2" : "gap-1", className)}>
@@ -67,17 +71,23 @@ export function DatePicker({ label, required, value, onChange, className, varian
           <span>{displayValue || "\u00A0"}</span>
           <CalendarIcon className="size-4 text-muted-foreground" />
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-auto p-0">
+        <PopoverContent align="start" className="w-auto min-w-0 p-0">
           <Calendar
+            className="[--calendar-pad-inline:0.75rem] [--cell-size:2rem] p-3"
             mode="single"
             locale={locale}
+            captionLayout="dropdown"
+            navLayout="around"
+            reverseYears
+            startMonth={calendarStartMonth}
+            endMonth={calendarEndMonth}
             selected={selected}
+            defaultMonth={initialMonth}
             onSelect={(date) => {
               if (date) {
                 onChange(format(date, "yyyy-MM-dd"));
               }
             }}
-            defaultMonth={selected}
           />
         </PopoverContent>
       </Popover>
