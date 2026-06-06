@@ -57,7 +57,7 @@ export async function completeOAuthProfile(name: string) {
   };
   await upsertSeller(
     data.user.id,
-    { companyName: "", address: "", tel: "", fax: "", representative: name },
+    { companyName: "", address: "", tel: "", fax: "", representative: name, signatureUrl: "" },
     emptyBank,
   );
   return data;
