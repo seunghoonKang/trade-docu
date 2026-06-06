@@ -25,7 +25,7 @@ interface Props {
 
 const navLinkClass =
   "text-xs font-semibold tracking-wide transition-colors duration-200";
-const navLinkInactive = `${navLinkClass} text-secondary font-medium hover:text-primary`;
+const navLinkInactive = `${navLinkClass} text-secondary-foreground/55 font-medium hover:text-primary`;
 const navLinkActive = `${navLinkClass} text-primary font-bold border-b-2 border-primary pb-1`;
 
 export function ExportToolbar({ formData, onShowHistory }: Props) {
