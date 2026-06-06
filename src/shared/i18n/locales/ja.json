@@ -1,7 +1,7 @@
 {
   "app": { "title": "プロフォーマインボイス" },
   "nav": { "login": "ログイン", "logout": "ログアウト", "signup": "新規登録", "history": "履歴", "settings": "設定", "dashboard": "ダッシュボード", "invoices": "インボイス", "packingLists": "パッキングリスト", "helpCenter": "ヘルプセンター", "comingSoon": "準備中", "comingSoonSection": "準備中" },
-  "export": { "pdf": "PDFダウンロード", "excel": "Excelダウンロード", "print": "印刷", "export": "エクスポート", "pdfFailed": "PDFの生成に失敗しました。" },
+  "export": { "pdf": "PDFでエクスポート", "excel": "Excelでエクスポート", "print": "印刷", "export": "エクスポート", "pdfFailed": "PDFの生成に失敗しました。" },
   "form": {
     "documentInfo": "書類情報",
     "invoiceNo": "インボイス番号",
