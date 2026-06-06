@@ -1,12 +1,12 @@
+import { useState } from "react";
 import {
-  Archive,
-  FileText,
   HelpCircle,
   LayoutDashboard,
   LogOut,
   Package,
   type LucideIcon,
 } from "lucide-react";
+import { mainNavItems } from "../lib/mainNavItems";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -28,11 +28,11 @@ interface SidebarItem {
   action?: "logout";
 }
 
-const mainItems: SidebarItem[] = [
+const activeItems: SidebarItem[] = mainNavItems.map((item) => ({ ...item }));
+
+const comingSoonItems: SidebarItem[] = [
   { id: "dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard", disabled: true },
-  { id: "invoices", icon: FileText, labelKey: "nav.invoices", href: "/" },
   { id: "packingLists", icon: Package, labelKey: "nav.packingLists", disabled: true },
-  { id: "archive", icon: Archive, labelKey: "nav.archive", href: "/history" },
 ];
 
 const bottomItems: SidebarItem[] = [
@@ -43,11 +43,13 @@ const bottomItems: SidebarItem[] = [
 function SidebarNavButton({
   item,
   active,
+  expanded,
   onNavigate,
   onLogout,
 }: {
   item: SidebarItem;
   active: boolean;
+  expanded: boolean;
   onNavigate: (href: string) => void;
   onLogout: () => void;
 }) {
@@ -59,20 +61,32 @@ function SidebarNavButton({
     "flex size-10 shrink-0 items-center justify-center rounded-lg transition-all",
     active && "bg-primary text-primary-foreground shadow-md",
     !active && !item.disabled && "text-muted-foreground hover:bg-accent hover:text-foreground",
-    item.disabled && "opacity-50",
+    item.disabled && "border border-dashed border-border/70 bg-muted/40 text-muted-foreground/70",
   );
 
-  const rowClass = "flex h-12 w-full items-center gap-3 px-3 transition-colors";
+  const rowClass = cn(
+    "flex h-12 w-full items-center transition-colors",
+    expanded ? "gap-3 px-3" : "justify-center gap-0 px-0",
+  );
 
-  const labelClass =
-    "text-xs font-semibold tracking-wide opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap text-foreground";
+  const labelClass = cn(
+    "block truncate text-xs font-semibold tracking-wide whitespace-nowrap",
+    item.disabled ? "text-muted-foreground" : "text-foreground",
+  );
 
   const content = (
     <>
       <span className={iconShellClass}>
         <Icon className="size-5" aria-hidden />
       </span>
-      <span className={labelClass}>{label}</span>
+      <span
+        className={cn(
+          "min-w-0 overflow-hidden transition-[width] duration-300 ease-in-out",
+          expanded ? "flex-1" : "w-0",
+        )}
+      >
+        <span className={labelClass}>{label}</span>
+      </span>
     </>
   );
 
@@ -86,7 +100,7 @@ function SidebarNavButton({
             aria-label={label}
             title={label}
             tabIndex={0}
-            className="flex w-full items-center gap-3"
+            className={cn("flex w-full items-center", expanded ? "gap-3" : "justify-center gap-0")}
           >
             {content}
           </span>
@@ -120,6 +134,7 @@ export function AppSidebar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [expanded, setExpanded] = useState(false);
 
   function isActive(item: SidebarItem) {
     if (!item.href) return false;
@@ -133,28 +148,72 @@ export function AppSidebar() {
 
   return (
     <TooltipProvider delay={200}>
-      <aside className="group/sidebar fixed left-0 top-16 z-40 hidden h-[calc(100vh-4rem)] w-[72px] flex-col overflow-hidden border-r border-border bg-secondary transition-all duration-300 ease-in-out hover:w-[260px] md:flex">
+      <aside
+        className={cn(
+          "fixed left-0 top-16 z-40 hidden h-[calc(100vh-4rem)] flex-col overflow-hidden border-r border-border bg-secondary transition-[width] duration-300 ease-in-out md:flex",
+          expanded ? "w-[260px]" : "w-[72px]",
+        )}
+        onMouseEnter={() => setExpanded(true)}
+        onMouseLeave={() => setExpanded(false)}
+      >
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-2 py-4">
-          {mainItems.map((item) => (
+          {activeItems.map((item) => (
             <SidebarNavButton
               key={item.id}
               item={item}
               active={isActive(item)}
+              expanded={expanded}
               onNavigate={navigate}
               onLogout={handleLogout}
             />
           ))}
         </nav>
-        <div className="mt-auto space-y-1 border-t border-border px-2 py-4">
-          {bottomItems.map((item) => (
-            <SidebarNavButton
-              key={item.id}
-              item={item}
-              active={isActive(item)}
-              onNavigate={navigate}
-              onLogout={handleLogout}
-            />
-          ))}
+
+        <div className="mt-auto shrink-0">
+          <div className="space-y-1 border-t border-border/60 px-2 pb-3 pt-3">
+            <div
+              className={cn(
+                "space-y-1 rounded-lg border transition-[background-color,border-color,padding] duration-300 ease-in-out",
+                expanded
+                  ? "border-dashed border-border/70 bg-muted/25 px-1 py-2"
+                  : "border-transparent px-0 py-1",
+              )}
+            >
+              <div
+                className={cn(
+                  "overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out",
+                  expanded ? "max-h-6 opacity-100" : "max-h-0 opacity-0",
+                )}
+              >
+                <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {t("nav.comingSoonSection")}
+                </p>
+              </div>
+            {comingSoonItems.map((item) => (
+              <SidebarNavButton
+                key={item.id}
+                item={item}
+                active={isActive(item)}
+                expanded={expanded}
+                onNavigate={navigate}
+                onLogout={handleLogout}
+              />
+            ))}
+            </div>
+          </div>
+
+          <div className="space-y-1 border-t border-border px-2 py-4">
+            {bottomItems.map((item) => (
+              <SidebarNavButton
+                key={item.id}
+                item={item}
+                active={isActive(item)}
+                expanded={expanded}
+                onNavigate={navigate}
+                onLogout={handleLogout}
+              />
+            ))}
+          </div>
         </div>
       </aside>
     </TooltipProvider>
