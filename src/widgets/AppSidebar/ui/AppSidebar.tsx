@@ -32,7 +32,7 @@ const mainItems: SidebarItem[] = [
   { id: "dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard", disabled: true },
   { id: "invoices", icon: FileText, labelKey: "nav.invoices", href: "/" },
   { id: "packingLists", icon: Package, labelKey: "nav.packingLists", disabled: true },
-  { id: "archive", icon: Archive, labelKey: "nav.archive", disabled: true },
+  { id: "archive", icon: Archive, labelKey: "nav.archive", href: "/history" },
 ];
 
 const bottomItems: SidebarItem[] = [
