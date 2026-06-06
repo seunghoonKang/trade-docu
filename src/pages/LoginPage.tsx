@@ -1,10 +1,19 @@
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/app/providers/AuthProvider";
+import { needsOAuthOnboarding } from "@/features/auth/lib/profile";
 import { LoginMobileLayout } from "@/features/auth/ui/LoginMobileLayout";
 import { LoginHero } from "@/features/auth/ui/LoginHero";
 import { LoginPanel } from "@/features/auth/ui/LoginPanel";
 
 export function LoginPage() {
+  const { user, loading } = useAuth();
   const [mode, setMode] = useState<"login" | "signup">("login");
+
+  if (loading) return null;
+  if (user) {
+    return <Navigate to={needsOAuthOnboarding(user) ? "/onboarding" : "/"} replace />;
+  }
 
   return (
     <>
