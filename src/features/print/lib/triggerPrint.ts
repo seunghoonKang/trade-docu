@@ -24,7 +24,7 @@ export function triggerPrint() {
       <title>Print Invoice</title>
       <style>${styles}</style>
       <style>
-        body { margin: 0; padding: 24px; background: white; font-family: "Noto Sans KR", sans-serif; }
+        body { margin: 0; padding: 24px; background: white; font-family: system-ui, sans-serif; }
       </style>
     </head>
     <body>${element.innerHTML}</body>

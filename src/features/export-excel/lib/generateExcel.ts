@@ -1,11 +1,11 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import type { Invoice } from "@/entities/invoice/model";
-import type { TFunction } from "i18next";
+import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice/documentLabels";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
-export async function generateExcel(data: FormData, t: TFunction) {
+export async function generateExcel(data: FormData) {
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet("Proforma Invoice");
 
@@ -22,34 +22,34 @@ export async function generateExcel(data: FormData, t: TFunction) {
   // Title
   ws.mergeCells(`B${row}:H${row}`);
   const titleCell = ws.getCell(`B${row}`);
-  titleCell.value = t("invoice.proformaInvoice");
+  titleCell.value = L.proformaInvoice;
   titleCell.font = { size: 14, bold: true };
   titleCell.alignment = { horizontal: "center" };
   row += 2;
 
   // Buyer + Date
-  ws.getCell(`B${row}`).value = `${t("invoice.to")} ${data.buyerSnapshot.companyName}`;
+  ws.getCell(`B${row}`).value = `${L.to} ${data.buyerSnapshot.companyName}`;
   ws.getCell(`B${row}`).font = { bold: true };
-  ws.getCell(`G${row}`).value = `${t("form.date")}: ${data.date}`;
+  ws.getCell(`G${row}`).value = `${L.date}: ${data.date}`;
   row++;
   ws.getCell(`B${row}`).value = data.buyerSnapshot.address;
-  ws.getCell(`G${row}`).value = `${t("form.refNo")}: ${data.refNo}`;
+  ws.getCell(`G${row}`).value = `${L.refNo}: ${data.refNo}`;
   row++;
   ws.getCell(`B${row}`).value = data.buyerSnapshot.tel;
-  ws.getCell(`G${row}`).value = `${t("form.orderNo")}: ${data.orderNo}`;
+  ws.getCell(`G${row}`).value = `${L.orderNo}: ${data.orderNo}`;
   row += 2;
 
-  ws.getCell(`B${row}`).value = `${t("form.invoiceNo")}: ${data.invoiceNo}`;
+  ws.getCell(`B${row}`).value = `${L.invoiceNo}: ${data.invoiceNo}`;
   row += 2;
 
   // Terms
   const terms = [
-    { label: t("form.delivery"), value: data.delivery },
-    { label: t("form.paymentTerms"), value: data.paymentTerms },
-    { label: t("form.packing"), value: data.packing },
-    { label: t("form.validity"), value: data.validity },
-    { label: t("form.incoterms"), value: data.incoterms },
-    { label: t("form.remarks"), value: data.remarks },
+    { label: L.delivery, value: data.delivery },
+    { label: L.paymentTerms, value: data.paymentTerms },
+    { label: L.packing, value: data.packing },
+    { label: L.validity, value: data.validity },
+    { label: L.incoterms, value: data.incoterms },
+    { label: L.remarks, value: data.remarks },
   ].filter((term) => term.value);
 
   for (const term of terms) {
@@ -61,20 +61,20 @@ export async function generateExcel(data: FormData, t: TFunction) {
   row++;
 
   if (data.commodity) {
-    ws.getCell(`B${row}`).value = `${t("form.commodity")}: ${data.commodity}`;
+    ws.getCell(`B${row}`).value = `${L.commodity}: ${data.commodity}`;
     row++;
   }
   row++;
 
   // Items header
   const headers = [
-    { col: "B", label: t("form.description") },
-    { col: "C", label: t("form.hsCode") },
-    { col: "D", label: t("form.qty") },
-    { col: "E", label: t("form.unit") },
-    { col: "F", label: t("form.unitPrice") },
-    { col: "G", label: t("form.amount") },
-    { col: "H", label: t("form.remarks") },
+    { col: "B", label: L.description },
+    { col: "C", label: L.hsCode },
+    { col: "D", label: L.qty },
+    { col: "E", label: L.unit },
+    { col: "F", label: L.unitPrice },
+    { col: "G", label: L.amount },
+    { col: "H", label: L.remarks },
   ];
   for (const h of headers) {
     const cell = ws.getCell(`${h.col}${row}`);
@@ -115,7 +115,7 @@ export async function generateExcel(data: FormData, t: TFunction) {
   }
 
   // Total
-  ws.getCell(`F${row}`).value = t("form.total");
+  ws.getCell(`F${row}`).value = L.total;
   ws.getCell(`F${row}`).font = { bold: true };
   ws.getCell(`G${row}`).value = data.totalAmount;
   ws.getCell(`G${row}`).numFmt = "#,##0.00";
@@ -127,16 +127,16 @@ export async function generateExcel(data: FormData, t: TFunction) {
 
   // Bank info
   if (data.bankInfo.bankName) {
-    ws.getCell(`B${row}`).value = t("form.bankInfo");
+    ws.getCell(`B${row}`).value = L.bankInfo;
     ws.getCell(`B${row}`).font = { bold: true };
     row++;
     const bankFields = [
-      { label: t("form.bankName"), value: data.bankInfo.bankName },
-      { label: t("form.bankSwift"), value: data.bankInfo.bankSwift },
-      { label: t("form.accountNo"), value: data.bankInfo.accountNo },
-      { label: t("form.accountee"), value: data.bankInfo.accountee },
-      { label: t("form.bankAddress"), value: data.bankInfo.bankAddress },
-      { label: t("form.bankTel"), value: data.bankInfo.bankTel },
+      { label: L.bankName, value: data.bankInfo.bankName },
+      { label: L.bankSwift, value: data.bankInfo.bankSwift },
+      { label: L.accountNo, value: data.bankInfo.accountNo },
+      { label: L.accountee, value: data.bankInfo.accountee },
+      { label: L.bankAddress, value: data.bankInfo.bankAddress },
+      { label: L.bankTel, value: data.bankInfo.bankTel },
     ].filter((f) => f.value);
     for (const field of bankFields) {
       ws.getCell(`B${row}`).value = field.label;

@@ -51,7 +51,7 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
     if (passesValidation()) generatePdf(formData);
   }
   function handleExcel() {
-    if (passesValidation()) generateExcel(formData, t);
+    if (passesValidation()) generateExcel(formData);
   }
   function handlePrint() {
     if (passesValidation()) triggerPrint();
