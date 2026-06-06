@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "@/shared/ui";
-import { ProfileSectionCard } from "@/features/profile";
+import { LinkedAuthSkeleton, ProfileSectionCard } from "@/features/profile";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { linkOAuthProvider, unlinkOAuthProvider } from "../api";
 import { useLinkedIdentities } from "../hooks/useLinkedIdentities";
@@ -59,7 +59,7 @@ function MobileRowIcon({ provider }: { provider: LinkedAuthProvider }) {
 export function LinkedAuthMethods() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { identities, loading, reload } = useLinkedIdentities(user?.id);
+  const { identities, loading, reload } = useLinkedIdentities(user);
   const [linking, setLinking] = useState<LinkableOAuthProvider | null>(null);
   const [unlinking, setUnlinking] = useState<LinkableOAuthProvider | null>(null);
 
@@ -96,11 +96,7 @@ export function LinkedAuthMethods() {
   }
 
   if (loading) {
-    return (
-      <ProfileSectionCard icon={<Shield className="size-5" />} title={t("profile.accountSecurity")}>
-        <p className="text-sm text-muted-foreground">{t("profile.loadingAuth")}</p>
-      </ProfileSectionCard>
-    );
+    return <LinkedAuthSkeleton />;
   }
 
   if (linked.size === 0) return null;

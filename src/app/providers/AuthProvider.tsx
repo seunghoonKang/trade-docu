@@ -46,8 +46,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session?.user) {
+        setUser(null);
+        return;
+      }
+
+      const shouldRefreshFromServer =
+        event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED";
+
+      if (shouldRefreshFromServer) {
+        // Must stay synchronous — async callbacks block Supabase getSession().
+        void supabase.auth.getUser().then(({ data, error }) => {
+          setUser(error ? session.user : (data.user ?? session.user));
+        });
+        return;
+      }
+
+      setUser(session.user);
     });
 
     return () => subscription.unsubscribe();

@@ -116,9 +116,7 @@ export async function refreshAuthSession() {
 }
 
 export async function reloadLinkedIdentities() {
-  const identities = await fetchUserIdentities();
-  await refreshAuthSession();
-  return identities;
+  return fetchUserIdentities();
 }
 
 export async function unlinkOAuthProvider(provider: LinkableOAuthProvider) {

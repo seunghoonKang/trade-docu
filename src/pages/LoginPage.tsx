@@ -10,7 +10,9 @@ export function LoginPage() {
   const { user, loading } = useAuth();
   const [mode, setMode] = useState<"login" | "signup">("login");
 
-  if (loading) return null;
+  if (loading) {
+    return <div className="min-h-screen bg-background" aria-busy="true" />;
+  }
   if (user) {
     return <Navigate to={needsOAuthOnboarding(user) ? "/onboarding" : "/"} replace />;
   }
