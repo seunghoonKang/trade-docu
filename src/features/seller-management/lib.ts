@@ -43,7 +43,10 @@ export function seedSellerFromMetadata(
   const metadata = user?.user_metadata ?? {};
   return {
     ...EMPTY_PROFILE,
-    representative: (metadata.name as string) ?? "",
+    representative:
+      (metadata.name as string) ??
+      (metadata.full_name as string) ??
+      "",
     companyName: (metadata.company as string) ?? "",
   };
 }
