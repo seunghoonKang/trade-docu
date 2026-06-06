@@ -3,6 +3,7 @@ export { Input } from "./input";
 export { Select } from "./select";
 export { FormSection } from "./form-section";
 export { Layout } from "./layout";
+export { AvatarThumbnail } from "./AvatarThumbnail";
 export { DatePicker } from "./date-picker";
 
 // shadcn primitives

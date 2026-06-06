@@ -1,45 +1,15 @@
-import { ArrowLeft, Save, User } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { GlobeLanguageSwitcher } from "@/features/i18n-switch";
-import { Button } from "@/shared/ui";
+import { AvatarThumbnail, Button } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
-import { getAvatarUrl } from "../lib/avatar";
 
 interface ProfilePageHeaderProps {
   user: SupabaseUser;
   saving: boolean;
   onBack: () => void;
   onSave: () => void;
-}
-
-function AvatarThumbnail({ user }: { user: SupabaseUser }) {
-  const avatarUrl = getAvatarUrl(user);
-  const name =
-    (user.user_metadata?.name as string | undefined) ??
-    user.email?.split("@")[0] ??
-    "";
-
-  if (avatarUrl) {
-    return (
-      <img
-        src={avatarUrl}
-        alt=""
-        className="size-8 rounded-full border border-border object-cover shrink-0"
-      />
-    );
-  }
-
-  const initial = name.trim().charAt(0).toUpperCase();
-  return (
-    <span className="size-8 rounded-full border border-border bg-secondary flex items-center justify-center shrink-0">
-      {initial ? (
-        <span className="text-xs font-semibold text-primary">{initial}</span>
-      ) : (
-        <User className="size-4 text-muted-foreground" aria-hidden />
-      )}
-    </span>
-  );
 }
 
 export function ProfilePageHeader({
