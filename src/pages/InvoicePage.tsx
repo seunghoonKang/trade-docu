@@ -10,26 +10,25 @@ import { useAuth } from "@/app/providers/AuthProvider";
 import { getSeller, ProfileNudgeBanner } from "@/features/seller-management";
 import type { BankInfo } from "@/entities/bank-info/model";
 import type { Seller } from "@/entities/seller/model";
-import { createEmptyInvoice } from "@/entities/invoice/model";
 import {
-  loadDraft,
-  saveDraft,
-  clearDraft,
-  isEmptyDraft,
   DraftRestoreBanner,
-  type InvoiceDraft,
+  useInvoiceDraftSession,
 } from "@/features/draft-autosave";
 
 export function InvoicePage() {
   const invoiceForm = useInvoiceForm();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [showHistory, setShowHistory] = useState(false);
-  const [pendingDraft, setPendingDraft] = useState<InvoiceDraft | null>(() => {
-    const draft = loadDraft();
-    return draft && !isEmptyDraft(draft) ? draft : null;
-  });
   const [needsProfile, setNeedsProfile] = useState(false);
+  const ownerId = user?.id ?? null;
+
+  const { pendingDraft, restorePendingDraft, discardPendingDraft } = useInvoiceDraftSession({
+    ownerId,
+    authLoading: loading,
+    form: invoiceForm.form,
+    loadForm: invoiceForm.loadForm,
+  });
 
   const onSellerLoaded = useEffectEvent((seller: (Seller & BankInfo) | null) => {
     if (seller) {
@@ -59,33 +58,11 @@ export function InvoicePage() {
     getSeller(user.id).then(onSellerLoaded);
   }, [user]);
 
-  const onAutosave = useEffectEvent(() => {
-    if (pendingDraft) return;
-    if (!isEmptyDraft(invoiceForm.form)) saveDraft(invoiceForm.form);
-  });
-
-  // Auto-save the working draft (debounced). Paused while a restore banner is
-  // pending so an ignored prompt can't clobber the saved draft.
-  useEffect(() => {
-    const id = setTimeout(onAutosave, 500);
-    return () => clearTimeout(id);
-  }, [invoiceForm.form, pendingDraft]);
-
   return (
     <Layout toolbar={<ExportToolbar formData={invoiceForm.form} onShowHistory={() => setShowHistory(true)} />}>
       {needsProfile && <ProfileNudgeBanner onComplete={() => navigate("/profile")} />}
       {pendingDraft && (
-        <DraftRestoreBanner
-          onRestore={() => {
-            invoiceForm.loadForm(pendingDraft);
-            setPendingDraft(null);
-          }}
-          onDiscard={() => {
-            invoiceForm.loadForm(createEmptyInvoice());
-            clearDraft();
-            setPendingDraft(null);
-          }}
-        />
+        <DraftRestoreBanner onRestore={restorePendingDraft} onDiscard={discardPendingDraft} />
       )}
       <div className="flex flex-col lg:flex-row h-[calc(100vh-57px)]">
         <div className="w-full lg:w-1/2 overflow-y-auto bg-card border-r border-border">

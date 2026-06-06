@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { isEmptyDraft } from "./lib";
+import { afterEach, describe, it, expect } from "vitest";
+import { isEmptyDraft, saveDraft, loadDraft, clearDraft } from "./lib";
 import { createEmptyInvoice } from "@/entities/invoice/model";
 
 describe("isEmptyDraft", () => {
@@ -32,5 +32,30 @@ describe("isEmptyDraft", () => {
     const form = createEmptyInvoice();
     form.items[0].description = "Widget";
     expect(isEmptyDraft(form)).toBe(false);
+  });
+});
+
+describe("draft ownership", () => {
+  afterEach(() => {
+    clearDraft();
+  });
+
+  it("only restores a draft for the same owner", () => {
+    const form = createEmptyInvoice();
+    form.invoiceNo = "PI-USER-A";
+
+    saveDraft(form, "user-a");
+    expect(loadDraft("user-a")?.invoiceNo).toBe("PI-USER-A");
+    expect(loadDraft("user-b")).toBeNull();
+    expect(loadDraft()).toBeNull();
+  });
+
+  it("keeps guest drafts separate from logged-in users", () => {
+    const guestDraft = createEmptyInvoice();
+    guestDraft.invoiceNo = "PI-GUEST";
+
+    saveDraft(guestDraft, null);
+    expect(loadDraft(null)?.invoiceNo).toBe("PI-GUEST");
+    expect(loadDraft("user-a")).toBeNull();
   });
 });
