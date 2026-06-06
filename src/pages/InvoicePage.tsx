@@ -2,7 +2,7 @@ import { useEffect, useEffectEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/shared/ui";
 import { InvoiceForm } from "@/widgets/InvoiceForm";
-import { InvoicePreview } from "@/widgets/InvoicePreview";
+import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { useInvoiceForm } from "@/widgets/InvoiceForm";
 import { useAuth } from "@/app/providers/AuthProvider";
@@ -85,12 +85,15 @@ export function InvoicePage() {
         {pendingDraft && (
           <DraftRestoreBanner onRestore={restorePendingDraft} onDiscard={discardPendingDraft} />
         )}
-        <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-          <div className="editor-container w-full overflow-y-auto border-b border-border bg-[#cbdbf5] lg:w-1/2 lg:border-b-0 lg:border-r">
+        <div className="flex min-h-0 flex-1 flex-col xl:flex-row">
+          <div className="editor-container w-full overflow-y-auto border-b border-border bg-[#cbdbf5] xl:w-1/2 xl:border-b-0 xl:border-r">
             <InvoiceForm {...invoiceForm} />
           </div>
-          <div id="invoice-preview" className="hidden w-1/2 overflow-y-auto bg-accent lg:flex lg:justify-center lg:p-8">
-            <InvoicePreview data={invoiceForm.form} />
+          <div
+            id="invoice-preview"
+            className="hidden min-w-0 xl:flex xl:w-1/2 bg-accent"
+          >
+            <InvoicePreviewPanel data={invoiceForm.form} />
           </div>
         </div>
       </div>
