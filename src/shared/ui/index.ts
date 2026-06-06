@@ -1,4 +1,5 @@
 export { Button } from "./primitives/button";
+export { AppHeaderBrand } from "./AppHeaderBrand";
 export { Skeleton } from "./primitives/skeleton";
 export { Input, editorInlineInputClassName, editorInputClassName, editorInlineDismissButtonClassName, editorDismissButtonClassName } from "./input";
 export { Textarea } from "./textarea";

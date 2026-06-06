@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getPageTitleKey, mainNavItems } from "@/widgets/AppSidebar/lib/mainNavItems";
 import { toast } from "sonner";
-import { AvatarThumbnail, Button } from "@/shared/ui";
+import { AppHeaderBrand, AvatarThumbnail, Button } from "@/shared/ui";
 import { GlobeLanguageSwitcher } from "@/features/i18n-switch";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { logout } from "@/features/auth";
@@ -24,19 +25,16 @@ interface Props {
   page?: "documents" | "history";
 }
 
-const navLinkClass =
-  "text-xs font-semibold tracking-wide transition-colors duration-200";
-const navLinkInactive = `${navLinkClass} text-secondary-foreground/55 font-medium hover:text-primary`;
-const navLinkActive = `${navLinkClass} text-primary font-bold border-b-2 border-primary pb-1`;
-
 export function ExportToolbar({ formData, page = "documents" }: Props) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
   const isHistoryPage = page === "history";
+  const pageTitle = t(getPageTitleKey(page));
   const data = formData ?? createEmptyInvoice();
 
   useEffect(() => {
@@ -97,6 +95,25 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
 
   const menuItems = (
     <>
+      {user && (
+        <>
+          {mainNavItems.map((item) => (
+            <Button
+              key={item.id}
+              variant={pathname === item.href ? "secondary" : "ghost"}
+              size="sm"
+              className="w-full justify-start md:hidden"
+              onClick={() => {
+                navigate(item.href);
+                setMenuOpen(false);
+              }}
+            >
+              {t(item.labelKey)}
+            </Button>
+          ))}
+          <div className="w-full h-px bg-border my-1 md:hidden" />
+        </>
+      )}
       {!isHistoryPage && (
         <>
           <Button
@@ -141,39 +158,13 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
             <Button
               variant="default"
               size="sm"
-              className="w-full justify-start"
+              className="w-full justify-start md:hidden"
               onClick={() => {
                 handleSave();
                 setMenuOpen(false);
               }}
             >
               {t("history.save")}
-            </Button>
-          )}
-          {!isHistoryPage && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start"
-              onClick={() => {
-                navigate("/history");
-                setMenuOpen(false);
-              }}
-            >
-              {t("nav.history")}
-            </Button>
-          )}
-          {isHistoryPage && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start"
-              onClick={() => {
-                navigate("/");
-                setMenuOpen(false);
-              }}
-            >
-              {t("nav.documents")}
             </Button>
           )}
         </>
@@ -211,28 +202,7 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
 
   return (
     <div className="flex w-full items-center justify-between gap-4">
-      <div className="flex min-w-0 items-center gap-6 lg:gap-8">
-        <span className="text-[30px] font-bold text-primary tracking-tighter whitespace-nowrap leading-none">
-          TradeDocu
-        </span>
-        <nav className="hidden md:flex items-center gap-6">
-          {isHistoryPage ? (
-            <button type="button" className={navLinkInactive} onClick={() => navigate("/")}>
-              {t("nav.documents")}
-            </button>
-          ) : (
-            <span className={navLinkActive}>{t("nav.documents")}</span>
-          )}
-          {user &&
-            (isHistoryPage ? (
-              <span className={navLinkActive}>{t("nav.history")}</span>
-            ) : (
-              <button type="button" className={navLinkInactive} onClick={() => navigate("/history")}>
-                {t("nav.history")}
-              </button>
-            ))}
-        </nav>
-      </div>
+      <AppHeaderBrand pageTitle={pageTitle} />
 
       {/* Desktop */}
       <div className="hidden md:flex items-center gap-2 shrink-0">
