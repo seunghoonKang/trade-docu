@@ -7,7 +7,10 @@ import { toast } from "sonner";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui";
 import { signup } from "../api";
+import { getAuthErrorMessage } from "../lib/errors";
+import { isSignupForExistingAccount } from "../lib/signup";
 import { AuthTextField } from "./AuthTextField";
+import { SignupAccountInfoTip } from "./SignupAccountInfoTip";
 import { OtpVerifyModal } from "./OtpVerifyModal";
 
 interface SignupFormProps {
@@ -38,10 +41,14 @@ export function SignupForm({ variant, onSwitchToLogin }: SignupFormProps) {
     }
     setLoading(true);
     try {
-      await signup({ email, password, name, company: company.trim() || undefined });
+      const data = await signup({ email, password, name, company: company.trim() || undefined });
+      if (isSignupForExistingAccount(data)) {
+        setError(t("auth.existingSocialAccount"));
+        return;
+      }
       setShowVerifyModal(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("auth.signupFailed"));
+      setError(getAuthErrorMessage(err, t, "auth.signupFailed"));
     } finally {
       setLoading(false);
     }
@@ -53,7 +60,15 @@ export function SignupForm({ variant, onSwitchToLogin }: SignupFormProps) {
   return (
     <>
       <header className={cn("mb-6", variant === "mobile" ? "text-center" : "text-left")}>
-        <h2 className="text-xl font-semibold text-foreground mb-1">{t("auth.signupTitle")}</h2>
+        <div
+          className={cn(
+            "flex items-center gap-1.5 mb-1",
+            variant === "mobile" ? "justify-center" : "justify-start",
+          )}
+        >
+          <h2 className="text-xl font-semibold text-foreground">{t("auth.signupTitle")}</h2>
+          <SignupAccountInfoTip />
+        </div>
         {variant === "mobile" && (
           <p className="text-sm text-muted-foreground">{t("auth.welcomeSubtitleMobile")}</p>
         )}

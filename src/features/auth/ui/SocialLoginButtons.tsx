@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { loginWithGoogle, loginWithKakao } from "../api";
+import { getAuthErrorMessage } from "../lib/errors";
 
 function GoogleIcon() {
   return (
@@ -36,7 +37,7 @@ export function SocialLoginButtons({ variant }: SocialLoginButtonsProps) {
       if (provider === "google") await loginWithGoogle();
       else await loginWithKakao();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("auth.loginFailed"));
+      toast.error(getAuthErrorMessage(err, t, "auth.loginFailed"));
       setLoading(null);
     }
   }

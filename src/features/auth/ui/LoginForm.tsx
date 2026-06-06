@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui";
 import { login, resendSignupOtp } from "../api";
+import { getAuthErrorMessage } from "../lib/errors";
 import { AuthTextField } from "./AuthTextField";
 import { OtpVerifyModal } from "./OtpVerifyModal";
 import { SocialLoginButtons } from "./SocialLoginButtons";
@@ -65,7 +66,7 @@ export function LoginForm({ variant, onSwitchToSignup }: LoginFormProps) {
         }
         setShowVerifyModal(true);
       } else {
-        setError(err instanceof Error ? err.message : t("auth.loginFailed"));
+        setError(getAuthErrorMessage(err, t, "auth.loginFailed"));
       }
     } finally {
       setLoading(false);

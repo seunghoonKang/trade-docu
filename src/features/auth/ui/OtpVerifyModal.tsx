@@ -9,6 +9,7 @@ import {
 } from "@/shared/ui";
 import { Button } from "@/shared/ui";
 import { resendSignupOtp, verifySignupOtp } from "../api";
+import { getAuthErrorMessage } from "../lib/errors";
 
 const OTP_LENGTH = 6;
 
@@ -35,7 +36,7 @@ export function OtpVerifyModal({ email, onSuccess, onClose }: Props) {
       await verifySignupOtp(email, otp);
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("auth.verifyFailed"));
+      setError(getAuthErrorMessage(err, t, "auth.verifyFailed"));
     } finally {
       setVerifying(false);
     }
@@ -50,7 +51,7 @@ export function OtpVerifyModal({ email, onSuccess, onClose }: Props) {
       setOtp("");
       setInfo(t("auth.codeResent"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("auth.resendFailed"));
+      setError(getAuthErrorMessage(err, t, "auth.resendFailed"));
     } finally {
       setResending(false);
     }
