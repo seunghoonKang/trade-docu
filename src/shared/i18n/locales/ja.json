@@ -59,7 +59,16 @@
     "confirmPassword": "パスワード確認",
     "name": "お名前",
     "companyOptional": "会社名 (任意)",
-    "agreeToTerms": "利用規約およびプライバシーポリシーに同意します (必須)",
+    "agreeToTermsPrefix": "",
+    "agreeToTermsAnd": "および",
+    "agreeToTermsSuffix": "に同意します (必須)",
+    "onboardingTitle": "ようこそ",
+    "onboardingSubtitle": "サービスで使用する名前を入力してください。",
+    "displayName": "表示名",
+    "displayNamePlaceholder": "山田太郎",
+    "onboardingSubmit": "はじめる",
+    "onboardingSuccess": "プロフィール設定が完了しました",
+    "onboardingFailed": "プロフィール設定に失敗しました",
     "passwordMismatch": "パスワードが一致しません。",
     "loginTitle": "ログイン",
     "signupTitle": "新規登録",
@@ -84,7 +93,28 @@
     "codeResent": "新しい認証コードを送信しました。",
     "resendFailed": "再送に失敗しました。",
     "verifyLater": "後で認証する",
-    "goToMain": "メインページへ移動"
+    "goToMain": "メインページへ移動",
+    "welcomeTitle": "TradeDocuへようこそ",
+    "welcomeTitleMobile": "おかえりなさい",
+    "welcomeSubtitle": "プロフェッショナルな貿易書類管理の始まり",
+    "welcomeSubtitleMobile": "ログインして書類を管理しましょう",
+    "mobileBrandTagline": "グローバル貿易書類管理の新基準、スマートで安全なパートナー",
+    "heroTagline": "Global Trade, Simplified.",
+    "rememberEmail": "メールアドレスを記憶",
+    "stayLoggedIn": "ログイン状態を保持",
+    "orContinueWith": "または以下でログイン",
+    "quickLogin": "かんたんログイン",
+    "loginWithGoogle": "Google",
+    "loginWithKakao": "Kakao",
+    "loginWithGoogleFull": "Googleアカウントでログイン",
+    "loginWithKakaoFull": "カカオトークでログイン",
+    "signupPrompt": "アカウントをお持ちでない方",
+    "signupLink": "新規登録",
+    "loginPrompt": "アカウントをお持ちの方",
+    "loginLink": "ログイン",
+    "continueWithoutLogin": "会員登録なしで利用",
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー"
   },
   "draft": {
     "title": "作成途中のインボイスがあります。",
@@ -122,5 +152,63 @@
     "save": "保存",
     "saved": "保存しました！",
     "history": "履歴"
+  },
+  "legal": {
+    "back": "戻る",
+    "lastUpdated": "施行日: 2026年6月6日",
+    "termsTitle": "利用規約",
+    "privacyTitle": "プライバシーポリシー",
+    "termsSections": [
+      {
+        "title": "第1条 (目的)",
+        "body": "本規約は、TradeDocu(以下「本サービス」)が提供する貿易書類(プロフォーマインボイス等)の作成・管理サービスの利用条件を定めるものです。"
+      },
+      {
+        "title": "第2条 (サービス内容)",
+        "body": "本サービスは、貿易関連書類の作成・保存・出力機能を提供します。機能は予告なく変更・中止される場合があります。"
+      },
+      {
+        "title": "第3条 (アカウント)",
+        "body": "メール登録またはGoogle・Kakao等のソーシャルログインでアカウントを作成できます。アカウント管理の責任は利用者にあります。"
+      },
+      {
+        "title": "第4条 (利用者の義務)",
+        "body": "利用者は法令および本規約を遵守し、他者の権利を侵害したり、サービス運営を妨害する行為をしてはなりません。"
+      },
+      {
+        "title": "第5条 (免責)",
+        "body": "本サービスは、利用者が作成した書類の法的・商業的適合性を保証しません。不可抗力による損害について責任を負いません。"
+      },
+      {
+        "title": "第6条 (お問い合わせ)",
+        "body": "本規約に関するお問い合わせは、サービス運営者までご連絡ください。"
+      }
+    ],
+    "privacySections": [
+      {
+        "title": "1. 収集する個人情報",
+        "body": "本サービスは以下の情報を収集する場合があります。\n· 必須: メール(メール登録時)、表示名\n· 任意: 会社名、販売者・銀行情報等\n· ソーシャルログイン: Google/Kakaoから提供されるプロフィール情報"
+      },
+      {
+        "title": "2. 利用目的",
+        "body": "会員識別・認証、サービス提供、文書保存、サポート、セキュリティ、サービス改善。"
+      },
+      {
+        "title": "3. 保管・削除",
+        "body": "個人情報は利用目的達成時またはアカウント削除時に遅滞なく削除します。法令により保管が必要な場合は該当期間保管します。"
+      },
+      {
+        "title": "4. 第三者提供・委託",
+        "body": "原則として個人情報を外部に提供しません。運営のため以下に処理を委託する場合があります。\n· Supabase: 認証・データ保存\n· Google / Kakao: ソーシャルログイン\n· Vercel: ホスティング"
+      },
+      {
+        "title": "5. 利用者の権利",
+        "body": "個人情報の閲覧・訂正・削除をプロフィール設定またはお問い合わせにより請求できます。"
+      },
+      {
+        "title": "6. お問い合わせ",
+        "body": "個人情報に関するお問い合わせは、サービス運営者までご連絡ください。"
+      }
+    ]
   }
 }

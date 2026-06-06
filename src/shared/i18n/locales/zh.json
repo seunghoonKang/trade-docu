@@ -59,7 +59,16 @@
     "confirmPassword": "确认密码",
     "name": "姓名",
     "companyOptional": "公司名称 (可选)",
-    "agreeToTerms": "我同意服务条款和隐私政策 (必填)",
+    "agreeToTermsPrefix": "我同意",
+    "agreeToTermsAnd": "和",
+    "agreeToTermsSuffix": "(必填)",
+    "onboardingTitle": "欢迎",
+    "onboardingSubtitle": "请输入您在服务中使用的名称。",
+    "displayName": "显示名称",
+    "displayNamePlaceholder": "张三",
+    "onboardingSubmit": "开始使用",
+    "onboardingSuccess": "资料设置完成",
+    "onboardingFailed": "资料设置失败",
     "passwordMismatch": "两次输入的密码不一致。",
     "loginTitle": "登录",
     "signupTitle": "注册",
@@ -84,7 +93,28 @@
     "codeResent": "已发送新的验证码。",
     "resendFailed": "重新发送失败。",
     "verifyLater": "稍后验证",
-    "goToMain": "前往主页"
+    "goToMain": "前往主页",
+    "welcomeTitle": "欢迎使用 TradeDocu",
+    "welcomeTitleMobile": "欢迎回来",
+    "welcomeSubtitle": "专业贸易单据管理的开始",
+    "welcomeSubtitleMobile": "登录账户以管理您的单据",
+    "mobileBrandTagline": "全球贸易单据管理的新标准，智能安全的伙伴",
+    "heroTagline": "Global Trade, Simplified.",
+    "rememberEmail": "记住邮箱",
+    "stayLoggedIn": "保持登录",
+    "orContinueWith": "或通过以下方式登录",
+    "quickLogin": "快捷登录",
+    "loginWithGoogle": "Google",
+    "loginWithKakao": "Kakao",
+    "loginWithGoogleFull": "使用 Google 账户登录",
+    "loginWithKakaoFull": "使用 Kakao 登录",
+    "signupPrompt": "还没有账户？",
+    "signupLink": "注册",
+    "loginPrompt": "已有账户？",
+    "loginLink": "登录",
+    "continueWithoutLogin": "免注册使用",
+    "terms": "服务条款",
+    "privacy": "隐私政策"
   },
   "draft": {
     "title": "您有一张正在编辑的发票。",
@@ -122,5 +152,63 @@
     "save": "保存",
     "saved": "已保存！",
     "history": "历史"
+  },
+  "legal": {
+    "back": "返回",
+    "lastUpdated": "生效日期: 2026年6月6日",
+    "termsTitle": "服务条款",
+    "privacyTitle": "隐私政策",
+    "termsSections": [
+      {
+        "title": "第1条 (目的)",
+        "body": "本条款规定 TradeDocu（以下简称「本服务」）提供的贸易单据（形式发票等）创建与管理服务的使用条件。"
+      },
+      {
+        "title": "第2条 (服务内容)",
+        "body": "本服务提供贸易相关单据的创建、保存与导出功能。功能可能在不事先通知的情况下变更或中止。"
+      },
+      {
+        "title": "第3条 (账户)",
+        "body": "用户可通过邮箱注册或 Google、Kakao 等社交登录创建账户。用户须对账户管理负责。"
+      },
+      {
+        "title": "第4条 (用户义务)",
+        "body": "用户须遵守法律法规及本条款，不得侵害他人权利或妨碍服务运营。"
+      },
+      {
+        "title": "第5条 (免责)",
+        "body": "本服务不保证用户创建单据的法律或商业适用性。对不可抗力造成的损害不承担责任。"
+      },
+      {
+        "title": "第6条 (联系)",
+        "body": "有关本条款的咨询请联系服务运营方。"
+      }
+    ],
+    "privacySections": [
+      {
+        "title": "1. 收集的个人信息",
+        "body": "本服务可能收集以下信息：\n· 必填：邮箱（邮箱注册时）、显示名称\n· 选填：公司名称、卖家及银行资料等\n· 社交登录：Google/Kakao 提供的资料信息"
+      },
+      {
+        "title": "2. 收集目的",
+        "body": "用户识别与认证、提供服务、文档存储、客户支持、安全及服务改进。"
+      },
+      {
+        "title": "3. 保存与删除",
+        "body": "个人信息在达成目的或用户删除账户时及时删除。法律要求保留的，在相应期限内保留。"
+      },
+      {
+        "title": "4. 第三方提供与委托",
+        "body": "原则上不向外部提供个人信息。运营可能委托以下方处理：\n· Supabase：认证与数据存储\n· Google / Kakao：社交登录\n· Vercel：网站托管"
+      },
+      {
+        "title": "5. 用户权利",
+        "body": "用户可通过资料设置或联系运营方，请求查阅、更正或删除个人信息。"
+      },
+      {
+        "title": "6. 联系",
+        "body": "有关个人信息的咨询请联系服务运营方。"
+      }
+    ]
   }
 }

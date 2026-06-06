@@ -59,7 +59,16 @@
     "confirmPassword": "Confirm Password",
     "name": "Name",
     "companyOptional": "Company (optional)",
-    "agreeToTerms": "I agree to the Terms of Service and Privacy Policy (required)",
+    "agreeToTermsPrefix": "I agree to the",
+    "agreeToTermsAnd": "and",
+    "agreeToTermsSuffix": "(required)",
+    "onboardingTitle": "Welcome",
+    "onboardingSubtitle": "Enter the name you'd like to use in the service.",
+    "displayName": "Display name",
+    "displayNamePlaceholder": "John Doe",
+    "onboardingSubmit": "Get started",
+    "onboardingSuccess": "Profile setup complete",
+    "onboardingFailed": "Failed to save profile",
     "passwordMismatch": "Passwords do not match.",
     "loginTitle": "Login",
     "signupTitle": "Sign Up",
@@ -84,7 +93,28 @@
     "codeResent": "A new verification code has been sent.",
     "resendFailed": "Failed to resend code.",
     "verifyLater": "Verify later",
-    "goToMain": "Go to Main Page"
+    "goToMain": "Go to Main Page",
+    "welcomeTitle": "Welcome to TradeDocu",
+    "welcomeTitleMobile": "Welcome back",
+    "welcomeSubtitle": "Your professional trade document management starts here",
+    "welcomeSubtitleMobile": "Sign in to manage your documents",
+    "mobileBrandTagline": "The new standard in global trade document management — smart and secure",
+    "heroTagline": "Global Trade, Simplified.",
+    "rememberEmail": "Remember email",
+    "stayLoggedIn": "Stay signed in",
+    "orContinueWith": "Or continue with",
+    "quickLogin": "Quick sign in",
+    "loginWithGoogle": "Google",
+    "loginWithKakao": "Kakao",
+    "loginWithGoogleFull": "Sign in with Google",
+    "loginWithKakaoFull": "Sign in with Kakao",
+    "signupPrompt": "Don't have an account?",
+    "signupLink": "Sign up",
+    "loginPrompt": "Already have an account?",
+    "loginLink": "Login",
+    "continueWithoutLogin": "Continue as guest",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy"
   },
   "draft": {
     "title": "You have a PI you were working on.",
@@ -122,5 +152,63 @@
     "save": "Save",
     "saved": "Saved!",
     "history": "History"
+  },
+  "legal": {
+    "back": "Back",
+    "lastUpdated": "Effective: June 6, 2026",
+    "termsTitle": "Terms of Service",
+    "privacyTitle": "Privacy Policy",
+    "termsSections": [
+      {
+        "title": "1. Purpose",
+        "body": "These Terms govern the use of TradeDocu (the \"Service\"), a web tool for creating and managing trade documents such as proforma invoices."
+      },
+      {
+        "title": "2. Service",
+        "body": "The Service provides tools to create, save, and export trade documents. Features may be changed or discontinued with notice when possible."
+      },
+      {
+        "title": "3. Accounts",
+        "body": "You may register via email or social login (Google, Kakao). You are responsible for keeping your account credentials secure and providing accurate information."
+      },
+      {
+        "title": "4. User obligations",
+        "body": "You must comply with applicable laws and these Terms. You must not misuse the Service or infringe others' rights."
+      },
+      {
+        "title": "5. Disclaimer",
+        "body": "The Service does not guarantee the legal or commercial suitability of documents you create. We are not liable for damages caused by force majeure or system failures beyond reasonable control."
+      },
+      {
+        "title": "6. Contact",
+        "body": "For questions about these Terms, contact the Service operator."
+      }
+    ],
+    "privacySections": [
+      {
+        "title": "1. Information we collect",
+        "body": "We may collect:\n· Required: email (email signup), display name\n· Optional: company name, seller and bank profile data\n· Social login: profile data from Google/Kakao (name, email, etc.)"
+      },
+      {
+        "title": "2. Purpose",
+        "body": "Authentication, providing the Service, storing documents, support, security, and service improvement."
+      },
+      {
+        "title": "3. Retention",
+        "body": "We retain data while your account is active. Data is deleted when no longer needed or upon account deletion, subject to legal retention requirements."
+      },
+      {
+        "title": "4. Third parties",
+        "body": "We do not sell your data. Processors include:\n· Supabase (auth and database)\n· Google / Kakao (social login)\n· Vercel (hosting)"
+      },
+      {
+        "title": "5. Your rights",
+        "body": "You may access, correct, or delete your data via profile settings or by contacting us."
+      },
+      {
+        "title": "6. Contact",
+        "body": "For privacy inquiries, contact the Service operator."
+      }
+    ]
   }
 }
