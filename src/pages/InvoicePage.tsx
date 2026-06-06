@@ -7,7 +7,7 @@ import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { InvoiceHistory } from "@/widgets/InvoiceHistory";
 import { useInvoiceForm } from "@/widgets/InvoiceForm";
 import { useAuth } from "@/app/providers/AuthProvider";
-import { getSeller, ProfileNudgeBanner } from "@/features/seller-management";
+import { getSeller, ProfileNudgeBanner, dismissProfileNudge, isProfileNudgeDismissed } from "@/features/seller-management";
 import type { BankInfo } from "@/entities/bank-info/model";
 import type { Seller } from "@/entities/seller/model";
 import {
@@ -21,6 +21,7 @@ export function InvoicePage() {
   const navigate = useNavigate();
   const [showHistory, setShowHistory] = useState(false);
   const [needsProfile, setNeedsProfile] = useState(false);
+  const [profileNudgeDismissed, setProfileNudgeDismissed] = useState(false);
   const ownerId = user?.id ?? null;
 
   const { pendingDraft, restorePendingDraft, discardPendingDraft } = useInvoiceDraftSession({
@@ -53,18 +54,28 @@ export function InvoicePage() {
   useEffect(() => {
     if (!user) {
       setNeedsProfile(false);
+      setProfileNudgeDismissed(false);
       return;
     }
+    setProfileNudgeDismissed(isProfileNudgeDismissed(user.id));
     getSeller(user.id).then(onSellerLoaded);
   }, [user]);
 
   return (
     <Layout toolbar={<ExportToolbar formData={invoiceForm.form} onShowHistory={() => setShowHistory(true)} />}>
-      {needsProfile && <ProfileNudgeBanner onComplete={() => navigate("/profile")} />}
+      {needsProfile && !profileNudgeDismissed && (
+        <ProfileNudgeBanner
+          onComplete={() => navigate("/profile")}
+          onDismiss={() => {
+            if (user) dismissProfileNudge(user.id);
+            setProfileNudgeDismissed(true);
+          }}
+        />
+      )}
       {pendingDraft && (
         <DraftRestoreBanner onRestore={restorePendingDraft} onDiscard={discardPendingDraft} />
       )}
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-57px)]">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
         <div className="w-full lg:w-1/2 overflow-y-auto bg-card border-r border-border">
           <InvoiceForm {...invoiceForm} />
         </div>
