@@ -1,1 +1,1 @@
-export { InvoiceHistory } from "./ui/InvoiceHistory";
+export { InvoiceHistoryList } from "./ui/InvoiceHistoryList";
