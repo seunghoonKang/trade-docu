@@ -1,31 +1,8 @@
 {
-  "app": {
-    "title": "Proforma Invoice"
-  },
-  "editor": {
-    "title": "Document Editor: Proforma Invoice"
-  },
-  "nav": {
-    "login": "Login",
-    "logout": "Logout",
-    "signup": "Sign Up",
-    "documents": "Documents",
-    "history": "History",
-    "settings": "Settings",
-    "dashboard": "Dashboard",
-    "invoices": "Invoices",
-    "packingLists": "Packing Lists",
-    "archive": "Archive",
-    "helpCenter": "Help Center",
-    "comingSoon": "Coming soon"
-  },
-  "export": {
-    "pdf": "PDF Download",
-    "excel": "Excel Download",
-    "print": "Print",
-    "export": "Export",
-    "pdfFailed": "Failed to generate PDF"
-  },
+  "app": { "title": "Proforma Invoice" },
+  "editor": { "title": "Document Editor: Proforma Invoice" },
+  "nav": { "login": "Login", "logout": "Logout", "signup": "Sign Up", "documents": "Documents", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Invoices", "packingLists": "Packing Lists", "archive": "Archive", "helpCenter": "Help Center", "comingSoon": "Coming soon" },
+  "export": { "pdf": "PDF Download", "excel": "Excel Download", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF" },
   "form": {
     "documentInfo": "Document Info",
     "invoiceNo": "Invoice No.",
@@ -80,11 +57,7 @@
     "noSavedBuyers": "No saved buyers",
     "noSavedProducts": "No saved products"
   },
-  "invoice": {
-    "proformaInvoice": "PROFORMA INVOICE",
-    "to": "Messrs,",
-    "faithfully": "Faithfully Yours,"
-  },
+  "invoice": { "proformaInvoice": "PROFORMA INVOICE", "to": "Messrs,", "faithfully": "Faithfully Yours," },
   "auth": {
     "email": "Email",
     "password": "Password",
@@ -221,6 +194,18 @@
     "avatarRemoveSuccess": "Profile photo removed.",
     "avatarRemoveFailed": "Failed to remove profile photo.",
     "avatarInvalidFile": "Only JPG, PNG, or WEBP images up to 10MB are allowed. Images are optimized automatically on upload.",
+    "signatureTitle": "Signature / Seal",
+    "signatureHint": "PNG recommended (transparent background). Shown at the bottom of every PI.",
+    "signatureEmpty": "Upload a signature or company seal image",
+    "signatureUpload": "Upload image",
+    "signatureRemove": "Remove",
+    "signatureUploading": "Uploading...",
+    "signatureRemoving": "Removing...",
+    "signatureUploadSuccess": "Signature/seal saved.",
+    "signatureUploadFailed": "Failed to upload signature/seal.",
+    "signatureRemoveSuccess": "Signature/seal removed.",
+    "signatureRemoveFailed": "Failed to remove signature/seal.",
+    "signatureInvalidFile": "Only JPG, PNG, or WEBP images up to 5MB are allowed.",
     "unnamed": "Unnamed",
     "save": "Save",
     "saved": "Profile saved!",

@@ -1,31 +1,8 @@
 {
-  "app": {
-    "title": "形式发票"
-  },
-  "editor": {
-    "title": "文档编辑器: Proforma Invoice"
-  },
-  "nav": {
-    "login": "登录",
-    "logout": "退出",
-    "signup": "注册",
-    "documents": "文档",
-    "history": "历史",
-    "settings": "设置",
-    "dashboard": "仪表盘",
-    "invoices": "发票",
-    "packingLists": "装箱单",
-    "archive": "归档",
-    "helpCenter": "帮助中心",
-    "comingSoon": "即将推出"
-  },
-  "export": {
-    "pdf": "PDF 下载",
-    "excel": "Excel 下载",
-    "print": "打印",
-    "export": "导出",
-    "pdfFailed": "PDF 生成失败"
-  },
+  "app": { "title": "形式发票" },
+  "editor": { "title": "文档编辑器: Proforma Invoice" },
+  "nav": { "login": "登录", "logout": "退出", "signup": "注册", "documents": "文档", "history": "历史", "settings": "设置", "dashboard": "仪表盘", "invoices": "发票", "packingLists": "装箱单", "archive": "归档", "helpCenter": "帮助中心", "comingSoon": "即将推出" },
+  "export": { "pdf": "PDF 下载", "excel": "Excel 下载", "print": "打印", "export": "导出", "pdfFailed": "PDF 生成失败" },
   "form": {
     "documentInfo": "文件信息",
     "invoiceNo": "发票号",
@@ -80,11 +57,7 @@
     "noSavedBuyers": "没有已保存的买方",
     "noSavedProducts": "没有已保存的商品"
   },
-  "invoice": {
-    "proformaInvoice": "形式发票",
-    "to": "致,",
-    "faithfully": "此致敬礼,"
-  },
+  "invoice": { "proformaInvoice": "形式发票", "to": "致,", "faithfully": "此致敬礼," },
   "auth": {
     "email": "邮箱",
     "password": "密码",
@@ -221,6 +194,18 @@
     "avatarRemoveSuccess": "头像已删除。",
     "avatarRemoveFailed": "头像删除失败。",
     "avatarInvalidFile": "仅支持 10MB 以内的 JPG、PNG、WEBP 图片。上传时会自动优化。",
+    "signatureTitle": "签名 / 印章",
+    "signatureHint": "建议使用 PNG（透明背景）。将自动显示在所有 PI 底部。",
+    "signatureEmpty": "请上传签名或印章图片",
+    "signatureUpload": "上传图片",
+    "signatureRemove": "删除",
+    "signatureUploading": "上传中...",
+    "signatureRemoving": "删除中...",
+    "signatureUploadSuccess": "签名/印章已保存。",
+    "signatureUploadFailed": "签名/印章上传失败。",
+    "signatureRemoveSuccess": "签名/印章已删除。",
+    "signatureRemoveFailed": "签名/印章删除失败。",
+    "signatureInvalidFile": "仅支持 5MB 以内的 JPG、PNG、WEBP 图片。",
     "unnamed": "未命名",
     "save": "保存",
     "saved": "资料已保存！",

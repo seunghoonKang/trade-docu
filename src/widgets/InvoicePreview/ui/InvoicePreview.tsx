@@ -119,6 +119,7 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
             companyName={data.sellerCompanyName}
             lines={sellerLines}
             bordered={false}
+            signatureUrl={data.sellerSignatureUrl}
             signatureLabel={L.authorizedSignature}
           />
         </div>

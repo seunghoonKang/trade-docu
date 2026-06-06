@@ -14,6 +14,7 @@ create table if not exists sellers (
   bank_address text not null default '',
   bank_tel text not null default '',
   bank_fax text not null default '',
+  signature_url text not null default '',
   created_at timestamptz not null default now()
 );
 
@@ -78,8 +79,13 @@ create table if not exists invoices (
   additional_charges jsonb not null default '[]',
   total_amount numeric not null default 0,
   bank_info jsonb not null default '{}',
+  seller_signature_url text not null default '',
   created_at timestamptz not null default now()
 );
+
+-- Migrations for existing databases
+alter table sellers add column if not exists signature_url text not null default '';
+alter table invoices add column if not exists seller_signature_url text not null default '';
 
 alter table invoices enable row level security;
 create policy "Users can manage own invoices" on invoices

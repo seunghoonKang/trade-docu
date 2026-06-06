@@ -1,31 +1,8 @@
 {
-  "app": {
-    "title": "프로포마 인보이스"
-  },
-  "editor": {
-    "title": "문서 편집기: Proforma Invoice"
-  },
-  "nav": {
-    "login": "로그인",
-    "logout": "로그아웃",
-    "signup": "회원가입",
-    "documents": "문서",
-    "history": "기록",
-    "settings": "설정",
-    "dashboard": "대시보드",
-    "invoices": "인보이스",
-    "packingLists": "패킹 리스트",
-    "archive": "아카이브",
-    "helpCenter": "고객센터",
-    "comingSoon": "준비 중"
-  },
-  "export": {
-    "pdf": "PDF 다운로드",
-    "excel": "엑셀 다운로드",
-    "print": "인쇄",
-    "export": "내보내기",
-    "pdfFailed": "PDF 생성에 실패했습니다"
-  },
+  "app": { "title": "프로포마 인보이스" },
+  "editor": { "title": "문서 편집기: Proforma Invoice" },
+  "nav": { "login": "로그인", "logout": "로그아웃", "signup": "회원가입", "documents": "문서", "history": "기록", "settings": "설정", "dashboard": "대시보드", "invoices": "인보이스", "packingLists": "패킹 리스트", "archive": "아카이브", "helpCenter": "고객센터", "comingSoon": "준비 중" },
+  "export": { "pdf": "PDF 다운로드", "excel": "엑셀 다운로드", "print": "인쇄", "export": "내보내기", "pdfFailed": "PDF 생성에 실패했습니다" },
   "form": {
     "documentInfo": "문서 정보",
     "invoiceNo": "인보이스 번호",
@@ -80,11 +57,7 @@
     "noSavedBuyers": "저장된 거래처 없음",
     "noSavedProducts": "저장된 품목 없음"
   },
-  "invoice": {
-    "proformaInvoice": "프로포마 인보이스",
-    "to": "수신,",
-    "faithfully": "경구."
-  },
+  "invoice": { "proformaInvoice": "프로포마 인보이스", "to": "수신,", "faithfully": "경구." },
   "auth": {
     "email": "이메일",
     "password": "비밀번호",
@@ -221,6 +194,18 @@
     "avatarRemoveSuccess": "프로필 사진이 삭제되었습니다.",
     "avatarRemoveFailed": "프로필 사진 삭제에 실패했습니다.",
     "avatarInvalidFile": "JPG, PNG, WEBP 형식의 10MB 이하 이미지만 업로드할 수 있습니다. 업로드 시 자동으로 최적화됩니다.",
+    "signatureTitle": "서명 / 인감",
+    "signatureHint": "PNG 권장(투명 배경). 모든 PI 하단에 자동으로 표시됩니다.",
+    "signatureEmpty": "서명 또는 인감 이미지를 등록하세요",
+    "signatureUpload": "이미지 업로드",
+    "signatureRemove": "삭제",
+    "signatureUploading": "업로드 중...",
+    "signatureRemoving": "삭제 중...",
+    "signatureUploadSuccess": "서명/인감이 등록되었습니다.",
+    "signatureUploadFailed": "서명/인감 업로드에 실패했습니다.",
+    "signatureRemoveSuccess": "서명/인감이 삭제되었습니다.",
+    "signatureRemoveFailed": "서명/인감 삭제에 실패했습니다.",
+    "signatureInvalidFile": "JPG, PNG, WEBP 형식의 5MB 이하 이미지만 업로드할 수 있습니다.",
     "unnamed": "이름 없음",
     "save": "저장",
     "saved": "프로필이 저장되었습니다!",

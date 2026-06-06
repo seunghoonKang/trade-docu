@@ -1,31 +1,8 @@
 {
-  "app": {
-    "title": "プロフォーマインボイス"
-  },
-  "editor": {
-    "title": "文書エディター: Proforma Invoice"
-  },
-  "nav": {
-    "login": "ログイン",
-    "logout": "ログアウト",
-    "signup": "新規登録",
-    "documents": "ドキュメント",
-    "history": "履歴",
-    "settings": "設定",
-    "dashboard": "ダッシュボード",
-    "invoices": "インボイス",
-    "packingLists": "パッキングリスト",
-    "archive": "アーカイブ",
-    "helpCenter": "ヘルプセンター",
-    "comingSoon": "準備中"
-  },
-  "export": {
-    "pdf": "PDFダウンロード",
-    "excel": "Excelダウンロード",
-    "print": "印刷",
-    "export": "エクスポート",
-    "pdfFailed": "PDFの生成に失敗しました"
-  },
+  "app": { "title": "プロフォーマインボイス" },
+  "editor": { "title": "文書エディター: Proforma Invoice" },
+  "nav": { "login": "ログイン", "logout": "ログアウト", "signup": "新規登録", "documents": "ドキュメント", "history": "履歴", "settings": "設定", "dashboard": "ダッシュボード", "invoices": "インボイス", "packingLists": "パッキングリスト", "archive": "アーカイブ", "helpCenter": "ヘルプセンター", "comingSoon": "準備中" },
+  "export": { "pdf": "PDFダウンロード", "excel": "Excelダウンロード", "print": "印刷", "export": "エクスポート", "pdfFailed": "PDFの生成に失敗しました" },
   "form": {
     "documentInfo": "書類情報",
     "invoiceNo": "インボイス番号",
@@ -80,11 +57,7 @@
     "noSavedBuyers": "保存済み買主なし",
     "noSavedProducts": "保存済み品目なし"
   },
-  "invoice": {
-    "proformaInvoice": "プロフォーマインボイス",
-    "to": "宛先,",
-    "faithfully": "敬具,"
-  },
+  "invoice": { "proformaInvoice": "プロフォーマインボイス", "to": "宛先,", "faithfully": "敬具," },
   "auth": {
     "email": "メールアドレス",
     "password": "パスワード",
@@ -221,6 +194,18 @@
     "avatarRemoveSuccess": "プロフィール写真を削除しました。",
     "avatarRemoveFailed": "プロフィール写真の削除に失敗しました。",
     "avatarInvalidFile": "JPG、PNG、WEBP形式の10MB以下の画像のみアップロードできます。アップロード時に自動最適化されます。",
+    "signatureTitle": "署名 / 印鑑",
+    "signatureHint": "PNG推奨（透過背景）。すべてのPI下部に自動表示されます。",
+    "signatureEmpty": "署名または印鑑画像を登録してください",
+    "signatureUpload": "画像をアップロード",
+    "signatureRemove": "削除",
+    "signatureUploading": "アップロード中...",
+    "signatureRemoving": "削除中...",
+    "signatureUploadSuccess": "署名/印鑑を登録しました。",
+    "signatureUploadFailed": "署名/印鑑のアップロードに失敗しました。",
+    "signatureRemoveSuccess": "署名/印鑑を削除しました。",
+    "signatureRemoveFailed": "署名/印鑑の削除に失敗しました。",
+    "signatureInvalidFile": "JPG、PNG、WEBP形式の5MB以下の画像のみアップロードできます。",
     "unnamed": "名前なし",
     "save": "保存",
     "saved": "プロフィールを保存しました！",

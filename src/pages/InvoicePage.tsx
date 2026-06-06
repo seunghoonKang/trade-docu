@@ -40,6 +40,7 @@ export function InvoicePage() {
       invoiceForm.updateField("sellerTel", seller.tel);
       invoiceForm.updateField("sellerFax", seller.fax);
       invoiceForm.updateField("sellerRepresentative", seller.representative);
+      invoiceForm.updateField("sellerSignatureUrl", seller.signatureUrl);
       invoiceForm.updateBankInfo("bankName", seller.bankName);
       invoiceForm.updateBankInfo("bankSwift", seller.bankSwift);
       invoiceForm.updateBankInfo("accountNo", seller.accountNo);

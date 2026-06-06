@@ -14,6 +14,7 @@ import {
   getSeller,
   upsertSeller,
   seedSellerFromMetadata,
+  SignatureUpload,
   type SellerProfile,
 } from "@/features/seller-management";
 import { AppSidebar } from "@/widgets/AppSidebar";
@@ -24,7 +25,10 @@ interface ProfileFormFieldsProps {
   onUpdate: (key: keyof SellerProfile, value: string) => void;
 }
 
-function CompanyFields({ profile, onUpdate }: ProfileFormFieldsProps) {
+function CompanyFields({ profile, onUpdate, userId, onSignatureChange }: ProfileFormFieldsProps & {
+  userId: string;
+  onSignatureChange: (url: string) => void;
+}) {
   const { t } = useTranslation();
 
   return (
@@ -53,6 +57,12 @@ function CompanyFields({ profile, onUpdate }: ProfileFormFieldsProps) {
         label={t("form.fax")}
         value={profile.fax}
         onChange={(e) => onUpdate("fax", e.target.value)}
+      />
+      <SignatureUpload
+        userId={userId}
+        signatureUrl={profile.signatureUrl}
+        onSignatureChange={onSignatureChange}
+        className="pt-2 border-t border-border"
       />
     </div>
   );
@@ -165,6 +175,7 @@ export function ProfilePage() {
           tel: profile.tel,
           fax: profile.fax,
           representative: profile.representative,
+          signatureUrl: profile.signatureUrl,
         },
         {
           bankName: profile.bankName,
@@ -231,7 +242,12 @@ export function ProfilePage() {
               {t("profile.businessProfile")}
             </h3>
             <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
-              <CompanyFields profile={profile} onUpdate={update} />
+              <CompanyFields
+                profile={profile}
+                onUpdate={update}
+                userId={user.id}
+                onSignatureChange={(url) => update("signatureUrl", url)}
+              />
             </div>
           </section>
           <section className="space-y-4">
@@ -251,7 +267,12 @@ export function ProfilePage() {
             icon={<Building2 className="size-5" />}
             title={t("profile.businessProfile")}
           >
-            <CompanyFields profile={profile} onUpdate={update} />
+            <CompanyFields
+              profile={profile}
+              onUpdate={update}
+              userId={user.id}
+              onSignatureChange={(url) => update("signatureUrl", url)}
+            />
           </ProfileSectionCard>
 
           <ProfileSectionCard
