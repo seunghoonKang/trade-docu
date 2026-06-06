@@ -1,7 +1,6 @@
-const CAPTURE_WIDTH_PX = 794;
-const A4_WIDTH_MM = 210;
-const A4_HEIGHT_MM = 297;
-const PAGE_HEIGHT_PX = Math.floor((A4_HEIGHT_MM * CAPTURE_WIDTH_PX) / A4_WIDTH_MM);
+import { A4_PAGE_HEIGHT_PX, CAPTURE_WIDTH_PX } from "./invoiceCapture";
+
+const PAGE_HEIGHT_PX = A4_PAGE_HEIGHT_PX;
 
 interface PageBlock {
   isTableRow: boolean;
@@ -17,38 +16,69 @@ function createPageShell(template: HTMLElement): HTMLElement {
   page.style.background = "#ffffff";
   page.style.overflow = "visible";
   page.style.borderRadius = "0";
+  page.style.minHeight = "auto";
+  page.style.boxShadow = "none";
   return page;
 }
 
-function buildTableFragment(
+function buildWrappedTableFragment(
+  wrapper: Element,
   table: HTMLTableElement,
   thead: Element | null,
-  row: Element,
+  row: Element | null,
+  tfoot: Element | null,
   withHeader: boolean,
-): HTMLTableElement {
+): HTMLElement {
+  const container = document.createElement("div");
+  if (wrapper.tagName !== "TABLE") {
+    container.className = wrapper.className;
+  }
+
   const fragment = document.createElement("table");
   fragment.className = table.className;
   if (withHeader && thead) {
     fragment.appendChild(thead.cloneNode(true));
   }
-  const tbody = document.createElement("tbody");
-  tbody.appendChild(row.cloneNode(true));
-  fragment.appendChild(tbody);
-  return fragment;
+  if (row) {
+    const tbody = document.createElement("tbody");
+    tbody.appendChild(row.cloneNode(true));
+    fragment.appendChild(tbody);
+  }
+  if (tfoot) {
+    fragment.appendChild(tfoot.cloneNode(true));
+  }
+
+  if (wrapper.tagName === "TABLE") {
+    return fragment;
+  }
+
+  container.appendChild(fragment);
+  return container;
 }
 
 function extractBlocks(source: HTMLElement): PageBlock[] {
   const blocks: PageBlock[] = [];
 
   for (const child of Array.from(source.children)) {
-    if (child.tagName === "TABLE") {
-      const table = child as HTMLTableElement;
+    const table =
+      child.tagName === "TABLE" ? (child as HTMLTableElement) : child.querySelector("table");
+
+    if (table) {
       const thead = table.querySelector("thead");
-      const rows = table.querySelectorAll("tbody tr");
-      for (const row of rows) {
+      const tfoot = table.querySelector("tfoot");
+
+      for (const row of table.querySelectorAll("tbody tr")) {
         blocks.push({
           isTableRow: true,
-          render: (withHeader) => buildTableFragment(table, thead, row, withHeader),
+          render: (withHeader) =>
+            buildWrappedTableFragment(child, table, thead, row, null, withHeader),
+        });
+      }
+
+      if (tfoot) {
+        blocks.push({
+          isTableRow: false,
+          render: () => buildWrappedTableFragment(child, table, null, null, tfoot, false),
         });
       }
       continue;
@@ -77,7 +107,6 @@ export function paginateInvoiceDom(source: HTMLElement): HTMLElement[] {
   const pages: HTMLElement[] = [];
   let currentPage = createPageShell(source);
   mount.appendChild(currentPage);
-  /** Each page's first table row should repeat the column header (thead). */
   let needsTableHeader = true;
 
   try {
@@ -114,5 +143,3 @@ export function paginateInvoiceDom(source: HTMLElement): HTMLElement[] {
 
   return pages.length > 0 ? pages : [createPageShell(source)];
 }
-
-export { CAPTURE_WIDTH_PX, A4_WIDTH_MM, A4_HEIGHT_MM };
