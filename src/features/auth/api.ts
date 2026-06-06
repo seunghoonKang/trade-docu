@@ -1,6 +1,7 @@
 import { supabase } from "@/shared/lib/supabase";
 import i18n from "@/shared/i18n/config";
 import { upsertSeller } from "@/features/seller-management";
+import type { LinkableOAuthProvider } from "./lib/profile";
 
 export async function login(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -92,4 +93,50 @@ export async function loginWithKakao() {
     options: { redirectTo: `${window.location.origin}/` },
   });
   if (error) throw error;
+}
+
+export async function linkOAuthProvider(provider: LinkableOAuthProvider) {
+  const redirectTo = `${window.location.origin}/profile?linking=${provider}`;
+  const { error } = await supabase.auth.linkIdentity({
+    provider,
+    options: { redirectTo },
+  });
+  if (error) throw error;
+}
+
+export async function fetchUserIdentities() {
+  const { data, error } = await supabase.auth.getUserIdentities();
+  if (error) throw error;
+  return data.identities;
+}
+
+export async function refreshAuthSession() {
+  const { error } = await supabase.auth.refreshSession();
+  if (error) throw error;
+}
+
+export async function reloadLinkedIdentities() {
+  const identities = await fetchUserIdentities();
+  await refreshAuthSession();
+  return identities;
+}
+
+export async function unlinkOAuthProvider(provider: LinkableOAuthProvider) {
+  const { data, error } = await supabase.auth.getUserIdentities();
+  if (error) throw error;
+
+  if (data.identities.length < 2) {
+    throw { code: "last_identity_unlink" };
+  }
+
+  const identity = data.identities.find((item) => item.provider === provider);
+  if (!identity) {
+    throw { code: "identity_not_found" };
+  }
+
+  const { error: unlinkError } = await supabase.auth.unlinkIdentity(identity);
+  if (unlinkError) throw unlinkError;
+
+  await refreshAuthSession();
+  return fetchUserIdentities();
 }

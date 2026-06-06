@@ -4,6 +4,9 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button, Input, FormSection } from "@/shared/ui";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { reloadLinkedIdentities } from "@/features/auth/api";
+import { clearOAuthLinkCallbackUrl, consumeOAuthLinkCallback } from "@/features/auth/lib/oauthLinkCallback";
+import { LinkedAuthMethods } from "@/features/auth/ui/LinkedAuthMethods";
 import {
   getSeller,
   upsertSeller,
@@ -24,6 +27,28 @@ export function ProfilePage() {
       setProfile(seedSellerFromMetadata(user, seller));
     });
   }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const result = consumeOAuthLinkCallback(user, t);
+    if (!result) return;
+
+    async function handleLinkCallback() {
+      if (result!.type === "success") {
+        try {
+          await reloadLinkedIdentities();
+        } catch {
+          // Non-blocking: LinkedAuthMethods also reloads identities on mount.
+        }
+        toast.success(result!.message);
+      } else {
+        toast.error(result!.message);
+      }
+      clearOAuthLinkCallbackUrl();
+    }
+
+    void handleLinkCallback();
+  }, [user, t]);
 
   function update(key: keyof SellerProfile, value: string) {
     setProfile((prev) => (prev ? { ...prev, [key]: value } : prev));
@@ -79,6 +104,8 @@ export function ProfilePage() {
 
       <main className="max-w-2xl mx-auto px-4 py-6">
         <p className="text-sm text-muted-foreground mb-4">{t("profile.subtitle")}</p>
+
+        <LinkedAuthMethods />
 
         <FormSection title={t("profile.companyInfo")}>
           <div className="grid grid-cols-2 gap-3">
