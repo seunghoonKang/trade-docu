@@ -1,7 +1,7 @@
 -- Sellers
 create table if not exists sellers (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users on delete cascade not null,
+  user_id uuid references auth.users on delete cascade not null unique,
   company_name text not null default '',
   address text not null default '',
   tel text not null default '',
