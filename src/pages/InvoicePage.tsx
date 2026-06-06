@@ -4,31 +4,33 @@ import { Layout } from "@/shared/ui";
 import { InvoiceForm } from "@/widgets/InvoiceForm";
 import { InvoicePreview } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
-import { InvoiceHistory } from "@/widgets/InvoiceHistory";
 import { useInvoiceForm } from "@/widgets/InvoiceForm";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { useRestoreInvoiceFromHistory } from "@/features/invoice-crud";
+import { DraftRestoreBanner, useInvoiceDraftSession } from "@/features/draft-autosave";
 import { getSeller, ProfileNudgeBanner, dismissProfileNudge, isProfileNudgeDismissed } from "@/features/seller-management";
 import type { BankInfo } from "@/entities/bank-info/model";
 import type { Seller } from "@/entities/seller/model";
-import {
-  DraftRestoreBanner,
-  useInvoiceDraftSession,
-} from "@/features/draft-autosave";
 
 export function InvoicePage() {
   const invoiceForm = useInvoiceForm();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [showHistory, setShowHistory] = useState(false);
   const [needsProfile, setNeedsProfile] = useState(false);
   const [profileNudgeDismissed, setProfileNudgeDismissed] = useState(false);
   const ownerId = user?.id ?? null;
+
+  const { skipSellerPrefillRef, skipDraftResetRef } = useRestoreInvoiceFromHistory({
+    authLoading: loading,
+    loadForm: invoiceForm.loadForm,
+  });
 
   const { pendingDraft, restorePendingDraft, discardPendingDraft } = useInvoiceDraftSession({
     ownerId,
     authLoading: loading,
     form: invoiceForm.form,
     loadForm: invoiceForm.loadForm,
+    skipDraftResetRef,
   });
 
   const onSellerLoaded = useEffectEvent((seller: (Seller & BankInfo) | null) => {
@@ -58,11 +60,17 @@ export function InvoicePage() {
       return;
     }
     setProfileNudgeDismissed(isProfileNudgeDismissed(user.id));
-    getSeller(user.id).then(onSellerLoaded);
+    getSeller(user.id).then((seller) => {
+      if (skipSellerPrefillRef.current) {
+        skipSellerPrefillRef.current = false;
+        return;
+      }
+      onSellerLoaded(seller);
+    });
   }, [user]);
 
   return (
-    <Layout toolbar={<ExportToolbar formData={invoiceForm.form} onShowHistory={() => setShowHistory(true)} />}>
+    <Layout toolbar={<ExportToolbar formData={invoiceForm.form} page="documents" />}>
       {needsProfile && !profileNudgeDismissed && (
         <ProfileNudgeBanner
           onComplete={() => navigate("/profile")}
@@ -83,12 +91,6 @@ export function InvoicePage() {
           <InvoicePreview data={invoiceForm.form} />
         </div>
       </div>
-      {showHistory && (
-        <InvoiceHistory
-          onLoad={(data) => invoiceForm.loadForm(data)}
-          onClose={() => setShowHistory(false)}
-        />
-      )}
     </Layout>
   );
 }

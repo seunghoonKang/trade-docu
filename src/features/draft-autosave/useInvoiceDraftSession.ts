@@ -1,5 +1,6 @@
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { createEmptyInvoice } from "@/entities/invoice/model";
+import { peekPendingInvoiceLoad } from "@/features/invoice-crud";
 import { clearDraft, isEmptyDraft, loadDraft, saveDraft, type InvoiceDraft } from "./lib";
 
 interface UseInvoiceDraftSessionOptions {
@@ -7,6 +8,7 @@ interface UseInvoiceDraftSessionOptions {
   authLoading: boolean;
   form: InvoiceDraft;
   loadForm: (data: InvoiceDraft) => void;
+  skipDraftResetRef?: React.RefObject<boolean>;
 }
 
 export function useInvoiceDraftSession({
@@ -14,12 +16,26 @@ export function useInvoiceDraftSession({
   authLoading,
   form,
   loadForm,
+  skipDraftResetRef,
 }: UseInvoiceDraftSessionOptions) {
   const [pendingDraft, setPendingDraft] = useState<InvoiceDraft | null>(null);
+  const syncedOwnerRef = useRef<string | null | undefined>(undefined);
 
   const syncDraftSession = useEffectEvent(() => {
+    if (peekPendingInvoiceLoad()) return;
+
     const draft = loadDraft(ownerId);
     setPendingDraft(draft && !isEmptyDraft(draft) ? draft : null);
+
+    if (skipDraftResetRef?.current) {
+      skipDraftResetRef.current = false;
+      syncedOwnerRef.current = ownerId;
+      return;
+    }
+
+    if (syncedOwnerRef.current === ownerId) return;
+
+    syncedOwnerRef.current = ownerId;
     loadForm(createEmptyInvoice());
   });
 
