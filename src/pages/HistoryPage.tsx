@@ -3,8 +3,8 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useAuth } from "@/app/providers/AuthProvider";
-import { deleteInvoice, listInvoices, setPendingInvoiceLoad, toInvoiceFormData } from "@/features/invoice-crud";
-import { HistorySummaryCards } from "@/features/history";
+import { deleteInvoice, listInvoices, toInvoiceFormData } from "@/features/invoice-crud";
+import { HistoryPageSkeleton, HistorySummaryCards } from "@/features/history";
 import { InvoiceHistoryList } from "@/widgets/InvoiceHistory";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { ConfirmDialog, Layout } from "@/shared/ui";
@@ -49,7 +49,6 @@ export function HistoryPage() {
 
   function handleLoad(inv: Invoice) {
     const formData = toInvoiceFormData(inv);
-    setPendingInvoiceLoad(formData);
     navigate("/", { state: { restoreInvoice: formData } });
   }
 
@@ -66,19 +65,25 @@ export function HistoryPage() {
 
   if (!loading && !user) return <Navigate to="/login" replace />;
 
+  const isLoading = loading || fetching;
   const confirmInvoiceNo = confirmAction?.invoice.invoiceNo || t("history.noNumber");
 
   return (
     <Layout toolbar={<ExportToolbar page="history" />}>
       <div className="max-w-6xl mx-auto px-4 py-6 md:p-8 space-y-6 md:space-y-8 pb-8">
-        <HistorySummaryCards totalCount={invoices.length} recentCount={recentCount} />
+        {isLoading ? (
+          <HistoryPageSkeleton />
+        ) : (
+          <>
+            <HistorySummaryCards totalCount={invoices.length} recentCount={recentCount} />
 
-        <InvoiceHistoryList
-          invoices={invoices}
-          loading={loading || fetching}
-          onLoadRequest={(invoice) => setConfirmAction({ type: "load", invoice })}
-          onDeleteRequest={(invoice) => setConfirmAction({ type: "delete", invoice })}
-        />
+            <InvoiceHistoryList
+              invoices={invoices}
+              onLoadRequest={(invoice) => setConfirmAction({ type: "load", invoice })}
+              onDeleteRequest={(invoice) => setConfirmAction({ type: "delete", invoice })}
+            />
+          </>
+        )}
       </div>
 
       <ConfirmDialog

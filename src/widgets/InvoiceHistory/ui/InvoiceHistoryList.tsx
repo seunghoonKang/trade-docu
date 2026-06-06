@@ -19,7 +19,6 @@ type SavedDateSort = "desc" | "asc";
 
 interface Props {
   invoices: Invoice[];
-  loading?: boolean;
   onLoadRequest: (invoice: Invoice) => void;
   onDeleteRequest: (invoice: Invoice) => void;
 }
@@ -49,7 +48,7 @@ function matchesSearch(invoice: Invoice, query: string): boolean {
 const iconActionClass =
   "flex items-center justify-center size-8 rounded-md text-primary hover:bg-accent transition-colors active:opacity-80";
 
-export function InvoiceHistoryList({ invoices, loading, onLoadRequest, onDeleteRequest }: Props) {
+export function InvoiceHistoryList({ invoices, onLoadRequest, onDeleteRequest }: Props) {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [savedDateSort, setSavedDateSort] = useState<SavedDateSort>("desc");
@@ -105,9 +104,7 @@ export function InvoiceHistoryList({ invoices, loading, onLoadRequest, onDeleteR
         </div>
       </div>
 
-      {loading ? (
-        <p className="px-6 py-12 text-center text-muted-foreground">{t("history.loading")}</p>
-      ) : sortedInvoices.length === 0 ? (
+      {sortedInvoices.length === 0 ? (
         <p className="px-6 py-12 text-center text-muted-foreground">
           {debouncedQuery.trim() ? t("history.noSearchResults") : t("history.noInvoices")}
         </p>

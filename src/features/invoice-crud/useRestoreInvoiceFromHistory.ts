@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Invoice } from "@/entities/invoice/model";
 import { clearDraft } from "@/features/draft-autosave";
-import { consumePendingInvoiceLoad } from "./pendingLoad";
+import { clearPendingInvoiceLoad, consumePendingInvoiceLoad } from "./pendingLoad";
 
 type InvoiceFormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -23,25 +23,39 @@ export function useRestoreInvoiceFromHistory({ authLoading, loadForm }: Options)
   const navigate = useNavigate();
   const skipSellerPrefillRef = useRef(false);
   const skipDraftResetRef = useRef(false);
+  const restoredFromStateRef = useRef(false);
 
   useLayoutEffect(() => {
     if (authLoading) return;
 
     const fromState = (location.state as RestoreLocationState | null)?.restoreInvoice;
+
+    if (fromState) {
+      if (restoredFromStateRef.current) {
+        navigate(location.pathname, { replace: true, state: null });
+        return;
+      }
+      restoredFromStateRef.current = true;
+      clearPendingInvoiceLoad();
+      loadForm(fromState);
+      clearDraft();
+      skipSellerPrefillRef.current = true;
+      skipDraftResetRef.current = true;
+      toast.success(t("history.loaded"));
+      navigate(location.pathname, { replace: true, state: null });
+      return;
+    }
+
+    restoredFromStateRef.current = false;
+
     const fromStorage = consumePendingInvoiceLoad();
-    const pending = fromState ?? fromStorage;
+    if (!fromStorage) return;
 
-    if (!pending) return;
-
-    loadForm(pending);
+    loadForm(fromStorage);
     clearDraft();
     skipSellerPrefillRef.current = true;
     skipDraftResetRef.current = true;
     toast.success(t("history.loaded"));
-
-    if (fromState) {
-      navigate(location.pathname, { replace: true, state: null });
-    }
   }, [authLoading, loadForm, location.pathname, location.state, navigate, t]);
 
   return { skipSellerPrefillRef, skipDraftResetRef };

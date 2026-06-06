@@ -12,6 +12,10 @@ export function setPendingInvoiceLoad(data: PendingLoad): void {
   sessionStorage.setItem(KEY, JSON.stringify(data));
 }
 
+export function clearPendingInvoiceLoad(): void {
+  sessionStorage.removeItem(KEY);
+}
+
 export function consumePendingInvoiceLoad(): PendingLoad | null {
   const raw = sessionStorage.getItem(KEY);
   if (!raw) return null;
