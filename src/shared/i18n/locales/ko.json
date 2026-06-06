@@ -1,8 +1,31 @@
 {
-  "app": { "title": "프로포마 인보이스" },
-  "editor": { "title": "문서 편집기: Proforma Invoice" },
-  "nav": { "login": "로그인", "logout": "로그아웃", "signup": "회원가입", "documents": "문서", "history": "기록", "settings": "설정", "dashboard": "대시보드", "invoices": "인보이스", "packingLists": "패킹 리스트", "archive": "아카이브", "helpCenter": "고객센터", "comingSoon": "준비 중" },
-  "export": { "pdf": "PDF 다운로드", "excel": "엑셀 다운로드", "print": "인쇄", "export": "내보내기", "pdfFailed": "PDF 생성에 실패했습니다" },
+  "app": {
+    "title": "프로포마 인보이스"
+  },
+  "editor": {
+    "title": "문서 편집기: Proforma Invoice"
+  },
+  "nav": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "signup": "회원가입",
+    "documents": "문서",
+    "history": "기록",
+    "settings": "설정",
+    "dashboard": "대시보드",
+    "invoices": "인보이스",
+    "packingLists": "패킹 리스트",
+    "archive": "아카이브",
+    "helpCenter": "고객센터",
+    "comingSoon": "준비 중"
+  },
+  "export": {
+    "pdf": "PDF 다운로드",
+    "excel": "엑셀 다운로드",
+    "print": "인쇄",
+    "export": "내보내기",
+    "pdfFailed": "PDF 생성에 실패했습니다"
+  },
   "form": {
     "documentInfo": "문서 정보",
     "invoiceNo": "인보이스 번호",
@@ -32,11 +55,14 @@
     "qty": "수량",
     "unit": "단위",
     "unitPrice": "단가",
+    "unitPriceWithCurrency": "단가 ({{currency}})",
+    "amountWithCurrency": "금액 ({{currency}})",
     "amount": "금액",
     "addItem": "품목 추가",
     "addItemCta": "품목 추가하기",
     "removeItem": "삭제",
     "additionalCharges": "추가 비용",
+    "chargeDescription": "비용 항목",
     "addCharge": "비용 추가",
     "removeCharge": "삭제",
     "subtotal": "소계",
@@ -54,7 +80,11 @@
     "noSavedBuyers": "저장된 거래처 없음",
     "noSavedProducts": "저장된 품목 없음"
   },
-  "invoice": { "proformaInvoice": "프로포마 인보이스", "to": "수신,", "faithfully": "경구." },
+  "invoice": {
+    "proformaInvoice": "프로포마 인보이스",
+    "to": "수신,",
+    "faithfully": "경구."
+  },
   "auth": {
     "email": "이메일",
     "password": "비밀번호",

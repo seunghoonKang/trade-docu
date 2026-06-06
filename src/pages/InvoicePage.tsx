@@ -71,24 +71,26 @@ export function InvoicePage() {
 
   return (
     <Layout toolbar={<ExportToolbar formData={invoiceForm.form} page="documents" />}>
-      {needsProfile && !profileNudgeDismissed && (
-        <ProfileNudgeBanner
-          onComplete={() => navigate("/profile")}
-          onDismiss={() => {
-            if (user) dismissProfileNudge(user.id);
-            setProfileNudgeDismissed(true);
-          }}
-        />
-      )}
-      {pendingDraft && (
-        <DraftRestoreBanner onRestore={restorePendingDraft} onDiscard={discardPendingDraft} />
-      )}
-      <div className="flex h-[calc(100vh-4rem)] flex-col lg:flex-row">
-        <div className="editor-container w-full overflow-y-auto border-b border-border bg-[#cbdbf5] lg:w-1/2 lg:border-b-0 lg:border-r">
-          <InvoiceForm {...invoiceForm} />
-        </div>
-        <div id="invoice-preview" className="hidden w-1/2 overflow-y-auto bg-accent lg:flex lg:justify-center lg:p-8">
-          <InvoicePreview data={invoiceForm.form} />
+      <div className="flex h-[calc(100vh-4rem)] flex-col">
+        {needsProfile && !profileNudgeDismissed && (
+          <ProfileNudgeBanner
+            onComplete={() => navigate("/profile")}
+            onDismiss={() => {
+              if (user) dismissProfileNudge(user.id);
+              setProfileNudgeDismissed(true);
+            }}
+          />
+        )}
+        {pendingDraft && (
+          <DraftRestoreBanner onRestore={restorePendingDraft} onDiscard={discardPendingDraft} />
+        )}
+        <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+          <div className="editor-container w-full overflow-y-auto border-b border-border bg-[#cbdbf5] lg:w-1/2 lg:border-b-0 lg:border-r">
+            <InvoiceForm {...invoiceForm} />
+          </div>
+          <div id="invoice-preview" className="hidden w-1/2 overflow-y-auto bg-accent lg:flex lg:justify-center lg:p-8">
+            <InvoicePreview data={invoiceForm.form} />
+          </div>
         </div>
       </div>
     </Layout>

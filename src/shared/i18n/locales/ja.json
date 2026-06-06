@@ -1,8 +1,31 @@
 {
-  "app": { "title": "プロフォーマインボイス" },
-  "editor": { "title": "文書エディター: Proforma Invoice" },
-  "nav": { "login": "ログイン", "logout": "ログアウト", "signup": "新規登録", "documents": "ドキュメント", "history": "履歴", "settings": "設定", "dashboard": "ダッシュボード", "invoices": "インボイス", "packingLists": "パッキングリスト", "archive": "アーカイブ", "helpCenter": "ヘルプセンター", "comingSoon": "準備中" },
-  "export": { "pdf": "PDFダウンロード", "excel": "Excelダウンロード", "print": "印刷", "export": "エクスポート", "pdfFailed": "PDFの生成に失敗しました" },
+  "app": {
+    "title": "プロフォーマインボイス"
+  },
+  "editor": {
+    "title": "文書エディター: Proforma Invoice"
+  },
+  "nav": {
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "signup": "新規登録",
+    "documents": "ドキュメント",
+    "history": "履歴",
+    "settings": "設定",
+    "dashboard": "ダッシュボード",
+    "invoices": "インボイス",
+    "packingLists": "パッキングリスト",
+    "archive": "アーカイブ",
+    "helpCenter": "ヘルプセンター",
+    "comingSoon": "準備中"
+  },
+  "export": {
+    "pdf": "PDFダウンロード",
+    "excel": "Excelダウンロード",
+    "print": "印刷",
+    "export": "エクスポート",
+    "pdfFailed": "PDFの生成に失敗しました"
+  },
   "form": {
     "documentInfo": "書類情報",
     "invoiceNo": "インボイス番号",
@@ -32,11 +55,14 @@
     "qty": "数量",
     "unit": "単位",
     "unitPrice": "単価",
+    "unitPriceWithCurrency": "単価 ({{currency}})",
+    "amountWithCurrency": "金額 ({{currency}})",
     "amount": "金額",
     "addItem": "品目追加",
     "addItemCta": "品目を追加",
     "removeItem": "削除",
     "additionalCharges": "追加費用",
+    "chargeDescription": "費用項目",
     "addCharge": "費用追加",
     "removeCharge": "削除",
     "subtotal": "小計",
@@ -54,7 +80,11 @@
     "noSavedBuyers": "保存済み買主なし",
     "noSavedProducts": "保存済み品目なし"
   },
-  "invoice": { "proformaInvoice": "プロフォーマインボイス", "to": "宛先,", "faithfully": "敬具," },
+  "invoice": {
+    "proformaInvoice": "プロフォーマインボイス",
+    "to": "宛先,",
+    "faithfully": "敬具,"
+  },
   "auth": {
     "email": "メールアドレス",
     "password": "パスワード",

@@ -1,8 +1,31 @@
 {
-  "app": { "title": "形式发票" },
-  "editor": { "title": "文档编辑器: Proforma Invoice" },
-  "nav": { "login": "登录", "logout": "退出", "signup": "注册", "documents": "文档", "history": "历史", "settings": "设置", "dashboard": "仪表盘", "invoices": "发票", "packingLists": "装箱单", "archive": "归档", "helpCenter": "帮助中心", "comingSoon": "即将推出" },
-  "export": { "pdf": "PDF 下载", "excel": "Excel 下载", "print": "打印", "export": "导出", "pdfFailed": "PDF 生成失败" },
+  "app": {
+    "title": "形式发票"
+  },
+  "editor": {
+    "title": "文档编辑器: Proforma Invoice"
+  },
+  "nav": {
+    "login": "登录",
+    "logout": "退出",
+    "signup": "注册",
+    "documents": "文档",
+    "history": "历史",
+    "settings": "设置",
+    "dashboard": "仪表盘",
+    "invoices": "发票",
+    "packingLists": "装箱单",
+    "archive": "归档",
+    "helpCenter": "帮助中心",
+    "comingSoon": "即将推出"
+  },
+  "export": {
+    "pdf": "PDF 下载",
+    "excel": "Excel 下载",
+    "print": "打印",
+    "export": "导出",
+    "pdfFailed": "PDF 生成失败"
+  },
   "form": {
     "documentInfo": "文件信息",
     "invoiceNo": "发票号",
@@ -32,11 +55,14 @@
     "qty": "数量",
     "unit": "单位",
     "unitPrice": "单价",
+    "unitPriceWithCurrency": "单价 ({{currency}})",
+    "amountWithCurrency": "金额 ({{currency}})",
     "amount": "金额",
     "addItem": "添加商品",
     "addItemCta": "添加商品",
     "removeItem": "删除",
     "additionalCharges": "附加费用",
+    "chargeDescription": "费用项目",
     "addCharge": "添加费用",
     "removeCharge": "删除",
     "subtotal": "小计",
@@ -54,7 +80,11 @@
     "noSavedBuyers": "没有已保存的买方",
     "noSavedProducts": "没有已保存的商品"
   },
-  "invoice": { "proformaInvoice": "形式发票", "to": "致,", "faithfully": "此致敬礼," },
+  "invoice": {
+    "proformaInvoice": "形式发票",
+    "to": "致,",
+    "faithfully": "此致敬礼,"
+  },
   "auth": {
     "email": "邮箱",
     "password": "密码",

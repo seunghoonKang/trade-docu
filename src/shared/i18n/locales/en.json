@@ -1,8 +1,31 @@
 {
-  "app": { "title": "Proforma Invoice" },
-  "editor": { "title": "Document Editor: Proforma Invoice" },
-  "nav": { "login": "Login", "logout": "Logout", "signup": "Sign Up", "documents": "Documents", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Invoices", "packingLists": "Packing Lists", "archive": "Archive", "helpCenter": "Help Center", "comingSoon": "Coming soon" },
-  "export": { "pdf": "PDF Download", "excel": "Excel Download", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF" },
+  "app": {
+    "title": "Proforma Invoice"
+  },
+  "editor": {
+    "title": "Document Editor: Proforma Invoice"
+  },
+  "nav": {
+    "login": "Login",
+    "logout": "Logout",
+    "signup": "Sign Up",
+    "documents": "Documents",
+    "history": "History",
+    "settings": "Settings",
+    "dashboard": "Dashboard",
+    "invoices": "Invoices",
+    "packingLists": "Packing Lists",
+    "archive": "Archive",
+    "helpCenter": "Help Center",
+    "comingSoon": "Coming soon"
+  },
+  "export": {
+    "pdf": "PDF Download",
+    "excel": "Excel Download",
+    "print": "Print",
+    "export": "Export",
+    "pdfFailed": "Failed to generate PDF"
+  },
   "form": {
     "documentInfo": "Document Info",
     "invoiceNo": "Invoice No.",
@@ -32,11 +55,14 @@
     "qty": "Q'ty",
     "unit": "Unit",
     "unitPrice": "Unit Price",
+    "unitPriceWithCurrency": "Unit Price ({{currency}})",
+    "amountWithCurrency": "Amount ({{currency}})",
     "amount": "Amount",
     "addItem": "Add Item",
     "addItemCta": "Add Item",
     "removeItem": "Remove",
     "additionalCharges": "Additional Charges",
+    "chargeDescription": "Charge description",
     "addCharge": "Add Charge",
     "removeCharge": "Remove",
     "subtotal": "Subtotal",
@@ -54,7 +80,11 @@
     "noSavedBuyers": "No saved buyers",
     "noSavedProducts": "No saved products"
   },
-  "invoice": { "proformaInvoice": "PROFORMA INVOICE", "to": "Messrs,", "faithfully": "Faithfully Yours," },
+  "invoice": {
+    "proformaInvoice": "PROFORMA INVOICE",
+    "to": "Messrs,",
+    "faithfully": "Faithfully Yours,"
+  },
   "auth": {
     "email": "Email",
     "password": "Password",
