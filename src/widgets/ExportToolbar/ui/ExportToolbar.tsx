@@ -47,8 +47,13 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
     return true;
   }
 
-  function handlePdf() {
-    if (passesValidation()) generatePdf(formData);
+  async function handlePdf() {
+    if (!passesValidation()) return;
+    try {
+      await generatePdf(formData);
+    } catch {
+      toast.error(t("export.pdfFailed"));
+    }
   }
   function handleExcel() {
     if (passesValidation()) generateExcel(formData);

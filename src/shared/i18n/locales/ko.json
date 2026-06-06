@@ -1,7 +1,7 @@
 {
   "app": { "title": "프로포마 인보이스" },
   "nav": { "login": "로그인", "logout": "로그아웃", "signup": "회원가입" },
-  "export": { "pdf": "PDF 다운로드", "excel": "엑셀 다운로드", "print": "인쇄" },
+  "export": { "pdf": "PDF 다운로드", "excel": "엑셀 다운로드", "print": "인쇄", "pdfFailed": "PDF 생성에 실패했습니다" },
   "form": {
     "documentInfo": "문서 정보",
     "invoiceNo": "인보이스 번호",

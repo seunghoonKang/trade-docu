@@ -1,7 +1,7 @@
 {
   "app": { "title": "形式发票" },
   "nav": { "login": "登录", "logout": "退出", "signup": "注册" },
-  "export": { "pdf": "PDF 下载", "excel": "Excel 下载", "print": "打印" },
+  "export": { "pdf": "PDF 下载", "excel": "Excel 下载", "print": "打印", "pdfFailed": "PDF 生成失败" },
   "form": {
     "documentInfo": "文件信息",
     "invoiceNo": "发票号",
