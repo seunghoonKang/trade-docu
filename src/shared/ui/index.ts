@@ -1,6 +1,6 @@
 export { Button } from "./primitives/button";
 export { Skeleton } from "./primitives/skeleton";
-export { Input, editorInlineInputClassName } from "./input";
+export { Input, editorInlineInputClassName, editorInputClassName, editorInlineDismissButtonClassName, editorDismissButtonClassName } from "./input";
 export { Textarea } from "./textarea";
 export { Select } from "./select";
 export { FormSection } from "./form-section";

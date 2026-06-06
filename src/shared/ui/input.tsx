@@ -9,6 +9,14 @@ export const editorInputClassName =
 export const editorInlineInputClassName =
   "w-full h-9 px-2 text-sm bg-background border border-input rounded-lg transition-colors hover:border-ring/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary";
 
+export const editorInlineDismissButtonClassName =
+  "flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-colors hover:bg-muted hover:text-foreground";
+
+export const editorDismissButtonClassName = cn(
+  editorInlineDismissButtonClassName,
+  "absolute -right-2 -top-2",
+);
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   variant?: "default" | "editor";
