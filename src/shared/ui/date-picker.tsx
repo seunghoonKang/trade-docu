@@ -9,6 +9,7 @@ import {
   PopoverTrigger,
 } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
+import { editorLabelClassName } from "./input";
 
 const localeMap: Record<string, Locale> = {
   ko,
@@ -22,9 +23,10 @@ interface DatePickerProps {
   value: string; // "YYYY-MM-DD"
   onChange: (value: string) => void;
   className?: string;
+  variant?: "default" | "editor";
 }
 
-export function DatePicker({ label, value, onChange, className }: DatePickerProps) {
+export function DatePicker({ label, value, onChange, className, variant = "default" }: DatePickerProps) {
   const { i18n } = useTranslation();
 
   const locale = localeMap[i18n.language] ?? enUS;
@@ -34,10 +36,15 @@ export function DatePicker({ label, value, onChange, className }: DatePickerProp
 
   const inputId = label?.toLowerCase().replace(/\s+/g, "-");
 
+  const isEditor = variant === "editor";
+
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
+    <div className={cn("flex flex-col", isEditor ? "gap-2" : "gap-1", className)}>
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-muted-foreground">
+        <label
+          htmlFor={inputId}
+          className={isEditor ? editorLabelClassName : "text-sm font-medium text-muted-foreground"}
+        >
           {label}
         </label>
       )}
@@ -45,11 +52,12 @@ export function DatePicker({ label, value, onChange, className }: DatePickerProp
         <PopoverTrigger
           id={inputId}
           className={cn(
-            "w-full px-3 py-2 text-base text-left bg-card border border-input rounded-md transition-colors",
-            "flex items-center justify-between cursor-pointer",
+            "w-full text-left bg-background border border-input transition-colors",
+            "flex h-11 items-center justify-between cursor-pointer rounded-lg px-4 text-sm",
             "hover:border-ring/60",
-            "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-            !displayValue && "text-muted-foreground/50"
+            "focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary",
+            !isEditor && "rounded-md bg-card px-3 py-2 text-base focus:ring-2 focus:ring-primary/20",
+            !displayValue && "text-muted-foreground/50",
           )}
         >
           <span>{displayValue || "\u00A0"}</span>

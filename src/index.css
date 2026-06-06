@@ -138,6 +138,23 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
+.editor-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.editor-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.editor-container::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 10px;
+}
+
+.paper-shadow {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
