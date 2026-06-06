@@ -1,30 +1,34 @@
 import { ChevronDownIcon } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
+import { FieldLabel } from "./field-label";
 import { editorInputClassName, editorLabelClassName } from "./input";
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
+  required?: boolean;
   options: { value: string; label: string }[];
   variant?: "default" | "editor";
 }
 
-export function Select({ label, options, className, id, variant = "default", ...props }: SelectProps) {
+export function Select({ label, required, options, className, id, variant = "default", ...props }: SelectProps) {
   const selectId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
   const isEditor = variant === "editor";
 
   return (
     <div className={cn("flex flex-col", isEditor ? "gap-2" : "gap-1")}>
       {label && (
-        <label
+        <FieldLabel
           htmlFor={selectId}
+          required={required}
           className={isEditor ? editorLabelClassName : "text-sm font-medium text-muted-foreground"}
         >
           {label}
-        </label>
+        </FieldLabel>
       )}
       <div className="relative">
         <select
           id={selectId}
+          aria-required={required || undefined}
           className={cn(
             isEditor
               ? cn(editorInputClassName, "appearance-none pr-9")

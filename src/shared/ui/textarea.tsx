@@ -1,27 +1,31 @@
 import { cn } from "@/shared/lib/utils";
+import { FieldLabel } from "./field-label";
 import { editorInputClassName, editorLabelClassName } from "./input";
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
+  required?: boolean;
   variant?: "default" | "editor";
 }
 
-export function Textarea({ label, className, id, variant = "default", ...props }: TextareaProps) {
+export function Textarea({ label, required, className, id, variant = "default", ...props }: TextareaProps) {
   const textareaId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
   const isEditor = variant === "editor";
 
   return (
     <div className={cn("flex flex-col", isEditor ? "gap-2" : "gap-1")}>
       {label && (
-        <label
+        <FieldLabel
           htmlFor={textareaId}
+          required={required}
           className={isEditor ? editorLabelClassName : "text-sm font-medium text-muted-foreground"}
         >
           {label}
-        </label>
+        </FieldLabel>
       )}
       <textarea
         id={textareaId}
+        aria-required={required || undefined}
         className={cn(
           isEditor
             ? cn(editorInputClassName, "h-auto min-h-[72px] resize-none py-3")

@@ -38,6 +38,7 @@ function ItemCard({ item, index, currency, canRemove, t, onUpdateItem, onRemoveI
       <Input
         variant="editor"
         label={t("form.description")}
+        required
         value={item.description}
         onChange={(e) => onUpdateItem(index, "description", e.target.value)}
       />
@@ -51,6 +52,7 @@ function ItemCard({ item, index, currency, canRemove, t, onUpdateItem, onRemoveI
         <Input
           variant="editor"
           label={t("form.qty")}
+          required
           type="number"
           min="0"
           value={item.qty || ""}
@@ -65,6 +67,7 @@ function ItemCard({ item, index, currency, canRemove, t, onUpdateItem, onRemoveI
         <Input
           variant="editor"
           label={t("form.unitPriceWithCurrency", { currency })}
+          required
           type="number"
           min="0"
           step="0.01"
@@ -91,7 +94,7 @@ export function ItemsTableSection({ items, currency, totalAmount, onUpdateItem, 
   const canRemove = items.length > 1;
 
   return (
-    <FormSection title={t("form.items")} icon={Package} variant="card">
+    <FormSection title={t("form.items")} icon={Package} variant="card" required>
       <div className="space-y-4">
         {items.map((item, i) => (
           <ItemCard

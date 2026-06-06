@@ -1,4 +1,5 @@
 import { cn } from "@/shared/lib/utils";
+import { FieldLabel } from "./field-label";
 
 export const editorLabelClassName =
   "text-xs font-semibold uppercase tracking-wider text-secondary-foreground";
@@ -19,25 +20,28 @@ export const editorDismissButtonClassName = cn(
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  required?: boolean;
   variant?: "default" | "editor";
 }
 
-export function Input({ label, className, id, variant = "default", ...props }: InputProps) {
+export function Input({ label, required, className, id, variant = "default", ...props }: InputProps) {
   const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
   const isEditor = variant === "editor";
 
   return (
     <div className={cn("flex flex-col", isEditor ? "gap-2" : "gap-1")}>
       {label && (
-        <label
+        <FieldLabel
           htmlFor={inputId}
+          required={required}
           className={isEditor ? editorLabelClassName : "text-sm font-medium text-muted-foreground"}
         >
           {label}
-        </label>
+        </FieldLabel>
       )}
       <input
         id={inputId}
+        aria-required={required || undefined}
         className={cn(
           isEditor
             ? editorInputClassName

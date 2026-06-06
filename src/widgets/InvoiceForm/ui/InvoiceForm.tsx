@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { DocumentInfoSection } from "./DocumentInfoSection";
 import { SellerSection } from "./SellerSection";
 import { BuyerSection } from "./BuyerSection";
@@ -15,11 +14,8 @@ export function InvoiceForm({
   updateItem, addItem, removeItem,
   updateCharge, addCharge, removeCharge,
 }: InvoiceFormProps) {
-  const { t } = useTranslation();
   return (
     <div className="space-y-6 p-6">
-      <h1 className="text-2xl font-semibold tracking-tight text-primary">{t("editor.title")}</h1>
-
       <DocumentInfoSection invoiceNo={form.invoiceNo} refNo={form.refNo} orderNo={form.orderNo} date={form.date} validity={form.validity} onUpdate={(key, value) => updateField(key as any, value)} />
       <SellerSection companyName={form.sellerCompanyName} address={form.sellerAddress} tel={form.sellerTel} fax={form.sellerFax} representative={form.sellerRepresentative} onUpdate={(key, value) => updateField(key as any, value)} />
       <BuyerSection companyName={form.buyerSnapshot.companyName} address={form.buyerSnapshot.address} tel={form.buyerSnapshot.tel} contactPerson={form.buyerSnapshot.contactPerson} onUpdate={(key, value) => updateBuyer(key as any, value)} />

@@ -21,7 +21,7 @@ export function BuyerSection({ companyName, address, tel, contactPerson, onUpdat
         onUpdate("contactPerson", buyer.contactPerson);
       }} />
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <Input variant="editor" label={t("form.companyName")} value={companyName} onChange={(e) => onUpdate("companyName", e.target.value)} />
+        <Input variant="editor" label={t("form.companyName")} required value={companyName} onChange={(e) => onUpdate("companyName", e.target.value)} />
         <Input variant="editor" label={t("form.contactPerson")} value={contactPerson} onChange={(e) => onUpdate("contactPerson", e.target.value)} />
         <Textarea variant="editor" label={t("form.address")} value={address} onChange={(e) => onUpdate("address", e.target.value)} rows={2} className="sm:col-span-2" />
         <Input variant="editor" label={t("form.tel")} value={tel} onChange={(e) => onUpdate("tel", e.target.value)} />

@@ -14,7 +14,7 @@ export function DocumentInfoSection({ invoiceNo, refNo, orderNo, date, validity,
   return (
     <FormSection title={t("form.documentInfo")} icon={Info} variant="card">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <Input variant="editor" label={t("form.invoiceNo")} value={invoiceNo} onChange={(e) => onUpdate("invoiceNo", e.target.value)} />
+        <Input variant="editor" label={t("form.invoiceNo")} required value={invoiceNo} onChange={(e) => onUpdate("invoiceNo", e.target.value)} />
         <DatePicker variant="editor" label={t("form.date")} value={date} onChange={(v) => onUpdate("date", v)} />
         <Input variant="editor" label={t("form.refNo")} value={refNo} onChange={(e) => onUpdate("refNo", e.target.value)} />
         <Input variant="editor" label={t("form.orderNo")} value={orderNo} onChange={(e) => onUpdate("orderNo", e.target.value)} />

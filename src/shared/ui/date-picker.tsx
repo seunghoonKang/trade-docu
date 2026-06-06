@@ -9,6 +9,7 @@ import {
   PopoverTrigger,
 } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
+import { FieldLabel } from "./field-label";
 import { editorLabelClassName } from "./input";
 
 const localeMap: Record<string, Locale> = {
@@ -20,13 +21,14 @@ const localeMap: Record<string, Locale> = {
 
 interface DatePickerProps {
   label?: string;
+  required?: boolean;
   value: string; // "YYYY-MM-DD"
   onChange: (value: string) => void;
   className?: string;
   variant?: "default" | "editor";
 }
 
-export function DatePicker({ label, value, onChange, className, variant = "default" }: DatePickerProps) {
+export function DatePicker({ label, required, value, onChange, className, variant = "default" }: DatePickerProps) {
   const { i18n } = useTranslation();
 
   const locale = localeMap[i18n.language] ?? enUS;
@@ -41,16 +43,18 @@ export function DatePicker({ label, value, onChange, className, variant = "defau
   return (
     <div className={cn("flex flex-col", isEditor ? "gap-2" : "gap-1", className)}>
       {label && (
-        <label
+        <FieldLabel
           htmlFor={inputId}
+          required={required}
           className={isEditor ? editorLabelClassName : "text-sm font-medium text-muted-foreground"}
         >
           {label}
-        </label>
+        </FieldLabel>
       )}
       <Popover>
         <PopoverTrigger
           id={inputId}
+          aria-required={required || undefined}
           className={cn(
             "w-full text-left bg-background border border-input transition-colors",
             "flex h-11 items-center justify-between cursor-pointer rounded-lg px-4 text-sm",
