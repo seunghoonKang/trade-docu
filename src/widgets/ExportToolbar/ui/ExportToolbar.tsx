@@ -112,6 +112,19 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
             </Button>
           ))}
           <div className="w-full h-px bg-border my-1 md:hidden" />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start gap-2 md:hidden"
+            onClick={() => {
+              navigate("/profile");
+              setMenuOpen(false);
+            }}
+          >
+            <AvatarThumbnail user={user} className="size-6" />
+            {t("profile.title")}
+          </Button>
+          <div className="w-full h-px bg-border my-1 md:hidden" />
         </>
       )}
       {!isHistoryPage && (
