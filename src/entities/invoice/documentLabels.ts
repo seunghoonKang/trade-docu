@@ -2,6 +2,11 @@
 export const INVOICE_DOCUMENT_LABELS = {
   proformaInvoice: "PROFORMA INVOICE",
   to: "To:",
+  from: "From:",
+  attn: "Attn.",
+  tel: "Tel",
+  fax: "Fax",
+  representative: "Representative",
   faithfully: "Faithfully Yours,",
   date: "DATE",
   refNo: "REF NO",

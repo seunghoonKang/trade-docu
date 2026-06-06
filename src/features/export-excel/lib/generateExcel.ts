@@ -2,6 +2,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import type { Invoice } from "@/entities/invoice/model";
 import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice/documentLabels";
+import { buildBuyerDetailLines, buildSellerDetailLines } from "@/entities/invoice/partyDetails";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -27,17 +28,22 @@ export async function generateExcel(data: FormData) {
   titleCell.alignment = { horizontal: "center" };
   row += 2;
 
-  // Buyer + Date
+  const buyerLines = buildBuyerDetailLines(data.buyerSnapshot);
+  const buyerStartRow = row;
+
   ws.getCell(`B${row}`).value = `${L.to} ${data.buyerSnapshot.companyName}`;
   ws.getCell(`B${row}`).font = { bold: true };
   ws.getCell(`G${row}`).value = `${L.date}: ${data.date}`;
   row++;
-  ws.getCell(`B${row}`).value = data.buyerSnapshot.address;
-  ws.getCell(`G${row}`).value = `${L.refNo}: ${data.refNo}`;
+
+  for (const line of buyerLines) {
+    ws.getCell(`B${row}`).value = line;
+    row++;
+  }
+
+  ws.getCell(`G${buyerStartRow + 1}`).value = `${L.refNo}: ${data.refNo}`;
+  ws.getCell(`G${buyerStartRow + 2}`).value = `${L.orderNo}: ${data.orderNo}`;
   row++;
-  ws.getCell(`B${row}`).value = data.buyerSnapshot.tel;
-  ws.getCell(`G${row}`).value = `${L.orderNo}: ${data.orderNo}`;
-  row += 2;
 
   ws.getCell(`B${row}`).value = `${L.invoiceNo}: ${data.invoiceNo}`;
   row += 2;
@@ -123,6 +129,25 @@ export async function generateExcel(data: FormData) {
   ws.getCell(`G${row}`).alignment = { horizontal: "right" };
   ws.getCell(`F${row}`).border = { top: thick };
   ws.getCell(`G${row}`).border = { top: thick };
+  row += 2;
+
+  const sellerLines = buildSellerDetailLines({
+    companyName: data.sellerCompanyName,
+    address: data.sellerAddress,
+    tel: data.sellerTel,
+    fax: data.sellerFax,
+    representative: data.sellerRepresentative,
+  });
+
+  ws.getCell(`B${row}`).value = `${L.from} ${data.sellerCompanyName}`;
+  ws.getCell(`B${row}`).font = { bold: true };
+  row++;
+  for (const line of sellerLines) {
+    ws.getCell(`B${row}`).value = line;
+    row++;
+  }
+  ws.getCell(`B${row}`).value = L.authorizedSignature;
+  ws.getCell(`B${row}`).font = { italic: true, color: { argb: "FF666666" } };
   row += 2;
 
   // Bank info

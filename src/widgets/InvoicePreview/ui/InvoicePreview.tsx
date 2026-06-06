@@ -1,5 +1,7 @@
 import type { Invoice } from "@/entities/invoice/model";
 import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice/documentLabels";
+import { buildBuyerDetailLines, buildSellerDetailLines } from "@/entities/invoice/partyDetails";
+import { cn } from "@/shared/lib/utils";
 
 type PreviewData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -12,20 +14,23 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
   const hasExtraTerms = data.paymentTerms || data.packing || data.validity || data.remarks;
   const hasBankInfo = Boolean(data.bankInfo.bankName);
   const hasCharges = data.additionalCharges.length > 0;
+  const buyerLines = buildBuyerDetailLines(data.buyerSnapshot);
+  const sellerLines = buildSellerDetailLines({
+    companyName: data.sellerCompanyName,
+    address: data.sellerAddress,
+    tel: data.sellerTel,
+    fax: data.sellerFax,
+    representative: data.sellerRepresentative,
+  });
 
   return (
     <div
       id="invoice-preview-content"
       className="flex w-full max-w-[794px] min-h-[1123px] flex-col bg-white p-10 font-serif text-[12px] leading-[1.4] text-[#1a1a1a] paper-shadow sm:p-[60px] sm:text-[13px] print:border-none print:p-0 print:shadow-none"
     >
-      <div className="mb-10 flex items-start justify-between">
-        <div className="w-1/2">
-          <div className="mb-1 font-sans text-[10px] font-bold uppercase tracking-widest text-gray-500">{L.to}</div>
-          <div className="min-h-10 border-b-2 border-black pb-2">
-            <span className="text-sm font-bold">{data.buyerSnapshot.companyName || "—"}</span>
-          </div>
-        </div>
-        <div className="w-1/3 space-y-1 text-right">
+      <div className="mb-10 flex items-start justify-between gap-6">
+        <PartyBlock label={L.to} companyName={data.buyerSnapshot.companyName} lines={buyerLines} />
+        <div className="w-1/3 shrink-0 space-y-1 text-right">
           <PreviewMetaRow label={L.date} value={data.date || "—"} />
           <PreviewMetaRow label={L.refNo} value={data.refNo || "—"} />
           <PreviewMetaRow label={L.orderNo} value={data.orderNo || "—"} />
@@ -104,13 +109,18 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
         </div>
       )}
 
-      <div className="mt-auto flex flex-col items-center justify-between gap-8 sm:flex-row sm:items-end sm:gap-0">
-        <div className="text-center text-[11px] italic text-gray-400 sm:w-1/2 sm:text-left">
+      <div className="mt-auto flex flex-col items-stretch justify-between gap-8 sm:flex-row sm:items-end">
+        <div className="text-center text-[11px] italic text-gray-400 sm:w-1/3 sm:text-left">
           {L.faithfully}
         </div>
-        <div className="w-full border-t border-black pt-2 text-center sm:w-1/3">
-          <div className="font-bold uppercase">{data.sellerCompanyName || "—"}</div>
-          <div className="mt-4 text-[10px] text-gray-500">{L.authorizedSignature}</div>
+        <div className="w-full border-t border-black pt-2 sm:w-1/2">
+          <PartyBlock
+            label={L.from}
+            companyName={data.sellerCompanyName}
+            lines={sellerLines}
+            bordered={false}
+            signatureLabel={L.authorizedSignature}
+          />
         </div>
       </div>
 
@@ -126,6 +136,51 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
             {data.bankInfo.bankTel && <><span>{L.bankTel}</span><span>{data.bankInfo.bankTel}</span></>}
             {data.bankInfo.bankFax && <><span>{L.bankFax}</span><span>{data.bankInfo.bankFax}</span></>}
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PartyBlock({
+  label,
+  companyName,
+  lines,
+  bordered = true,
+  signatureUrl,
+  signatureLabel,
+}: {
+  label: string;
+  companyName: string;
+  lines: string[];
+  bordered?: boolean;
+  signatureUrl?: string;
+  signatureLabel?: string;
+}) {
+  return (
+    <div className="w-full sm:w-auto sm:min-w-[280px]">
+      <div className="mb-1 font-sans text-[10px] font-bold uppercase tracking-widest text-gray-500">{label}</div>
+      <div className={bordered ? "min-h-10 space-y-0.5 border-b-2 border-black pb-2" : "space-y-0.5"}>
+        <div className="text-sm font-bold">{companyName || "—"}</div>
+        {lines.map((line, i) => (
+          <div key={i} className="whitespace-pre-line font-sans text-[11px] leading-snug text-gray-700">
+            {line}
+          </div>
+        ))}
+      </div>
+      {signatureUrl && (
+        <div className="mt-4 flex justify-center">
+          <img
+            src={signatureUrl}
+            alt=""
+            className="max-h-20 max-w-[220px] object-contain"
+            crossOrigin="anonymous"
+          />
+        </div>
+      )}
+      {signatureLabel && (
+        <div className={cn("text-center font-sans text-[10px] text-gray-500", signatureUrl ? "mt-3" : "mt-6")}>
+          {signatureLabel}
         </div>
       )}
     </div>
