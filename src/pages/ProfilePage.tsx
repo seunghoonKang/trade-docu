@@ -1,18 +1,107 @@
 import { useEffect, useState } from "react";
+import { Building2, Info, Landmark, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Button, Input, FormSection } from "@/shared/ui";
+import { Button, Input } from "@/shared/ui";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { reloadLinkedIdentities } from "@/features/auth/api";
 import { clearOAuthLinkCallbackUrl, consumeOAuthLinkCallback } from "@/features/auth/lib/oauthLinkCallback";
 import { LinkedAuthMethods } from "@/features/auth/ui/LinkedAuthMethods";
+import { ProfileHeader, ProfilePageHeader, ProfileSectionCard } from "@/features/profile";
 import {
   getSeller,
   upsertSeller,
   seedSellerFromMetadata,
   type SellerProfile,
 } from "@/features/seller-management";
+
+interface ProfileFormFieldsProps {
+  profile: SellerProfile;
+  onUpdate: (key: keyof SellerProfile, value: string) => void;
+}
+
+function CompanyFields({ profile, onUpdate }: ProfileFormFieldsProps) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="space-y-4">
+      <Input
+        label={t("form.companyName")}
+        value={profile.companyName}
+        onChange={(e) => onUpdate("companyName", e.target.value)}
+      />
+      <Input
+        label={t("form.representative")}
+        value={profile.representative}
+        onChange={(e) => onUpdate("representative", e.target.value)}
+      />
+      <Input
+        label={t("form.address")}
+        value={profile.address}
+        onChange={(e) => onUpdate("address", e.target.value)}
+      />
+      <Input
+        label={t("form.tel")}
+        value={profile.tel}
+        onChange={(e) => onUpdate("tel", e.target.value)}
+      />
+      <Input
+        label={t("form.fax")}
+        value={profile.fax}
+        onChange={(e) => onUpdate("fax", e.target.value)}
+      />
+    </div>
+  );
+}
+
+function BankFields({ profile, onUpdate }: ProfileFormFieldsProps) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="space-y-4">
+      <Input
+        label={t("form.bankName")}
+        value={profile.bankName}
+        onChange={(e) => onUpdate("bankName", e.target.value)}
+      />
+      <Input
+        label={t("form.bankSwift")}
+        value={profile.bankSwift}
+        onChange={(e) => onUpdate("bankSwift", e.target.value)}
+      />
+      <Input
+        label={t("form.accountNo")}
+        value={profile.accountNo}
+        onChange={(e) => onUpdate("accountNo", e.target.value)}
+      />
+      <Input
+        label={t("form.accountee")}
+        value={profile.accountee}
+        onChange={(e) => onUpdate("accountee", e.target.value)}
+      />
+      <Input
+        label={t("form.bankAddress")}
+        value={profile.bankAddress}
+        onChange={(e) => onUpdate("bankAddress", e.target.value)}
+      />
+      <Input
+        label={t("form.bankTel")}
+        value={profile.bankTel}
+        onChange={(e) => onUpdate("bankTel", e.target.value)}
+      />
+      <Input
+        label={t("form.bankFax")}
+        value={profile.bankFax}
+        onChange={(e) => onUpdate("bankFax", e.target.value)}
+      />
+      <p className="text-xs text-muted-foreground flex items-start gap-1.5 p-3 bg-secondary/60 rounded-lg border border-dashed border-border">
+        <Info className="size-3.5 mt-0.5 shrink-0" aria-hidden />
+        {t("profile.bankHint")}
+      </p>
+    </div>
+  );
+}
 
 export function ProfilePage() {
   const { t } = useTranslation();
@@ -90,49 +179,83 @@ export function ProfilePage() {
   if (!user) return <Navigate to="/login" replace />;
   if (!profile) return null;
 
+  const saveButton = (className?: string) => (
+    <Button
+      variant="default"
+      size="lg"
+      onClick={handleSave}
+      disabled={saving}
+      className={className}
+    >
+      <Save aria-hidden />
+      {saving ? t("profile.saving") : t("profile.saveChanges")}
+    </Button>
+  );
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 bg-card border-b border-border px-6 py-3 flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
-          {t("profile.back")}
-        </Button>
-        <h1 className="text-lg font-bold text-foreground">{t("profile.title")}</h1>
-        <Button variant="secondary" size="sm" onClick={handleSave} disabled={saving}>
-          {t("profile.save")}
-        </Button>
-      </header>
+      <ProfilePageHeader
+        user={user}
+        saving={saving}
+        onBack={() => navigate("/")}
+        onSave={handleSave}
+      />
 
-      <main className="max-w-2xl mx-auto px-4 py-6">
-        <p className="text-sm text-muted-foreground mb-4">{t("profile.subtitle")}</p>
+      <main className="max-w-4xl mx-auto px-4 py-6 md:p-8 space-y-6 md:space-y-8 mt-16 md:mt-0 pb-28 md:pb-8">
+        <p className="text-sm text-muted-foreground hidden md:block">{t("profile.subtitle")}</p>
+
+        <ProfileHeader profile={profile} />
 
         <LinkedAuthMethods />
 
-        <FormSection title={t("profile.companyInfo")}>
-          <div className="grid grid-cols-2 gap-3">
-            <Input label={t("form.companyName")} value={profile.companyName} onChange={(e) => update("companyName", e.target.value)} />
-            <Input label={t("form.representative")} value={profile.representative} onChange={(e) => update("representative", e.target.value)} />
-            <Input label={t("form.address")} value={profile.address} onChange={(e) => update("address", e.target.value)} className="col-span-2" />
-            <Input label={t("form.tel")} value={profile.tel} onChange={(e) => update("tel", e.target.value)} />
-            <Input label={t("form.fax")} value={profile.fax} onChange={(e) => update("fax", e.target.value)} />
-          </div>
-        </FormSection>
+        {/* Desktop: 2-column company + bank */}
+        <div className="hidden md:grid lg:grid-cols-2 gap-8">
+          <section className="space-y-4">
+            <h3 className="text-xl font-semibold text-primary flex items-center gap-2">
+              <Building2 className="size-5" aria-hidden />
+              {t("profile.businessProfile")}
+            </h3>
+            <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
+              <CompanyFields profile={profile} onUpdate={update} />
+            </div>
+          </section>
+          <section className="space-y-4">
+            <h3 className="text-xl font-semibold text-primary flex items-center gap-2">
+              <Landmark className="size-5" aria-hidden />
+              {t("profile.financialInfo")}
+            </h3>
+            <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
+              <BankFields profile={profile} onUpdate={update} />
+            </div>
+          </section>
+        </div>
 
-        <FormSection title={t("form.bankInfo")}>
-          <div className="grid grid-cols-2 gap-3">
-            <Input label={t("form.bankName")} value={profile.bankName} onChange={(e) => update("bankName", e.target.value)} />
-            <Input label={t("form.bankSwift")} value={profile.bankSwift} onChange={(e) => update("bankSwift", e.target.value)} />
-            <Input label={t("form.accountNo")} value={profile.accountNo} onChange={(e) => update("accountNo", e.target.value)} />
-            <Input label={t("form.accountee")} value={profile.accountee} onChange={(e) => update("accountee", e.target.value)} />
-            <Input label={t("form.bankAddress")} value={profile.bankAddress} onChange={(e) => update("bankAddress", e.target.value)} className="col-span-2" />
-            <Input label={t("form.bankTel")} value={profile.bankTel} onChange={(e) => update("bankTel", e.target.value)} />
-            <Input label={t("form.bankFax")} value={profile.bankFax} onChange={(e) => update("bankFax", e.target.value)} />
-          </div>
-        </FormSection>
+        {/* Mobile: stacked cards */}
+        <div className="md:hidden space-y-6">
+          <ProfileSectionCard
+            icon={<Building2 className="size-5" />}
+            title={t("profile.businessProfile")}
+          >
+            <CompanyFields profile={profile} onUpdate={update} />
+          </ProfileSectionCard>
 
-        <div className="mt-6 flex justify-end">
-          <Button variant="secondary" size="sm" onClick={handleSave} disabled={saving}>
-            {t("profile.save")}
-          </Button>
+          <ProfileSectionCard
+            icon={<Landmark className="size-5" />}
+            title={t("profile.financialInfo")}
+            collapsible
+            defaultOpen
+          >
+            <BankFields profile={profile} onUpdate={update} />
+          </ProfileSectionCard>
+
+          <div className="pt-2">
+            {saveButton("w-full h-12")}
+          </div>
+        </div>
+
+        {/* Desktop footer save bar */}
+        <div className="hidden md:flex justify-end gap-3 pt-8 mt-2 border-t border-border">
+          {saveButton("shadow-lg font-semibold gap-2 px-6")}
         </div>
       </main>
     </div>
