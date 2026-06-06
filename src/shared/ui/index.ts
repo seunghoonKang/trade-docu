@@ -5,6 +5,7 @@ export { Textarea } from "./textarea";
 export { Select } from "./select";
 export { FormSection } from "./form-section";
 export { Layout } from "./layout";
+export { ConfirmDialog } from "./confirm-dialog";
 export { AvatarThumbnail } from "./AvatarThumbnail";
 export { DatePicker } from "./date-picker";
 
