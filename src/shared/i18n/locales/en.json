@@ -1,6 +1,6 @@
 {
   "app": { "title": "Proforma Invoice" },
-  "nav": { "login": "Login", "logout": "Logout", "signup": "Sign Up", "documents": "Documents", "history": "History", "settings": "Settings" },
+  "nav": { "login": "Login", "logout": "Logout", "signup": "Sign Up", "documents": "Documents", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Invoices", "packingLists": "Packing Lists", "archive": "Archive", "helpCenter": "Help Center", "comingSoon": "Coming soon" },
   "export": { "pdf": "PDF Download", "excel": "Excel Download", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF" },
   "form": {
     "documentInfo": "Document Info",

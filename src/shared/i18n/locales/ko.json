@@ -1,6 +1,6 @@
 {
   "app": { "title": "프로포마 인보이스" },
-  "nav": { "login": "로그인", "logout": "로그아웃", "signup": "회원가입", "documents": "문서", "history": "기록", "settings": "설정" },
+  "nav": { "login": "로그인", "logout": "로그아웃", "signup": "회원가입", "documents": "문서", "history": "기록", "settings": "설정", "dashboard": "대시보드", "invoices": "인보이스", "packingLists": "패킹 리스트", "archive": "아카이브", "helpCenter": "고객센터", "comingSoon": "준비 중" },
   "export": { "pdf": "PDF 다운로드", "excel": "엑셀 다운로드", "print": "인쇄", "export": "내보내기", "pdfFailed": "PDF 생성에 실패했습니다" },
   "form": {
     "documentInfo": "문서 정보",
