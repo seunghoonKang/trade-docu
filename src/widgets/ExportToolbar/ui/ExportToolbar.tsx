@@ -1,127 +1,307 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronDown, Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getPageTitleKey, mainNavItems } from "@/widgets/AppSidebar/lib/mainNavItems";
 import { toast } from "sonner";
-import { Button } from "@/shared/ui";
-import { LanguageSwitcher } from "@/features/i18n-switch";
+import { AppHeaderBrand, AvatarThumbnail, Button } from "@/shared/ui";
+import { GlobeLanguageSwitcher } from "@/features/i18n-switch";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { logout } from "@/features/auth";
+import { createEmptyInvoice } from "@/entities/invoice/model";
 import type { Invoice } from "@/entities/invoice/model";
+import { validateInvoice } from "@/entities/invoice/validate";
 import { generatePdf } from "@/features/export-pdf";
 import { generateExcel } from "@/features/export-excel";
 import { saveInvoice } from "@/features/invoice-crud";
 import { triggerPrint } from "@/features/print";
+import { clearDraft } from "@/features/draft-autosave";
+import { cn } from "@/shared/lib/utils";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
 interface Props {
-  formData: FormData;
-  onShowHistory?: () => void;
+  formData?: FormData;
+  page?: "documents" | "history";
 }
 
-export function ExportToolbar({ formData, onShowHistory }: Props) {
+export function ExportToolbar({ formData, page = "documents" }: Props) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+  const isHistoryPage = page === "history";
+  const pageTitle = t(getPageTitleKey(page));
+  const data = formData ?? createEmptyInvoice();
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setExportOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   async function handleLogout() {
     await logout();
     toast.success(t("auth.logoutSuccess"));
   }
 
+  function passesValidation(): boolean {
+    const { blocking, warnings } = validateInvoice(data);
+    if (blocking.length > 0) {
+      toast.error(
+        `${t("validation.blockedTitle")}: ${blocking.map((k) => t(`validation.${k}`)).join(", ")}`,
+      );
+      return false;
+    }
+    if (warnings.length > 0) {
+      toast.warning(warnings.map((k) => t(`validation.${k}`)).join(", "));
+    }
+    return true;
+  }
+
+  async function handlePdf() {
+    if (!passesValidation()) return;
+    try {
+      await generatePdf(data);
+    } catch {
+      toast.error(t("export.pdfFailed"));
+    }
+  }
+
+  function handleExcel() {
+    if (passesValidation()) generateExcel(data);
+  }
+
+  function handlePrint() {
+    if (passesValidation()) triggerPrint();
+  }
+
+  async function handleSave() {
+    if (!user || !passesValidation()) return;
+    await saveInvoice(user.id, data);
+    clearDraft();
+    toast.success(t("history.saved"));
+  }
+
+  const iconButtonClass =
+    "flex items-center justify-center size-10 rounded-full text-muted-foreground hover:text-primary hover:bg-accent transition-colors active:opacity-80";
+
   const menuItems = (
     <>
-      <Button variant="secondary" size="sm" onClick={() => { generatePdf(formData); setMenuOpen(false); }}>
-        {t("export.pdf")}
-      </Button>
-      <Button variant="secondary" size="sm" onClick={() => { generateExcel(formData, t); setMenuOpen(false); }}>
-        {t("export.excel")}
-      </Button>
-      <Button variant="secondary" size="sm" onClick={() => { triggerPrint(); setMenuOpen(false); }}>
-        {t("export.print")}
-      </Button>
       {user && (
         <>
-          <Button variant="secondary" size="sm" onClick={async () => {
-            await saveInvoice(user.id, formData);
-            alert(t("history.saved"));
-            setMenuOpen(false);
-          }}>
-            {t("history.save")}
+          {mainNavItems.map((item) => (
+            <Button
+              key={item.id}
+              variant={pathname === item.href ? "secondary" : "ghost"}
+              size="sm"
+              className="w-full justify-start md:hidden"
+              onClick={() => {
+                navigate(item.href);
+                setMenuOpen(false);
+              }}
+            >
+              {t(item.labelKey)}
+            </Button>
+          ))}
+          <div className="w-full h-px bg-border my-1 md:hidden" />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start gap-2 md:hidden"
+            onClick={() => {
+              navigate("/profile");
+              setMenuOpen(false);
+            }}
+          >
+            <AvatarThumbnail user={user} className="size-6" />
+            {t("profile.title")}
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => { onShowHistory?.(); setMenuOpen(false); }}>
-            {t("history.history")}
+          <div className="w-full h-px bg-border my-1 md:hidden" />
+        </>
+      )}
+      {!isHistoryPage && (
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start"
+            onClick={() => {
+              handlePdf();
+              setMenuOpen(false);
+            }}
+          >
+            {t("export.pdf")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start"
+            onClick={() => {
+              handleExcel();
+              setMenuOpen(false);
+            }}
+          >
+            {t("export.excel")}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            onClick={() => {
+              handlePrint();
+              setMenuOpen(false);
+            }}
+          >
+            {t("export.print")}
           </Button>
         </>
       )}
-      <div className="w-full h-px bg-gray-200 my-1 md:hidden" />
-      <div className="md:hidden">
-        <LanguageSwitcher />
-      </div>
-      <div className="w-full h-px bg-gray-200 my-1 md:hidden" />
-      <div className="md:hidden">
-        {user ? (
-          <Button variant="ghost" size="sm" onClick={() => { handleLogout(); setMenuOpen(false); }}>
-            {t("nav.logout")}
-          </Button>
-        ) : (
-          <Button variant="ghost" size="sm" onClick={() => { navigate("/login"); setMenuOpen(false); }}>
-            {t("nav.login")}
-          </Button>
-        )}
-      </div>
+      {user && (
+        <>
+          {!isHistoryPage && <div className="w-full h-px bg-border my-1" />}
+          {!isHistoryPage && (
+            <Button
+              variant="default"
+              size="sm"
+              className="w-full justify-start md:hidden"
+              onClick={() => {
+                handleSave();
+                setMenuOpen(false);
+              }}
+            >
+              {t("history.save")}
+            </Button>
+          )}
+        </>
+      )}
+      <div className="w-full h-px bg-border my-1" />
+      <GlobeLanguageSwitcher />
+      <div className="w-full h-px bg-border my-1" />
+      {user ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-start"
+          onClick={() => {
+            handleLogout();
+            setMenuOpen(false);
+          }}
+        >
+          {t("nav.logout")}
+        </Button>
+      ) : (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-start"
+          onClick={() => {
+            navigate("/login");
+            setMenuOpen(false);
+          }}
+        >
+          {t("nav.login")}
+        </Button>
+      )}
     </>
   );
 
   return (
-    <div className="flex items-center justify-between">
-      <h1 className="text-lg font-bold text-gray-900 whitespace-nowrap">{t("app.title")}</h1>
+    <div className="flex w-full items-center justify-between gap-4">
+      <AppHeaderBrand pageTitle={pageTitle} />
 
       {/* Desktop */}
-      <div className="hidden md:flex items-center gap-2">
-        <Button variant="secondary" size="sm" onClick={() => generatePdf(formData)}>
-          {t("export.pdf")}
-        </Button>
-        <Button variant="secondary" size="sm" onClick={() => generateExcel(formData, t)}>
-          {t("export.excel")}
-        </Button>
-        <Button variant="secondary" size="sm" onClick={() => triggerPrint()}>
-          {t("export.print")}
-        </Button>
-        {user && (
+      <div className="hidden md:flex items-center gap-2 shrink-0">
+        <div className={cn("flex items-center gap-1 mr-2", !isHistoryPage && "border-r border-border pr-4")}>
+          <GlobeLanguageSwitcher placement="below" showLabel={false} />
+          {!isHistoryPage && (
+            <button
+              type="button"
+              className={iconButtonClass}
+              title={t("export.print")}
+              aria-label={t("export.print")}
+              onClick={handlePrint}
+            >
+              <Printer className="size-5" />
+            </button>
+          )}
+        </div>
+
+        {!isHistoryPage && (
           <>
-            <div className="w-px h-6 bg-gray-200" />
-            <Button variant="secondary" size="sm" onClick={async () => {
-              await saveInvoice(user.id, formData);
-              alert(t("history.saved"));
-            }}>
-              {t("history.save")}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={onShowHistory}>
-              {t("history.history")}
-            </Button>
+            <div ref={exportRef} className="relative">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1 font-semibold text-xs tracking-wide"
+                onClick={() => setExportOpen((v) => !v)}
+                aria-expanded={exportOpen}
+              >
+                {t("export.export")}
+                <ChevronDown className={cn("size-3.5 transition-transform", exportOpen && "rotate-180")} />
+              </Button>
+              {exportOpen && (
+                <div className="absolute right-0 top-full z-30 mt-2 min-w-[160px] rounded-lg border border-border bg-card py-1 shadow-md">
+                  <button
+                    type="button"
+                    className="block w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors"
+                    onClick={() => {
+                      handlePdf();
+                      setExportOpen(false);
+                    }}
+                  >
+                    {t("export.pdf")}
+                  </button>
+                  <button
+                    type="button"
+                    className="block w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors"
+                    onClick={() => {
+                      handleExcel();
+                      setExportOpen(false);
+                    }}
+                  >
+                    {t("export.excel")}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {user && (
+              <Button variant="default" size="sm" className="font-semibold text-xs tracking-wide shadow-sm" onClick={handleSave}>
+                {t("history.save")}
+              </Button>
+            )}
           </>
         )}
-        <div className="w-px h-6 bg-gray-200" />
-        <LanguageSwitcher />
-        <div className="w-px h-6 bg-gray-200" />
-        {user ? (
-          <Button variant="ghost" size="sm" onClick={handleLogout}>
-            {t("nav.logout")}
-          </Button>
-        ) : (
-          <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
-            {t("nav.login")}
-          </Button>
-        )}
+
+        <div className="ml-2">
+          {user ? (
+            <AvatarThumbnail user={user} onClick={() => navigate("/profile")} />
+          ) : (
+            <Button
+              variant="default"
+              size="sm"
+              className="font-semibold text-xs tracking-wide shadow-sm"
+              onClick={() => navigate("/login")}
+            >
+              {t("nav.login")}
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Mobile hamburger */}
-      <div className="md:hidden relative">
+      <div className="md:hidden relative shrink-0">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="p-2 rounded hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-full hover:bg-muted transition-colors"
           aria-label="Menu"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -142,7 +322,7 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
         {menuOpen && (
           <>
             <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-            <div className="absolute right-0 top-full mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-lg p-3 flex flex-col gap-2 min-w-[180px]">
+            <div className="absolute right-0 top-full mt-2 z-20 bg-card border border-border rounded-lg shadow-lg p-3 flex flex-col gap-2 min-w-[200px]">
               {menuItems}
             </div>
           </>

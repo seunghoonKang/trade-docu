@@ -70,7 +70,11 @@ export function useInvoiceForm() {
   }, []);
 
   const loadForm = useCallback((data: InvoiceForm) => {
-    setForm(data);
+    setForm({
+      ...createEmptyInvoice(),
+      ...data,
+      sellerSignatureUrl: data.sellerSignatureUrl ?? "",
+    });
   }, []);
 
   return { form, updateField, updateBuyer, updateBankInfo, updateItem, addItem, removeItem, updateCharge, addCharge, removeCharge, loadForm };

@@ -9,6 +9,7 @@ import {
 } from "@/shared/ui";
 import { Button } from "@/shared/ui";
 import { resendSignupOtp, verifySignupOtp } from "../api";
+import { getAuthErrorMessage } from "../lib/errors";
 
 const OTP_LENGTH = 6;
 
@@ -35,7 +36,7 @@ export function OtpVerifyModal({ email, onSuccess, onClose }: Props) {
       await verifySignupOtp(email, otp);
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("auth.verifyFailed"));
+      setError(getAuthErrorMessage(err, t, "auth.verifyFailed"));
     } finally {
       setVerifying(false);
     }
@@ -50,7 +51,7 @@ export function OtpVerifyModal({ email, onSuccess, onClose }: Props) {
       setOtp("");
       setInfo(t("auth.codeResent"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("auth.resendFailed"));
+      setError(getAuthErrorMessage(err, t, "auth.resendFailed"));
     } finally {
       setResending(false);
     }
@@ -58,10 +59,10 @@ export function OtpVerifyModal({ email, onSuccess, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-20 bg-black/30 flex items-center justify-center">
-      <div className="bg-white rounded-lg border border-gray-200 w-full max-w-md p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center">{t("auth.verifyEmailTitle")}</h2>
-        <p className="text-base text-gray-700 mb-2 text-center">{t("auth.verifyOtpMessage", { email })}</p>
-        <p className="text-sm text-gray-500 mb-4 text-center">{t("auth.verifyEmailSpam")}</p>
+      <div className="bg-card rounded-lg border border-border w-full max-w-md p-6">
+        <h2 className="text-xl font-semibold text-foreground mb-4 text-center">{t("auth.verifyEmailTitle")}</h2>
+        <p className="text-base text-foreground mb-2 text-center">{t("auth.verifyOtpMessage", { email })}</p>
+        <p className="text-sm text-muted-foreground mb-4 text-center">{t("auth.verifyEmailSpam")}</p>
         <form onSubmit={handleVerify} className="space-y-4">
           {error && <p className="text-base text-red-500 text-center">{error}</p>}
           {info && <p className="text-base text-green-600 text-center">{info}</p>}
@@ -94,14 +95,14 @@ export function OtpVerifyModal({ email, onSuccess, onClose }: Props) {
               type="button"
               onClick={handleResend}
               disabled={resending}
-              className="text-base text-gray-500 hover:text-gray-700 disabled:opacity-50"
+              className="text-base text-muted-foreground hover:text-foreground disabled:opacity-50"
             >
               {resending ? t("auth.resending") : t("auth.resendCode")}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="text-base text-gray-500 hover:text-gray-700"
+              className="text-base text-muted-foreground hover:text-foreground"
             >
               {t("auth.verifyLater")}
             </button>

@@ -1,23 +1,24 @@
 import { useTranslation } from "react-i18next";
+import { cn } from "@/shared/lib/utils";
 import { Select } from "@/shared/ui";
+import { APP_LANGUAGES, resolveAppLanguage } from "@/shared/i18n/languages";
 
-const LANGUAGES = [
-  { value: "ko", label: "한국어" },
-  { value: "en", label: "English" },
-  { value: "zh", label: "中文" },
-  { value: "ja", label: "日本語" },
-];
-
-export function LanguageSwitcher() {
+export function LanguageSwitcher({
+  className,
+  selectClassName,
+}: {
+  className?: string;
+  selectClassName?: string;
+}) {
   const { i18n } = useTranslation();
-  const current = i18n.language.split("-")[0];
-  const value = LANGUAGES.some((l) => l.value === current) ? current : "ko";
+  const value = resolveAppLanguage(i18n.language);
   return (
-    <div className="w-full md:w-32">
+    <div className={cn("w-full md:w-32", className)}>
       <Select
         aria-label="Language"
-        options={LANGUAGES}
+        options={APP_LANGUAGES.map(({ value, label }) => ({ value, label }))}
         value={value}
+        className={selectClassName}
         onChange={(e) => i18n.changeLanguage(e.target.value)}
       />
     </div>

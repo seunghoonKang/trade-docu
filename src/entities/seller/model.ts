@@ -6,4 +6,5 @@ export interface Seller {
   tel: string;
   fax: string;
   representative: string;
+  signatureUrl: string;
 }

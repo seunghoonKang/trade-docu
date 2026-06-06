@@ -1,28 +1,43 @@
 import { ChevronDownIcon } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
+import { FieldLabel } from "./field-label";
+import { editorInputClassName, editorLabelClassName } from "./input";
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
+  required?: boolean;
   options: { value: string; label: string }[];
+  variant?: "default" | "editor";
 }
 
-export function Select({ label, options, className, id, ...props }: SelectProps) {
+export function Select({ label, required, options, className, id, variant = "default", ...props }: SelectProps) {
   const selectId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
+  const isEditor = variant === "editor";
+
   return (
-    <div className="flex flex-col gap-1">
+    <div className={cn("flex flex-col", isEditor ? "gap-2" : "gap-1")}>
       {label && (
-        <label htmlFor={selectId} className="text-sm font-medium text-gray-500">
+        <FieldLabel
+          htmlFor={selectId}
+          required={required}
+          className={isEditor ? editorLabelClassName : "text-sm font-medium text-muted-foreground"}
+        >
           {label}
-        </label>
+        </FieldLabel>
       )}
       <div className="relative">
         <select
           id={selectId}
+          aria-required={required || undefined}
           className={cn(
-            "w-full px-3 pr-9 py-2 text-base bg-white border border-gray-300 rounded-md transition-colors appearance-none",
-            "hover:border-gray-400",
-            "focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-500",
-            className
+            isEditor
+              ? cn(editorInputClassName, "appearance-none pr-9")
+              : [
+                  "w-full px-3 pr-9 py-2 text-base bg-card border border-input rounded-md transition-colors appearance-none",
+                  "hover:border-ring/60",
+                  "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                ],
+            className,
           )}
           {...props}
         >
@@ -32,7 +47,7 @@ export function Select({ label, options, className, id, ...props }: SelectProps)
             </option>
           ))}
         </select>
-        <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
+        <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
       </div>
     </div>
   );

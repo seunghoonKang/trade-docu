@@ -35,6 +35,7 @@ export interface Invoice {
   sellerTel: string;
   sellerFax: string;
   sellerRepresentative: string;
+  sellerSignatureUrl: string;
   buyerSnapshot: BuyerSnapshot;
   commodity: string;
   currency: string;
@@ -62,6 +63,7 @@ export function createEmptyInvoice(): Omit<Invoice, "id" | "userId" | "createdAt
     sellerTel: "",
     sellerFax: "",
     sellerRepresentative: "",
+    sellerSignatureUrl: "",
     buyerSnapshot: {
       companyName: "",
       address: "",

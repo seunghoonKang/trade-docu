@@ -13,6 +13,7 @@ function renderComponent(overrides = {}) {
   const props = {
     items: [createEmptyItem()],
     currency: "USD",
+    totalAmount: 0,
     onUpdateItem: vi.fn(),
     onAddItem: vi.fn(),
     onRemoveItem: vi.fn(),
@@ -46,7 +47,6 @@ describe("ItemsTableSection", () => {
 
   it("shows remove button when multiple items", () => {
     renderComponent({ items: [createEmptyItem(), createEmptyItem()] });
-    // 2 items × (mobile card + desktop table row) = 4 remove buttons in JSDOM
-    expect(screen.getAllByText(/remove/i)).toHaveLength(4);
+    expect(screen.getAllByLabelText(/remove/i)).toHaveLength(2);
   });
 });

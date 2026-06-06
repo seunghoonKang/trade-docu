@@ -1,26 +1,57 @@
 import { cn } from "@/shared/lib/utils";
+import { FieldLabel } from "./field-label";
+
+export const editorLabelClassName =
+  "text-xs font-semibold uppercase tracking-wider text-secondary-foreground";
+
+export const editorInputClassName =
+  "w-full h-11 px-4 text-sm bg-background border border-input rounded-lg transition-colors hover:border-ring/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-muted-foreground/50";
+
+export const editorInlineInputClassName =
+  "w-full h-9 px-2 text-sm bg-background border border-input rounded-lg transition-colors hover:border-ring/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary";
+
+export const editorInlineDismissButtonClassName =
+  "flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-colors hover:bg-muted hover:text-foreground";
+
+export const editorDismissButtonClassName = cn(
+  editorInlineDismissButtonClassName,
+  "absolute -right-2 -top-2",
+);
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  required?: boolean;
+  variant?: "default" | "editor";
 }
 
-export function Input({ label, className, id, ...props }: InputProps) {
+export function Input({ label, required, className, id, variant = "default", ...props }: InputProps) {
   const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
+  const isEditor = variant === "editor";
+
   return (
-    <div className="flex flex-col gap-1">
+    <div className={cn("flex flex-col", isEditor ? "gap-2" : "gap-1")}>
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-gray-500">
+        <FieldLabel
+          htmlFor={inputId}
+          required={required}
+          className={isEditor ? editorLabelClassName : "text-sm font-medium text-muted-foreground"}
+        >
           {label}
-        </label>
+        </FieldLabel>
       )}
       <input
         id={inputId}
+        aria-required={required || undefined}
         className={cn(
-          "w-full px-3 py-2 text-base bg-white border border-gray-300 rounded-md transition-colors",
-          "hover:border-gray-400",
-          "focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-500",
-          "placeholder:text-gray-300",
-          className
+          isEditor
+            ? editorInputClassName
+            : [
+                "w-full px-3 py-2 text-base bg-card border border-input rounded-md transition-colors",
+                "hover:border-ring/60",
+                "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                "placeholder:text-muted-foreground/50",
+              ],
+          className,
         )}
         {...props}
       />

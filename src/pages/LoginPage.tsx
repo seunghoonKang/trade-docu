@@ -1,19 +1,29 @@
 import { useState } from "react";
-import { LoginForm } from "@/features/auth";
-import { SignupForm } from "@/features/auth";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/app/providers/AuthProvider";
+import { needsOAuthOnboarding } from "@/features/auth/lib/profile";
+import { LoginMobileLayout } from "@/features/auth/ui/LoginMobileLayout";
+import { LoginHero } from "@/features/auth/ui/LoginHero";
+import { LoginPanel } from "@/features/auth/ui/LoginPanel";
 
 export function LoginPage() {
+  const { user, loading } = useAuth();
   const [mode, setMode] = useState<"login" | "signup">("login");
 
+  if (loading) {
+    return <div className="min-h-screen bg-background" aria-busy="true" />;
+  }
+  if (user) {
+    return <Navigate to={needsOAuthOnboarding(user) ? "/onboarding" : "/"} replace />;
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="w-full max-w-sm bg-white rounded-lg border border-gray-200 p-8">
-        {mode === "login" ? (
-          <LoginForm onSwitchToSignup={() => setMode("signup")} />
-        ) : (
-          <SignupForm onSwitchToLogin={() => setMode("login")} />
-        )}
+    <>
+      <LoginMobileLayout mode={mode} onSwitchMode={setMode} />
+      <div className="hidden md:flex min-h-screen">
+        <LoginHero />
+        <LoginPanel mode={mode} onSwitchMode={setMode} />
       </div>
-    </div>
+    </>
   );
 }
