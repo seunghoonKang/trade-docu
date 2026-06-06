@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button, Input, FormSection } from "@/shared/ui";
 import { useAuth } from "@/app/providers/AuthProvider";
@@ -19,15 +19,11 @@ export function ProfilePage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    if (!user) return;
     getSeller(user.id).then((seller) => {
       setProfile(seedSellerFromMetadata(user, seller));
     });
-  }, [user, loading, navigate]);
+  }, [user]);
 
   function update(key: keyof SellerProfile, value: string) {
     setProfile((prev) => (prev ? { ...prev, [key]: value } : prev));
@@ -65,6 +61,8 @@ export function ProfilePage() {
     }
   }
 
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
   if (!profile) return null;
 
   return (

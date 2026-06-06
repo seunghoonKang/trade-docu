@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/shared/ui";
 import { InvoiceForm } from "@/widgets/InvoiceForm";
@@ -8,6 +8,8 @@ import { InvoiceHistory } from "@/widgets/InvoiceHistory";
 import { useInvoiceForm } from "@/widgets/InvoiceForm";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { getSeller, ProfileNudgeBanner } from "@/features/seller-management";
+import type { BankInfo } from "@/entities/bank-info/model";
+import type { Seller } from "@/entities/seller/model";
 import { createEmptyInvoice } from "@/entities/invoice/model";
 import {
   loadDraft,
@@ -23,48 +25,49 @@ export function InvoicePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showHistory, setShowHistory] = useState(false);
-  const [pendingDraft, setPendingDraft] = useState<InvoiceDraft | null>(null);
+  const [pendingDraft, setPendingDraft] = useState<InvoiceDraft | null>(() => {
+    const draft = loadDraft();
+    return draft && !isEmptyDraft(draft) ? draft : null;
+  });
   const [needsProfile, setNeedsProfile] = useState(false);
+
+  const onSellerLoaded = useEffectEvent((seller: (Seller & BankInfo) | null) => {
+    if (seller) {
+      invoiceForm.updateField("sellerCompanyName", seller.companyName);
+      invoiceForm.updateField("sellerAddress", seller.address);
+      invoiceForm.updateField("sellerTel", seller.tel);
+      invoiceForm.updateField("sellerFax", seller.fax);
+      invoiceForm.updateField("sellerRepresentative", seller.representative);
+      invoiceForm.updateBankInfo("bankName", seller.bankName);
+      invoiceForm.updateBankInfo("bankSwift", seller.bankSwift);
+      invoiceForm.updateBankInfo("accountNo", seller.accountNo);
+      invoiceForm.updateBankInfo("accountee", seller.accountee);
+      invoiceForm.updateBankInfo("bankAddress", seller.bankAddress);
+      invoiceForm.updateBankInfo("bankTel", seller.bankTel);
+      invoiceForm.updateBankInfo("bankFax", seller.bankFax);
+      setNeedsProfile(false);
+    } else {
+      setNeedsProfile(true);
+    }
+  });
 
   useEffect(() => {
     if (!user) {
       setNeedsProfile(false);
       return;
     }
-    getSeller(user.id).then((seller) => {
-      if (seller) {
-        invoiceForm.updateField("sellerCompanyName", seller.companyName);
-        invoiceForm.updateField("sellerAddress", seller.address);
-        invoiceForm.updateField("sellerTel", seller.tel);
-        invoiceForm.updateField("sellerFax", seller.fax);
-        invoiceForm.updateField("sellerRepresentative", seller.representative);
-        invoiceForm.updateBankInfo("bankName", seller.bankName);
-        invoiceForm.updateBankInfo("bankSwift", seller.bankSwift);
-        invoiceForm.updateBankInfo("accountNo", seller.accountNo);
-        invoiceForm.updateBankInfo("accountee", seller.accountee);
-        invoiceForm.updateBankInfo("bankAddress", seller.bankAddress);
-        invoiceForm.updateBankInfo("bankTel", seller.bankTel);
-        invoiceForm.updateBankInfo("bankFax", seller.bankFax);
-        setNeedsProfile(false);
-      } else {
-        setNeedsProfile(true);
-      }
-    });
+    getSeller(user.id).then(onSellerLoaded);
   }, [user]);
 
-  // Offer to restore a previous draft once, without auto-overwriting the form.
-  useEffect(() => {
-    const draft = loadDraft();
-    if (draft && !isEmptyDraft(draft)) setPendingDraft(draft);
-  }, []);
+  const onAutosave = useEffectEvent(() => {
+    if (pendingDraft) return;
+    if (!isEmptyDraft(invoiceForm.form)) saveDraft(invoiceForm.form);
+  });
 
   // Auto-save the working draft (debounced). Paused while a restore banner is
   // pending so an ignored prompt can't clobber the saved draft.
   useEffect(() => {
-    if (pendingDraft) return;
-    const id = setTimeout(() => {
-      if (!isEmptyDraft(invoiceForm.form)) saveDraft(invoiceForm.form);
-    }, 500);
+    const id = setTimeout(onAutosave, 500);
     return () => clearTimeout(id);
   }, [invoiceForm.form, pendingDraft]);
 

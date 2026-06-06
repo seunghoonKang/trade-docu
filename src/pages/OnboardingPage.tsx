@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
-import { User } from "lucide-react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import type { User } from "@supabase/supabase-js";
+import { User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { completeOAuthProfile } from "@/features/auth/api";
@@ -9,26 +10,12 @@ import { getOAuthDisplayName, needsOAuthOnboarding } from "@/features/auth/lib/p
 import { Button } from "@/shared/ui";
 import { AuthTextField } from "@/features/auth/ui/AuthTextField";
 
-export function OnboardingPage() {
+function OnboardingForm({ user }: { user: User }) {
   const { t } = useTranslation();
-  const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [name, setName] = useState("");
+  const [name, setName] = useState(() => getOAuthDisplayName(user));
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      navigate("/login", { replace: true });
-      return;
-    }
-    if (!needsOAuthOnboarding(user)) {
-      navigate("/", { replace: true });
-      return;
-    }
-    setName(getOAuthDisplayName(user));
-  }, [user, loading, navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,8 +31,6 @@ export function OnboardingPage() {
       setSubmitting(false);
     }
   }
-
-  if (loading || !user) return null;
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -63,7 +48,7 @@ export function OnboardingPage() {
             <AuthTextField
               id="onboarding-name"
               type="text"
-              icon={<User />}
+              icon={<UserIcon />}
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t("auth.displayNamePlaceholder")}
@@ -100,4 +85,14 @@ export function OnboardingPage() {
       </div>
     </div>
   );
+}
+
+export function OnboardingPage() {
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!needsOAuthOnboarding(user)) return <Navigate to="/" replace />;
+
+  return <OnboardingForm user={user} />;
 }
