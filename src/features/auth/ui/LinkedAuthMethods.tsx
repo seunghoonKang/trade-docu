@@ -3,7 +3,6 @@ import {
   CheckCircle2,
   Link2,
   Mail,
-  MessageCircle,
   Shield,
   Unlink,
   UserCircle,
@@ -11,11 +10,13 @@ import {
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "@/shared/ui";
+import { cn } from "@/shared/lib/utils";
 import { LinkedAuthSkeleton, ProfileSectionCard } from "@/features/profile";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { linkOAuthProvider, unlinkOAuthProvider } from "../api";
 import { useLinkedIdentities } from "../hooks/useLinkedIdentities";
 import { getAuthErrorMessage } from "../lib/errors";
+import { KakaoIcon } from "./KakaoIcon";
 import {
   canUnlinkIdentity,
   getAuthProviderLabelKey,
@@ -46,13 +47,17 @@ function ProviderIcon({ provider, className }: { provider: LinkedAuthProvider; c
       </svg>
     );
   }
-  return <MessageCircle className={cls} aria-hidden />;
+  return (
+    <span className="inline-flex size-5 items-center justify-center rounded-md bg-[#FEE500]">
+      <KakaoIcon className="size-3.5 text-[#191919]" />
+    </span>
+  );
 }
 
 function MobileRowIcon({ provider }: { provider: LinkedAuthProvider }) {
   const iconClass = "size-5 text-primary";
   if (provider === "email") return <Mail className={iconClass} aria-hidden />;
-  if (provider === "kakao") return <MessageCircle className={iconClass} aria-hidden />;
+  if (provider === "kakao") return <KakaoIcon className="size-4 text-[#191919]" aria-hidden />;
   return <UserCircle className={iconClass} aria-hidden />;
 }
 
@@ -202,7 +207,12 @@ export function LinkedAuthMethods() {
               return (
                 <div key={provider} className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="size-8 flex items-center justify-center bg-accent rounded-lg shrink-0">
+                    <div
+                      className={cn(
+                        "size-8 flex items-center justify-center rounded-lg shrink-0",
+                        provider === "kakao" ? "bg-[#FEE500]" : "bg-accent",
+                      )}
+                    >
                       <MobileRowIcon provider={provider} />
                     </div>
                     <div className="min-w-0">
