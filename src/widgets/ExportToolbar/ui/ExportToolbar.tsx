@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, LogIn, Printer } from "lucide-react";
+import { ChevronDown, Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -263,14 +263,14 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
           {user ? (
             <AvatarThumbnail user={user} onClick={() => navigate("/profile")} />
           ) : (
-            <button
-              type="button"
-              className={iconButtonClass}
-              aria-label={t("nav.login")}
+            <Button
+              variant="default"
+              size="sm"
+              className="font-semibold text-xs tracking-wide shadow-sm"
               onClick={() => navigate("/login")}
             >
-              <LogIn className="size-5" />
-            </button>
+              {t("nav.login")}
+            </Button>
           )}
         </div>
       </div>
