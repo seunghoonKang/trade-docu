@@ -1,5 +1,6 @@
 {
   "app": { "title": "Proforma Invoice" },
+  "editor": { "title": "Document Editor: Proforma Invoice" },
   "nav": { "login": "Login", "logout": "Logout", "signup": "Sign Up", "documents": "Documents", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Invoices", "packingLists": "Packing Lists", "archive": "Archive", "helpCenter": "Help Center", "comingSoon": "Coming soon" },
   "export": { "pdf": "PDF Download", "excel": "Excel Download", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF" },
   "form": {
@@ -33,6 +34,7 @@
     "unitPrice": "Unit Price",
     "amount": "Amount",
     "addItem": "Add Item",
+    "addItemCta": "Add Item",
     "removeItem": "Remove",
     "additionalCharges": "Additional Charges",
     "addCharge": "Add Charge",

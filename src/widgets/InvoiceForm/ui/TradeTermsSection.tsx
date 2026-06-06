@@ -1,3 +1,4 @@
+import { Handshake } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/shared/ui";
 import { Select } from "@/shared/ui";
@@ -24,15 +25,15 @@ const INCOTERMS_OPTIONS = [
 export function TradeTermsSection({ commodity, currency, paymentTerms, incoterms, delivery, packing, remarks, onUpdate }: Props) {
   const { t } = useTranslation();
   return (
-    <FormSection title={t("form.tradeTerms")}>
-      <div className="grid grid-cols-2 gap-3">
-        <Input label={t("form.commodity")} value={commodity} onChange={(e) => onUpdate("commodity", e.target.value)} className="col-span-2" />
-        <Select label={t("form.currency")} options={CURRENCY_OPTIONS} value={currency} onChange={(e) => onUpdate("currency", e.target.value)} />
-        <Select label={t("form.incoterms")} options={INCOTERMS_OPTIONS} value={incoterms} onChange={(e) => onUpdate("incoterms", e.target.value)} />
-        <Input label={t("form.paymentTerms")} value={paymentTerms} onChange={(e) => onUpdate("paymentTerms", e.target.value)} />
-        <Input label={t("form.delivery")} value={delivery} onChange={(e) => onUpdate("delivery", e.target.value)} />
-        <Input label={t("form.packing")} value={packing} onChange={(e) => onUpdate("packing", e.target.value)} />
-        <Input label={t("form.remarks")} value={remarks} onChange={(e) => onUpdate("remarks", e.target.value)} />
+    <FormSection title={t("form.tradeTerms")} icon={Handshake} variant="card">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <Input variant="editor" label={t("form.commodity")} value={commodity} onChange={(e) => onUpdate("commodity", e.target.value)} className="sm:col-span-2" />
+        <Select variant="editor" label={t("form.currency")} options={CURRENCY_OPTIONS} value={currency} onChange={(e) => onUpdate("currency", e.target.value)} />
+        <Select variant="editor" label={t("form.incoterms")} options={INCOTERMS_OPTIONS} value={incoterms} onChange={(e) => onUpdate("incoterms", e.target.value)} />
+        <Input variant="editor" label={t("form.paymentTerms")} value={paymentTerms} onChange={(e) => onUpdate("paymentTerms", e.target.value)} />
+        <Input variant="editor" label={t("form.delivery")} value={delivery} onChange={(e) => onUpdate("delivery", e.target.value)} />
+        <Input variant="editor" label={t("form.packing")} value={packing} onChange={(e) => onUpdate("packing", e.target.value)} />
+        <Input variant="editor" label={t("form.remarks")} value={remarks} onChange={(e) => onUpdate("remarks", e.target.value)} />
       </div>
     </FormSection>
   );

@@ -1,5 +1,6 @@
 {
   "app": { "title": "プロフォーマインボイス" },
+  "editor": { "title": "文書エディター: Proforma Invoice" },
   "nav": { "login": "ログイン", "logout": "ログアウト", "signup": "新規登録", "documents": "ドキュメント", "history": "履歴", "settings": "設定", "dashboard": "ダッシュボード", "invoices": "インボイス", "packingLists": "パッキングリスト", "archive": "アーカイブ", "helpCenter": "ヘルプセンター", "comingSoon": "準備中" },
   "export": { "pdf": "PDFダウンロード", "excel": "Excelダウンロード", "print": "印刷", "export": "エクスポート", "pdfFailed": "PDFの生成に失敗しました" },
   "form": {
@@ -33,6 +34,7 @@
     "unitPrice": "単価",
     "amount": "金額",
     "addItem": "品目追加",
+    "addItemCta": "品目を追加",
     "removeItem": "削除",
     "additionalCharges": "追加費用",
     "addCharge": "費用追加",

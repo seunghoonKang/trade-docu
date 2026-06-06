@@ -13,6 +13,7 @@ function renderComponent(overrides = {}) {
   const props = {
     items: [createEmptyItem()],
     currency: "USD",
+    totalAmount: 0,
     onUpdateItem: vi.fn(),
     onAddItem: vi.fn(),
     onRemoveItem: vi.fn(),

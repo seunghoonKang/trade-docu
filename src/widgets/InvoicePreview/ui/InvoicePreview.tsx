@@ -3,132 +3,149 @@ import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice/documentLabels"
 
 type PreviewData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
+function formatTermsOfTrade(data: PreviewData) {
+  const parts = [data.incoterms, data.commodity].filter(Boolean);
+  return parts.length > 0 ? parts.join(" / ") : "—";
+}
+
 export function InvoicePreview({ data }: { data: PreviewData }) {
+  const hasExtraTerms = data.paymentTerms || data.packing || data.validity || data.remarks;
+  const hasBankInfo = Boolean(data.bankInfo.bankName);
+  const hasCharges = data.additionalCharges.length > 0;
+
   return (
     <div
       id="invoice-preview-content"
-      className="bg-card border border-border rounded p-8 text-sm leading-relaxed print:border-none print:p-0"
+      className="flex w-full max-w-[794px] min-h-[1123px] flex-col bg-white p-10 font-serif text-[12px] leading-[1.4] text-[#1a1a1a] paper-shadow sm:p-[60px] sm:text-[13px] print:border-none print:p-0 print:shadow-none"
     >
-      {/* Header */}
-      <div className="flex justify-between items-start mb-6">
-        <div>
-          <p className="text-muted-foreground">{L.to}</p>
-          <p className="text-base font-semibold">{data.buyerSnapshot.companyName || "—"}</p>
-          <p className="text-muted-foreground">{data.buyerSnapshot.address}</p>
-          <p className="text-muted-foreground">{data.buyerSnapshot.tel}</p>
+      <div className="mb-10 flex items-start justify-between">
+        <div className="w-1/2">
+          <div className="mb-1 font-sans text-[10px] font-bold uppercase tracking-widest text-gray-500">{L.to}</div>
+          <div className="min-h-10 border-b-2 border-black pb-2">
+            <span className="text-sm font-bold">{data.buyerSnapshot.companyName || "—"}</span>
+          </div>
         </div>
-        <div className="text-right">
-          <p className="text-muted-foreground">{L.date}</p>
-          <p>{data.date || "—"}</p>
-          <p className="text-muted-foreground mt-2">{L.refNo}</p>
-          <p>{data.refNo || "—"}</p>
-          <p className="text-muted-foreground mt-2">{L.orderNo}</p>
-          <p>{data.orderNo || "—"}</p>
+        <div className="w-1/3 space-y-1 text-right">
+          <PreviewMetaRow label={L.date} value={data.date || "—"} />
+          <PreviewMetaRow label={L.refNo} value={data.refNo || "—"} />
+          <PreviewMetaRow label={L.orderNo} value={data.orderNo || "—"} />
         </div>
       </div>
 
-      {/* Title */}
-      <h1 className="text-center text-lg font-bold tracking-wide mb-6 border-b pb-3">
-        {L.proformaInvoice}
-      </h1>
-
-      {/* Invoice No */}
-      <p className="text-muted-foreground mb-4">{L.invoiceNo}: {data.invoiceNo || "—"}</p>
-
-      {/* Terms */}
-      <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 mb-6">
-        {data.delivery && <><span className="text-muted-foreground">*{L.delivery}</span><span>: {data.delivery}</span></>}
-        {data.paymentTerms && <><span className="text-muted-foreground">*{L.paymentTerms}</span><span>: {data.paymentTerms}</span></>}
-        {data.packing && <><span className="text-muted-foreground">*{L.packing}</span><span>: {data.packing}</span></>}
-        {data.validity && <><span className="text-muted-foreground">*{L.validity}</span><span>: {data.validity}</span></>}
-        {data.incoterms && <><span className="text-muted-foreground">*{L.incoterms}</span><span>: {data.incoterms}</span></>}
-        {data.remarks && <><span className="text-muted-foreground">*{L.remarks}</span><span>: {data.remarks}</span></>}
+      <div className="mb-10 border-t-4 border-double border-black pt-4 text-center">
+        <h3 className="text-2xl font-black uppercase tracking-[0.3em] sm:text-[28px] sm:tracking-[0.5em]">
+          {L.proformaInvoice}
+        </h3>
       </div>
 
-      {/* Commodity */}
-      {data.commodity && <p className="text-muted-foreground mb-3">{L.commodity}: {data.commodity}</p>}
+      <div className="mb-8 grid grid-cols-1 gap-6 font-sans sm:grid-cols-2 sm:gap-10">
+        <div className="space-y-1">
+          <PreviewSummaryRow label={L.invoiceNo} value={data.invoiceNo || "—"} />
+          <PreviewSummaryRow label={L.termsOfTrade} value={formatTermsOfTrade(data)} />
+        </div>
+        <div className="sm:text-right">
+          <div className="text-[10px] font-bold text-gray-400">{L.shipVia}</div>
+          <div className="font-medium">{data.delivery || "—"}</div>
+        </div>
+      </div>
 
-      {/* Items Table */}
-      <table className="w-full table-fixed border-collapse mb-4">
-        <colgroup>
-          <col className="w-[32%]" />
-          <col className="w-[12%]" />
-          <col className="w-[8%]" />
-          <col className="w-[8%]" />
-          <col className="w-[12%]" />
-          <col className="w-[12%]" />
-          <col className="w-[16%]" />
-        </colgroup>
-        <thead>
-          <tr className="border-b-2 border-foreground font-semibold text-muted-foreground">
-            <th className="text-left py-2 pr-2">{L.description}</th>
-            <th className="text-left py-2 pr-2">{L.hsCode}</th>
-            <th className="text-center py-2 px-1">{L.qty}</th>
-            <th className="text-center py-2 px-1">{L.unit}</th>
-            <th className="text-right py-2 pl-2">{L.unitPrice}</th>
-            <th className="text-right py-2 pr-4 whitespace-nowrap">{L.amount}</th>
-            <th className="text-left py-2 pl-4">{L.remarks}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.items.map((item, i) => (
-            <tr key={i} className="border-b border-border">
-              <td className="py-1.5 pr-2 break-words">{item.description}</td>
-              <td className="py-1.5 pr-2">{item.hsCode}</td>
-              <td className="py-1.5 text-center px-1">{item.qty || ""}</td>
-              <td className="py-1.5 text-center px-1">{item.unit}</td>
-              <td className="py-1.5 text-right pl-2 whitespace-nowrap">{item.unitPrice ? item.unitPrice.toFixed(2) : ""}</td>
-              <td className="py-1.5 text-right pr-4 whitespace-nowrap">{item.amount ? item.amount.toFixed(2) : ""}</td>
-              <td className="py-1.5 pl-4 break-words">{item.remarks}</td>
+      <div className="overflow-x-auto">
+        <table className="mb-10 w-full min-w-[500px] border-collapse">
+          <thead>
+            <tr className="border-y-2 border-black text-center text-[11px] font-bold">
+              <th className="w-[40%] py-2 text-left">{L.descriptionOfGoods}</th>
+              <th className="py-2">{L.hsCode}</th>
+              <th className="py-2">{L.qty}</th>
+              <th className="py-2">{L.unit}</th>
+              <th className="py-2">{L.unitPrice}</th>
+              <th className="py-2 text-right">{L.amount}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Additional Charges */}
-      {data.additionalCharges.length > 0 && (
-        <div className="mb-2">
-          {data.additionalCharges.map((charge, i) => (
-            <div key={i} className="flex justify-between py-0.5">
-              <span className="text-muted-foreground">{charge.description}</span>
-              <span>{charge.amount.toFixed(2)}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Total */}
-      <div className="border-t-2 border-foreground pt-2 text-right text-base font-bold">
-        {L.total}: {data.currency} {data.totalAmount.toFixed(2)}
+          </thead>
+          <tbody className="text-center">
+            {data.items.map((item, i) => (
+              <tr key={i} className="border-b border-gray-200">
+                <td className="py-4 text-left">
+                  <div className="font-bold">{item.description || "—"}</div>
+                  {item.remarks && <div className="text-[10px] text-gray-500">{item.remarks}</div>}
+                </td>
+                <td className="py-4">{item.hsCode || "—"}</td>
+                <td className="py-4">{item.qty ? item.qty.toFixed(2) : "—"}</td>
+                <td className="py-4">{item.unit || "—"}</td>
+                <td className="py-4">{item.unitPrice ? item.unitPrice.toFixed(2) : "—"}</td>
+                <td className="py-4 text-right">{item.amount ? item.amount.toFixed(2) : "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+          {hasCharges && (
+            <tbody>
+              {data.additionalCharges.map((charge, i) => (
+                <tr key={`charge-${i}`} className="border-b border-gray-200">
+                  <td className="py-2 text-left text-gray-600" colSpan={5}>{charge.description}</td>
+                  <td className="py-2 text-right">{charge.amount.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          )}
+          <tfoot>
+            <tr>
+              <td className="py-4 text-right text-sm font-black" colSpan={5}>{L.grandTotal}: {data.currency}</td>
+              <td className="py-4 text-right text-sm font-black">{data.totalAmount.toFixed(2)}</td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
 
-      {/* Closing */}
-      <p className="mt-8 text-muted-foreground">{L.faithfully}</p>
-
-      {/* Seller Info */}
-      {data.sellerCompanyName && (
-        <div className="mt-4 text-muted-foreground">
-          <p className="text-base font-semibold text-foreground">{data.sellerCompanyName}</p>
-          <p>{data.sellerAddress}</p>
-          {data.sellerTel && <p>Tel: {data.sellerTel}</p>}
-          {data.sellerFax && <p>Fax: {data.sellerFax}</p>}
+      {hasExtraTerms && (
+        <div className="mb-8 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 font-sans text-[11px] text-gray-600">
+          {data.paymentTerms && <><span className="font-bold uppercase">{L.paymentTerms}</span><span>{data.paymentTerms}</span></>}
+          {data.packing && <><span className="font-bold uppercase">{L.packing}</span><span>{data.packing}</span></>}
+          {data.validity && <><span className="font-bold uppercase">{L.validity}</span><span>{data.validity}</span></>}
+          {data.remarks && <><span className="font-bold uppercase">{L.remarks}</span><span>{data.remarks}</span></>}
         </div>
       )}
 
-      {/* Bank Info */}
-      {data.bankInfo.bankName && (
-        <div className="mt-6 border-t border-border pt-4">
-          <p className="font-semibold text-foreground mb-1">{L.bankInfo}</p>
-          <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-muted-foreground">
+      <div className="mt-auto flex flex-col items-center justify-between gap-8 sm:flex-row sm:items-end sm:gap-0">
+        <div className="text-center text-[11px] italic text-gray-400 sm:w-1/2 sm:text-left">
+          {L.faithfully}
+        </div>
+        <div className="w-full border-t border-black pt-2 text-center sm:w-1/3">
+          <div className="font-bold uppercase">{data.sellerCompanyName || "—"}</div>
+          <div className="mt-4 text-[10px] text-gray-500">{L.authorizedSignature}</div>
+        </div>
+      </div>
+
+      {hasBankInfo && (
+        <div className="mt-8 border-t border-gray-200 pt-4 font-sans text-[11px]">
+          <p className="mb-2 font-bold uppercase">{L.bankInfo}</p>
+          <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-gray-600">
             <span>{L.bankName}</span><span>{data.bankInfo.bankName}</span>
             <span>{L.bankSwift}</span><span>{data.bankInfo.bankSwift}</span>
             <span>{L.accountNo}</span><span>{data.bankInfo.accountNo}</span>
             <span>{L.accountee}</span><span>{data.bankInfo.accountee}</span>
             {data.bankInfo.bankAddress && <><span>{L.bankAddress}</span><span>{data.bankInfo.bankAddress}</span></>}
             {data.bankInfo.bankTel && <><span>{L.bankTel}</span><span>{data.bankInfo.bankTel}</span></>}
+            {data.bankInfo.bankFax && <><span>{L.bankFax}</span><span>{data.bankInfo.bankFax}</span></>}
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function PreviewMetaRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between border-b border-gray-200">
+      <span className="text-gray-500">{label}:</span>
+      <span className="font-bold">{value}</span>
+    </div>
+  );
+}
+
+function PreviewSummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex border-b border-gray-100 pb-1">
+      <span className="w-32 text-[10px] font-bold text-gray-400">{label}:</span>
+      <span className="font-medium">{value}</span>
     </div>
   );
 }

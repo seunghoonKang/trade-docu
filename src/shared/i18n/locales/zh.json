@@ -1,5 +1,6 @@
 {
   "app": { "title": "形式发票" },
+  "editor": { "title": "文档编辑器: Proforma Invoice" },
   "nav": { "login": "登录", "logout": "退出", "signup": "注册", "documents": "文档", "history": "历史", "settings": "设置", "dashboard": "仪表盘", "invoices": "发票", "packingLists": "装箱单", "archive": "归档", "helpCenter": "帮助中心", "comingSoon": "即将推出" },
   "export": { "pdf": "PDF 下载", "excel": "Excel 下载", "print": "打印", "export": "导出", "pdfFailed": "PDF 生成失败" },
   "form": {
@@ -33,6 +34,7 @@
     "unitPrice": "单价",
     "amount": "金额",
     "addItem": "添加商品",
+    "addItemCta": "添加商品",
     "removeItem": "删除",
     "additionalCharges": "附加费用",
     "addCharge": "添加费用",

@@ -75,11 +75,11 @@ export function InvoicePage() {
       {pendingDraft && (
         <DraftRestoreBanner onRestore={restorePendingDraft} onDiscard={discardPendingDraft} />
       )}
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
-        <div className="w-full lg:w-1/2 overflow-y-auto bg-card border-r border-border">
+      <div className="flex h-[calc(100vh-4rem)] flex-col lg:flex-row">
+        <div className="editor-container w-full overflow-y-auto border-b border-border bg-[#cbdbf5] lg:w-1/2 lg:border-b-0 lg:border-r">
           <InvoiceForm {...invoiceForm} />
         </div>
-        <div id="invoice-preview" className="hidden lg:block w-1/2 overflow-y-auto bg-background p-6">
+        <div id="invoice-preview" className="hidden w-1/2 overflow-y-auto bg-accent lg:flex lg:justify-center lg:p-8">
           <InvoicePreview data={invoiceForm.form} />
         </div>
       </div>
