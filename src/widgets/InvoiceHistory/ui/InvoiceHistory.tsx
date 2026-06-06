@@ -32,21 +32,21 @@ export function InvoiceHistory({ onLoad, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-20 bg-black/30 flex items-center justify-center">
-      <div className="bg-white rounded-lg border border-gray-200 w-full max-w-lg max-h-[70vh] overflow-y-auto p-6">
+      <div className="bg-card rounded-lg border border-border w-full max-w-lg max-h-[70vh] overflow-y-auto p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">{t("history.title")}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>{t("history.close")}</Button>
         </div>
         {invoices.length === 0 ? (
-          <p className="text-base text-gray-400">{t("history.noInvoices")}</p>
+          <p className="text-base text-muted-foreground/70">{t("history.noInvoices")}</p>
         ) : (
           <ul className="space-y-2">
             {invoices.map((inv) => (
-              <li key={inv.id} className="flex items-center justify-between border border-gray-100 rounded p-3">
+              <li key={inv.id} className="flex items-center justify-between border border-border rounded p-3">
                 <div>
                   <p className="text-base font-medium">{inv.invoiceNo || t("history.noNumber")}</p>
-                  <p className="text-sm text-gray-500">{inv.date} — {inv.buyerSnapshot.companyName || t("history.noBuyer")}</p>
-                  <p className="text-sm text-gray-400">{inv.currency} {inv.totalAmount.toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground">{inv.date} — {inv.buyerSnapshot.companyName || t("history.noBuyer")}</p>
+                  <p className="text-sm text-muted-foreground/70">{inv.currency} {inv.totalAmount.toFixed(2)}</p>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="secondary" size="sm" onClick={() => handleLoad(inv)}>{t("history.load")}</Button>

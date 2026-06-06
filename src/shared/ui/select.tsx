@@ -11,7 +11,7 @@ export function Select({ label, options, className, id, ...props }: SelectProps)
   return (
     <div className="flex flex-col gap-1">
       {label && (
-        <label htmlFor={selectId} className="text-sm font-medium text-gray-500">
+        <label htmlFor={selectId} className="text-sm font-medium text-muted-foreground">
           {label}
         </label>
       )}
@@ -19,9 +19,9 @@ export function Select({ label, options, className, id, ...props }: SelectProps)
         <select
           id={selectId}
           className={cn(
-            "w-full px-3 pr-9 py-2 text-base bg-white border border-gray-300 rounded-md transition-colors appearance-none",
-            "hover:border-gray-400",
-            "focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-500",
+            "w-full px-3 pr-9 py-2 text-base bg-card border border-input rounded-md transition-colors appearance-none",
+            "hover:border-ring/60",
+            "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
             className
           )}
           {...props}
@@ -32,7 +32,7 @@ export function Select({ label, options, className, id, ...props }: SelectProps)
             </option>
           ))}
         </select>
-        <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
+        <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
       </div>
     </div>
   );

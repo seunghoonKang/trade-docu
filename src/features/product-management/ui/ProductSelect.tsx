@@ -21,7 +21,7 @@ export function ProductSelect({ onSelect }: Props) {
 
   return (
     <select
-      className="text-sm border border-gray-200 rounded px-2 py-1"
+      className="text-sm border border-border rounded px-2 py-1"
       defaultValue=""
       onChange={(e) => {
         const product = products.find((p) => p.id === e.target.value);

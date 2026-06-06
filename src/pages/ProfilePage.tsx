@@ -68,19 +68,19 @@ export function ProfilePage() {
   if (!profile) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-10 bg-card border-b border-border px-6 py-3 flex items-center justify-between">
         <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
           {t("profile.back")}
         </Button>
-        <h1 className="text-lg font-bold text-gray-900">{t("profile.title")}</h1>
+        <h1 className="text-lg font-bold text-foreground">{t("profile.title")}</h1>
         <Button variant="secondary" size="sm" onClick={handleSave} disabled={saving}>
           {t("profile.save")}
         </Button>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-6">
-        <p className="text-sm text-gray-500 mb-4">{t("profile.subtitle")}</p>
+        <p className="text-sm text-muted-foreground mb-4">{t("profile.subtitle")}</p>
 
         <FormSection title={t("profile.companyInfo")}>
           <div className="grid grid-cols-2 gap-3">

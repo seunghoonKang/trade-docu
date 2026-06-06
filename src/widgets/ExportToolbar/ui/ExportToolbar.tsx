@@ -87,11 +87,11 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
           </Button>
         </>
       )}
-      <div className="w-full h-px bg-gray-200 my-1 md:hidden" />
+      <div className="w-full h-px bg-border my-1 md:hidden" />
       <div className="md:hidden">
         <LanguageSwitcher />
       </div>
-      <div className="w-full h-px bg-gray-200 my-1 md:hidden" />
+      <div className="w-full h-px bg-border my-1 md:hidden" />
       <div className="md:hidden">
         {user ? (
           <Button variant="ghost" size="sm" onClick={() => { handleLogout(); setMenuOpen(false); }}>
@@ -108,7 +108,7 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
 
   return (
     <div className="flex items-center justify-between">
-      <h1 className="text-lg font-bold text-gray-900 whitespace-nowrap">{t("app.title")}</h1>
+      <h1 className="text-lg font-bold text-foreground whitespace-nowrap">{t("app.title")}</h1>
 
       {/* Desktop */}
       <div className="hidden md:flex items-center gap-2">
@@ -123,7 +123,7 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
         </Button>
         {user && (
           <>
-            <div className="w-px h-6 bg-gray-200" />
+            <div className="w-px h-6 bg-border" />
             <Button variant="secondary" size="sm" onClick={handleSave}>
               {t("history.save")}
             </Button>
@@ -135,9 +135,9 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
             </Button>
           </>
         )}
-        <div className="w-px h-6 bg-gray-200" />
+        <div className="w-px h-6 bg-border" />
         <LanguageSwitcher />
-        <div className="w-px h-6 bg-gray-200" />
+        <div className="w-px h-6 bg-border" />
         {user ? (
           <Button variant="ghost" size="sm" onClick={handleLogout}>
             {t("nav.logout")}
@@ -153,7 +153,7 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
       <div className="md:hidden relative">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="p-2 rounded hover:bg-gray-100 transition-colors"
+          className="p-2 rounded hover:bg-muted transition-colors"
           aria-label="Menu"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -174,7 +174,7 @@ export function ExportToolbar({ formData, onShowHistory }: Props) {
         {menuOpen && (
           <>
             <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-            <div className="absolute right-0 top-full mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-lg p-3 flex flex-col gap-2 min-w-[180px]">
+            <div className="absolute right-0 top-full mt-2 z-20 bg-card border border-border rounded-lg shadow-lg p-3 flex flex-col gap-2 min-w-[180px]">
               {menuItems}
             </div>
           </>

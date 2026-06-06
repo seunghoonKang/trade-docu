@@ -37,7 +37,7 @@ export function DatePicker({ label, value, onChange, className }: DatePickerProp
   return (
     <div className={cn("flex flex-col gap-1", className)}>
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-gray-500">
+        <label htmlFor={inputId} className="text-sm font-medium text-muted-foreground">
           {label}
         </label>
       )}
@@ -45,15 +45,15 @@ export function DatePicker({ label, value, onChange, className }: DatePickerProp
         <PopoverTrigger
           id={inputId}
           className={cn(
-            "w-full px-3 py-2 text-base text-left bg-white border border-gray-300 rounded-md transition-colors",
+            "w-full px-3 py-2 text-base text-left bg-card border border-input rounded-md transition-colors",
             "flex items-center justify-between cursor-pointer",
-            "hover:border-gray-400",
-            "focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-500",
-            !displayValue && "text-gray-300"
+            "hover:border-ring/60",
+            "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+            !displayValue && "text-muted-foreground/50"
           )}
         >
           <span>{displayValue || "\u00A0"}</span>
-          <CalendarIcon className="size-4 text-gray-400" />
+          <CalendarIcon className="size-4 text-muted-foreground" />
         </PopoverTrigger>
         <PopoverContent align="start" className="w-auto p-0">
           <Calendar

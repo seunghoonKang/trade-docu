@@ -7,21 +7,21 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
   const { t } = useTranslation();
 
   return (
-    <div className="bg-white border border-gray-200 rounded p-8 text-base leading-relaxed print:border-none print:p-0">
+    <div className="bg-card border border-border rounded p-8 text-base leading-relaxed print:border-none print:p-0">
       {/* Header */}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <p className="text-sm text-gray-500">{t("invoice.to")}</p>
+          <p className="text-sm text-muted-foreground">{t("invoice.to")}</p>
           <p className="font-semibold">{data.buyerSnapshot.companyName || "—"}</p>
-          <p className="text-gray-600">{data.buyerSnapshot.address}</p>
-          <p className="text-gray-600">{data.buyerSnapshot.tel}</p>
+          <p className="text-muted-foreground">{data.buyerSnapshot.address}</p>
+          <p className="text-muted-foreground">{data.buyerSnapshot.tel}</p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-gray-500">{t("form.date")}</p>
+          <p className="text-sm text-muted-foreground">{t("form.date")}</p>
           <p>{data.date || "—"}</p>
-          <p className="text-sm text-gray-500 mt-2">{t("form.refNo")}</p>
+          <p className="text-sm text-muted-foreground mt-2">{t("form.refNo")}</p>
           <p>{data.refNo || "—"}</p>
-          <p className="text-sm text-gray-500 mt-2">{t("form.orderNo")}</p>
+          <p className="text-sm text-muted-foreground mt-2">{t("form.orderNo")}</p>
           <p>{data.orderNo || "—"}</p>
         </div>
       </div>
@@ -32,37 +32,37 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
       </h1>
 
       {/* Invoice No */}
-      <p className="text-sm text-gray-500 mb-4">{t("form.invoiceNo")}: {data.invoiceNo || "—"}</p>
+      <p className="text-sm text-muted-foreground mb-4">{t("form.invoiceNo")}: {data.invoiceNo || "—"}</p>
 
       {/* Terms */}
       <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 mb-6 text-sm">
-        {data.delivery && <><span className="text-gray-500">*{t("form.delivery")}</span><span>: {data.delivery}</span></>}
-        {data.paymentTerms && <><span className="text-gray-500">*{t("form.paymentTerms")}</span><span>: {data.paymentTerms}</span></>}
-        {data.packing && <><span className="text-gray-500">*{t("form.packing")}</span><span>: {data.packing}</span></>}
-        {data.validity && <><span className="text-gray-500">*{t("form.validity")}</span><span>: {data.validity}</span></>}
-        {data.incoterms && <><span className="text-gray-500">*{t("form.incoterms")}</span><span>: {data.incoterms}</span></>}
-        {data.remarks && <><span className="text-gray-500">*{t("form.remarks")}</span><span>: {data.remarks}</span></>}
+        {data.delivery && <><span className="text-muted-foreground">*{t("form.delivery")}</span><span>: {data.delivery}</span></>}
+        {data.paymentTerms && <><span className="text-muted-foreground">*{t("form.paymentTerms")}</span><span>: {data.paymentTerms}</span></>}
+        {data.packing && <><span className="text-muted-foreground">*{t("form.packing")}</span><span>: {data.packing}</span></>}
+        {data.validity && <><span className="text-muted-foreground">*{t("form.validity")}</span><span>: {data.validity}</span></>}
+        {data.incoterms && <><span className="text-muted-foreground">*{t("form.incoterms")}</span><span>: {data.incoterms}</span></>}
+        {data.remarks && <><span className="text-muted-foreground">*{t("form.remarks")}</span><span>: {data.remarks}</span></>}
       </div>
 
       {/* Commodity */}
-      {data.commodity && <p className="text-sm text-gray-600 mb-3">{t("form.commodity")}: {data.commodity}</p>}
+      {data.commodity && <p className="text-sm text-muted-foreground mb-3">{t("form.commodity")}: {data.commodity}</p>}
 
       {/* Items Table */}
       <table className="w-full border-collapse mb-4">
         <thead>
-          <tr className="border-b-2 border-gray-900">
-            <th className="text-left py-2 text-sm font-semibold text-gray-600">{t("form.description")}</th>
-            <th className="text-left py-2 text-sm font-semibold text-gray-600">{t("form.hsCode")}</th>
-            <th className="text-center py-2 text-xs font-semibold text-gray-600">{t("form.qty")}</th>
-            <th className="text-center py-2 text-xs font-semibold text-gray-600">{t("form.unit")}</th>
-            <th className="text-right py-2 text-xs font-semibold text-gray-600">{t("form.unitPrice")}</th>
-            <th className="text-right py-2 text-xs font-semibold text-gray-600">{t("form.amount")}</th>
-            <th className="text-left py-2 text-sm font-semibold text-gray-600">{t("form.remarks")}</th>
+          <tr className="border-b-2 border-foreground">
+            <th className="text-left py-2 text-sm font-semibold text-muted-foreground">{t("form.description")}</th>
+            <th className="text-left py-2 text-sm font-semibold text-muted-foreground">{t("form.hsCode")}</th>
+            <th className="text-center py-2 text-xs font-semibold text-muted-foreground">{t("form.qty")}</th>
+            <th className="text-center py-2 text-xs font-semibold text-muted-foreground">{t("form.unit")}</th>
+            <th className="text-right py-2 text-xs font-semibold text-muted-foreground">{t("form.unitPrice")}</th>
+            <th className="text-right py-2 text-xs font-semibold text-muted-foreground">{t("form.amount")}</th>
+            <th className="text-left py-2 text-sm font-semibold text-muted-foreground">{t("form.remarks")}</th>
           </tr>
         </thead>
         <tbody>
           {data.items.map((item, i) => (
-            <tr key={i} className="border-b border-gray-100">
+            <tr key={i} className="border-b border-border">
               <td className="py-1.5">{item.description}</td>
               <td className="py-1.5">{item.hsCode}</td>
               <td className="py-1.5 text-center">{item.qty || ""}</td>
@@ -80,7 +80,7 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
         <div className="mb-2">
           {data.additionalCharges.map((charge, i) => (
             <div key={i} className="flex justify-between text-sm py-0.5">
-              <span className="text-gray-600">{charge.description}</span>
+              <span className="text-muted-foreground">{charge.description}</span>
               <span>{charge.amount.toFixed(2)}</span>
             </div>
           ))}
@@ -88,17 +88,17 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
       )}
 
       {/* Total */}
-      <div className="border-t-2 border-gray-900 pt-2 text-right font-bold">
+      <div className="border-t-2 border-foreground pt-2 text-right font-bold">
         {t("form.total")}: {data.currency} {data.totalAmount.toFixed(2)}
       </div>
 
       {/* Closing */}
-      <p className="mt-8 text-sm text-gray-500">{t("invoice.faithfully")}</p>
+      <p className="mt-8 text-sm text-muted-foreground">{t("invoice.faithfully")}</p>
 
       {/* Seller Info */}
       {data.sellerCompanyName && (
-        <div className="mt-4 text-sm text-gray-600">
-          <p className="font-semibold text-gray-800 text-base">{data.sellerCompanyName}</p>
+        <div className="mt-4 text-sm text-muted-foreground">
+          <p className="font-semibold text-foreground text-base">{data.sellerCompanyName}</p>
           <p>{data.sellerAddress}</p>
           {data.sellerTel && <p>Tel: {data.sellerTel}</p>}
           {data.sellerFax && <p>Fax: {data.sellerFax}</p>}
@@ -107,9 +107,9 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
 
       {/* Bank Info */}
       {data.bankInfo.bankName && (
-        <div className="mt-6 border-t border-gray-100 pt-4 text-sm">
-          <p className="font-semibold text-gray-700 mb-1">{t("form.bankInfo")}</p>
-          <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-gray-600">
+        <div className="mt-6 border-t border-border pt-4 text-sm">
+          <p className="font-semibold text-foreground mb-1">{t("form.bankInfo")}</p>
+          <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-muted-foreground">
             <span>{t("form.bankName")}</span><span>{data.bankInfo.bankName}</span>
             <span>{t("form.bankSwift")}</span><span>{data.bankInfo.bankSwift}</span>
             <span>{t("form.accountNo")}</span><span>{data.bankInfo.accountNo}</span>

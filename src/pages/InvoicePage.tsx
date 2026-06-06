@@ -85,10 +85,10 @@ export function InvoicePage() {
         />
       )}
       <div className="flex flex-col lg:flex-row h-[calc(100vh-57px)]">
-        <div className="w-full lg:w-1/2 overflow-y-auto bg-white border-r border-gray-200">
+        <div className="w-full lg:w-1/2 overflow-y-auto bg-card border-r border-border">
           <InvoiceForm {...invoiceForm} />
         </div>
-        <div id="invoice-preview" className="hidden lg:block w-1/2 overflow-y-auto bg-gray-50 p-6">
+        <div id="invoice-preview" className="hidden lg:block w-1/2 overflow-y-auto bg-background p-6">
           <InvoicePreview data={invoiceForm.form} />
         </div>
       </div>

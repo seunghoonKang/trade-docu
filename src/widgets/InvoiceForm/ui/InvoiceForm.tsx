@@ -25,7 +25,7 @@ export function InvoiceForm({
       <ItemsTableSection items={form.items} currency={form.currency} onUpdateItem={updateItem} onAddItem={addItem} onRemoveItem={removeItem} />
       <AdditionalChargesSection charges={form.additionalCharges} onUpdateCharge={updateCharge} onAddCharge={addCharge} onRemoveCharge={removeCharge} />
       <BankInfoSection bankInfo={form.bankInfo} onUpdate={updateBankInfo} />
-      <div className="text-right text-lg font-bold text-gray-900 border-t-2 border-gray-900 pt-3">
+      <div className="text-right text-lg font-bold text-foreground border-t-2 border-foreground pt-3">
         {t("form.total")}: {form.currency} {form.totalAmount.toFixed(2)}
       </div>
     </div>
