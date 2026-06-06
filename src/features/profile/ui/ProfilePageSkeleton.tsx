@@ -1,8 +1,7 @@
 import { ArrowLeft, Building2, Landmark, Shield } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Skeleton } from "@/shared/ui";
-import { AppSidebar } from "@/widgets/AppSidebar";
+import { AppHeaderBrand, Skeleton } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 
 function FormFieldsSkeleton({ rows = 5 }: { rows?: number }) {
@@ -74,42 +73,38 @@ export function ProfilePageSkeleton() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background" aria-busy="true">
-      <header className="md:hidden fixed top-0 inset-x-0 z-10 h-16 flex items-center justify-between px-4 bg-card border-b border-border shadow-sm">
+    <div className="min-h-screen bg-background flex flex-col" aria-busy="true">
+      <header className="md:hidden fixed top-0 inset-x-0 z-50 h-16 flex items-center gap-2 px-4 bg-card border-b border-border shadow-sm">
         <button
           type="button"
           onClick={() => navigate("/")}
           aria-label={t("profile.back")}
-          className="flex items-center justify-center size-10 rounded-full text-primary hover:bg-accent transition-colors"
+          className="flex items-center justify-center size-10 shrink-0 rounded-full text-primary hover:bg-accent transition-colors"
         >
           <ArrowLeft className="size-5" aria-hidden />
         </button>
-        <h1 className="text-xl font-bold text-primary">{t("profile.settingsTitle")}</h1>
-        <Skeleton className="size-10 rounded-full" />
+        <div className="min-w-0 flex-1">
+          <AppHeaderBrand pageTitle={t("profile.title")} />
+        </div>
+        <Skeleton className="size-10 rounded-full shrink-0" />
       </header>
 
-      <header className="hidden md:flex sticky top-0 z-10 h-16 items-center justify-between px-8 bg-card border-b border-border shrink-0">
-        <h1 className="text-2xl font-semibold text-primary tracking-tight truncate">
-          {t("profile.title")}
-        </h1>
+      <header className="hidden md:flex sticky top-0 z-50 h-16 items-center justify-between px-6 bg-card border-b border-border shadow-sm shrink-0">
+        <AppHeaderBrand pageTitle={t("profile.title")} />
         <div className="flex items-center gap-4 shrink-0">
           <Skeleton className="h-9 w-24 rounded-lg" />
-          <div className="flex items-center gap-3 border-l border-border pl-4">
+          <div className="flex items-center border-l border-border pl-4">
             <Skeleton className="size-8 rounded-full" />
-            <Skeleton className="h-10 w-28 rounded-lg" />
           </div>
         </div>
       </header>
 
-      <AppSidebar />
-
-      <div className="md:pl-[72px]">
+      <div className="md:pl-[72px] flex flex-col flex-1">
         <main
           className={cn(
-            "max-w-4xl mx-auto px-4 py-6 md:p-8 space-y-6 md:space-y-8 mt-16 md:mt-0 pb-28 md:pb-8",
+            "flex-1 max-w-4xl mx-auto w-full px-4 py-6 md:p-8 space-y-6 md:space-y-8 mt-16 md:mt-0 pb-6",
           )}
         >
-        <Skeleton className="h-4 w-72 hidden md:block" />
 
         <section className="bg-card rounded-xl border border-border shadow-sm p-6 flex flex-col items-center gap-4 md:flex-row md:items-center md:text-left md:gap-6">
           <Skeleton className="size-24 rounded-full md:rounded-xl shrink-0" />
@@ -168,13 +163,14 @@ export function ProfilePageSkeleton() {
             </div>
           </div>
 
-          <Skeleton className="h-12 w-full rounded-lg" />
-        </div>
-
-        <div className="hidden md:flex justify-end gap-3 pt-8 mt-2 border-t border-border">
-          <Skeleton className="h-11 w-32 rounded-lg" />
         </div>
         </main>
+
+        <div className="sticky bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur px-4 py-3 md:px-8 md:py-4">
+          <div className="max-w-4xl mx-auto flex justify-stretch md:justify-end">
+            <Skeleton className="h-12 w-full md:w-36 rounded-lg" />
+          </div>
+        </div>
       </div>
     </div>
   );

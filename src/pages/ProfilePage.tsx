@@ -1,15 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { Building2, Info, Landmark, Save } from "lucide-react";
+import { Building2, Info, Landmark } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Button, Input } from "@/shared/ui";
+import { Input } from "@/shared/ui";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { clearOAuthLinkCallbackUrl, consumeOAuthLinkCallback } from "@/features/auth/lib/oauthLinkCallback";
 import i18n from "@/shared/i18n/config";
 import { LinkedAuthMethods } from "@/features/auth/ui/LinkedAuthMethods";
 import { restoreAvatarMetadataIfNeeded } from "@/features/profile/api/avatar";
-import { ProfileHeader, ProfilePageHeader, ProfilePageSkeleton, ProfileSectionCard } from "@/features/profile";
+import {
+  ProfileHeader,
+  ProfilePageHeader,
+  ProfilePageSkeleton,
+  ProfileSaveBar,
+  ProfileSectionCard,
+} from "@/features/profile";
 import {
   getSeller,
   upsertSeller,
@@ -17,12 +23,20 @@ import {
   SignatureUpload,
   type SellerProfile,
 } from "@/features/seller-management";
-import { AppSidebar } from "@/widgets/AppSidebar";
 import { cn } from "@/shared/lib/utils";
 
 interface ProfileFormFieldsProps {
   profile: SellerProfile;
   onUpdate: (key: keyof SellerProfile, value: string) => void;
+}
+
+function SectionHint({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs text-muted-foreground flex items-start gap-1.5 p-3 bg-secondary/60 rounded-lg border border-dashed border-border">
+      <Info className="size-3.5 mt-0.5 shrink-0" aria-hidden />
+      {children}
+    </p>
+  );
 }
 
 function CompanyFields({ profile, onUpdate, userId, onSignatureChange }: ProfileFormFieldsProps & {
@@ -64,6 +78,7 @@ function CompanyFields({ profile, onUpdate, userId, onSignatureChange }: Profile
         onSignatureChange={onSignatureChange}
         className="pt-2 border-t border-border"
       />
+      <SectionHint>{t("profile.companyHint")}</SectionHint>
     </div>
   );
 }
@@ -108,10 +123,7 @@ function BankFields({ profile, onUpdate }: ProfileFormFieldsProps) {
         value={profile.bankFax}
         onChange={(e) => onUpdate("bankFax", e.target.value)}
       />
-      <p className="text-xs text-muted-foreground flex items-start gap-1.5 p-3 bg-secondary/60 rounded-lg border border-dashed border-border">
-        <Info className="size-3.5 mt-0.5 shrink-0" aria-hidden />
-        {t("profile.bankHint")}
-      </p>
+      <SectionHint>{t("profile.bankHint")}</SectionHint>
     </div>
   );
 }
@@ -199,37 +211,15 @@ export function ProfilePage() {
   if (!loading && !user) return <Navigate to="/login" replace />;
   if (loading || !user || !profile) return <ProfilePageSkeleton />;
 
-  const saveButton = (className?: string) => (
-    <Button
-      variant="default"
-      size="lg"
-      onClick={handleSave}
-      disabled={saving}
-      className={className}
-    >
-      <Save aria-hidden />
-      {saving ? t("profile.saving") : t("profile.saveChanges")}
-    </Button>
-  );
-
   return (
-    <div className="min-h-screen bg-background">
-      <ProfilePageHeader
-        user={user}
-        saving={saving}
-        onBack={() => navigate("/")}
-        onSave={handleSave}
-      />
-      <AppSidebar />
-
-      <div className="md:pl-[72px]">
+    <div className="min-h-screen bg-background flex flex-col">
+      <ProfilePageHeader user={user} onBack={() => navigate("/")} />
+      <div className="md:pl-[72px] flex flex-col flex-1">
         <main
           className={cn(
-            "max-w-4xl mx-auto px-4 py-6 md:p-8 space-y-6 md:space-y-8 mt-16 md:mt-0 pb-28 md:pb-8",
+            "flex-1 max-w-4xl mx-auto w-full px-4 py-6 md:p-8 space-y-6 md:space-y-8 mt-16 md:mt-0 pb-6",
           )}
         >
-        <p className="text-sm text-muted-foreground hidden md:block">{t("profile.subtitle")}</p>
-
         <ProfileHeader profile={profile} />
 
         <LinkedAuthMethods />
@@ -283,17 +273,10 @@ export function ProfilePage() {
           >
             <BankFields profile={profile} onUpdate={update} />
           </ProfileSectionCard>
-
-          <div className="pt-2">
-            {saveButton("w-full h-12")}
-          </div>
-        </div>
-
-        {/* Desktop footer save bar */}
-        <div className="hidden md:flex justify-end gap-3 pt-8 mt-2 border-t border-border">
-          {saveButton("shadow-lg font-semibold gap-2 px-6")}
         </div>
         </main>
+
+        <ProfileSaveBar saving={saving} onSave={handleSave} />
       </div>
     </div>
   );
