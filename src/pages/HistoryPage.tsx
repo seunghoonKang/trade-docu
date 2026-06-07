@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { deleteInvoice, listInvoices, toInvoiceFormData } from "@/features/invoice-crud";
 import { HistoryPageSkeleton, HistorySummaryCards } from "@/features/history";
+import { consumeHistoryFocusInvoiceId, setHistoryFocusInvoiceId } from "@/features/history/lib/historyFocus";
+import type { HistoryListLocationState } from "@/features/history/lib/historyNavigationState";
 import { InvoiceHistoryList } from "@/widgets/InvoiceHistory";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { ConfirmDialog, Layout } from "@/shared/ui";
@@ -23,9 +25,26 @@ export function HistoryPage() {
   const { t } = useTranslation();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [fetching, setFetching] = useState(true);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
+  const [focusInvoiceId, setFocusInvoiceId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fromState = (location.state as HistoryListLocationState | null)?.focusInvoiceId;
+    const id = fromState ?? consumeHistoryFocusInvoiceId();
+    if (!id) return;
+
+    setFocusInvoiceId(id);
+
+    if (fromState) {
+      navigate(
+        { pathname: location.pathname, search: location.search },
+        { replace: true, state: null },
+      );
+    }
+  }, [location.key, location.pathname, location.search, location.state, navigate]);
 
   useEffect(() => {
     if (!user) {
@@ -79,6 +98,14 @@ export function HistoryPage() {
 
             <InvoiceHistoryList
               invoices={invoices}
+              focusInvoiceId={focusInvoiceId}
+              onFocusHandled={() => setFocusInvoiceId(null)}
+              onViewRequest={(invoice) => {
+                setHistoryFocusInvoiceId(invoice.id);
+                navigate(`/history/${invoice.id}`, {
+                  state: { invoice, historySearch: location.search },
+                });
+              }}
               onLoadRequest={(invoice) => setConfirmAction({ type: "load", invoice })}
               onDeleteRequest={(invoice) => setConfirmAction({ type: "delete", invoice })}
             />
@@ -90,6 +117,7 @@ export function HistoryPage() {
         open={confirmAction?.type === "load"}
         title={t("history.confirmLoadTitle")}
         description={t("history.confirmLoadDescription", { id: confirmInvoiceNo })}
+        descriptionNote={t("history.confirmLoadNote")}
         confirmLabel={t("history.load")}
         cancelLabel={t("history.cancel")}
         onConfirm={handleConfirm}
@@ -100,6 +128,7 @@ export function HistoryPage() {
         open={confirmAction?.type === "delete"}
         title={t("history.confirmDeleteTitle")}
         description={t("history.confirmDeleteDescription", { id: confirmInvoiceNo })}
+        descriptionNote={t("history.confirmDeleteNote")}
         confirmLabel={t("history.delete")}
         cancelLabel={t("history.cancel")}
         destructive
