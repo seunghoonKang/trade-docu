@@ -22,8 +22,9 @@ describe("cardPosition", () => {
     };
     const rect = new DOMRect(window.innerWidth - 200, 16, 180, 40);
     const style = getCardStyle(step, rect);
-    expect(style?.left).toBeGreaterThanOrEqual(16);
-    expect((style?.left ?? 0) + CARD_WIDTH).toBeLessThanOrEqual(window.innerWidth - 16);
+    const left = Number(style?.left ?? 0);
+    expect(left).toBeGreaterThanOrEqual(16);
+    expect(left + CARD_WIDTH).toBeLessThanOrEqual(window.innerWidth - 16);
   });
 
   it("프로필 아바타 타깃은 사이드바 고정 위치를 쓰지 않는다", () => {

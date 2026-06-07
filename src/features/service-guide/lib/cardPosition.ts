@@ -1,4 +1,4 @@
-import type { GuidePlacement, GuideStep } from "./steps";
+import type { GuideStep } from "./steps";
 
 export const CARD_WIDTH = 384;
 export const CARD_ESTIMATED_HEIGHT = 280;
