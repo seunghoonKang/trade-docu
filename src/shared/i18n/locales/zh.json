@@ -1,6 +1,6 @@
 {
   "app": { "title": "形式发票" },
-  "nav": { "login": "登录", "logout": "退出", "signup": "注册", "history": "历史", "settings": "设置", "dashboard": "仪表盘", "invoices": "发票", "packingLists": "装箱单", "helpCenter": "帮助中心", "comingSoon": "即将推出", "comingSoonSection": "即将推出" },
+  "nav": { "login": "登录", "logout": "退出", "signup": "注册", "history": "历史", "settings": "设置", "dashboard": "仪表盘", "invoices": "发票", "packingLists": "装箱单", "userGuide": "用户指南", "comingSoon": "即将推出", "comingSoonSection": "即将推出" },
   "export": { "pdf": "导出为 PDF", "excel": "导出为 Excel", "print": "打印", "export": "导出", "pdfFailed": "PDF 生成失败。" },
   "form": {
     "documentInfo": "文件信息",
@@ -324,5 +324,61 @@
         "body": "有关个人信息的咨询请联系服务运营方。"
       }
     ]
+  },
+  "guide": {
+    "stepOf": "{{current}} / {{total}}",
+    "next": "下一步",
+    "prev": "上一步",
+    "close": "关闭",
+    "finish": "完成",
+    "navigateToInvoices": "前往发票页面",
+    "navigateToHistory": "前往历史页面",
+    "navigateToProfile": "前往资料页面",
+    "steps": {
+      "welcome": {
+        "title": "TradeDocu 服务指南",
+        "body": "逐步介绍从创建形式发票到保存和导出的核心功能。"
+      },
+      "nav-invoices": {
+        "title": "发票菜单",
+        "body": "用于创建新发票或继续当前工作。"
+      },
+      "invoice-form": {
+        "title": "发票输入表单",
+        "body": "填写文档信息、买卖双方、贸易条件、品项和银行信息。资料中的卖方信息会自动填入。"
+      },
+      "export-toolbar": {
+        "title": "导出与保存",
+        "body": "可导出 PDF、Excel 或打印。保存后可在历史页面重新加载。"
+      },
+      "preview": {
+        "title": "实时预览",
+        "body": "输入内容会即时反映在发票格式中。导出前请最终确认。"
+      },
+      "nav-history": {
+        "title": "历史菜单",
+        "body": "在此查看和管理所有已保存的发票。"
+      },
+      "history-actions": {
+        "title": "文档操作",
+        "body": "查看详情、加载到编辑页面，或删除不需要的文档。"
+      },
+      "nav-profile": {
+        "title": "资料设置",
+        "body": "注册卖方信息和签名后，创建发票时会自动应用。"
+      },
+      "profile-seller": {
+        "title": "公司与签名",
+        "body": "填写公司名称、地址、代表人和签名图片，供所有发票共用。"
+      },
+      "profile-bank": {
+        "title": "银行信息",
+        "body": "填写 SWIFT 代码、账号等付款所需的银行信息。"
+      },
+      "complete": {
+        "title": "指南完成",
+        "body": "您已准备好使用 TradeDocu。可随时从侧边栏用户指南重新打开本指南。"
+      }
+    }
   }
 }

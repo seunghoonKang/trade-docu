@@ -1,6 +1,6 @@
 {
   "app": { "title": "프로포마 인보이스" },
-  "nav": { "login": "로그인", "logout": "로그아웃", "signup": "회원가입", "history": "기록", "settings": "설정", "dashboard": "대시보드", "invoices": "인보이스", "packingLists": "패킹 리스트", "helpCenter": "고객센터", "comingSoon": "준비 중", "comingSoonSection": "준비 중" },
+  "nav": { "login": "로그인", "logout": "로그아웃", "signup": "회원가입", "history": "기록", "settings": "설정", "dashboard": "대시보드", "invoices": "인보이스", "packingLists": "패킹 리스트", "userGuide": "사용자 가이드", "comingSoon": "준비 중", "comingSoonSection": "준비 중" },
   "export": { "pdf": "PDF로 내보내기", "excel": "엑셀로 내보내기", "print": "인쇄", "export": "내보내기", "pdfFailed": "PDF 생성에 실패했습니다." },
   "form": {
     "documentInfo": "문서 정보",
@@ -324,5 +324,61 @@
         "body": "개인정보 처리와 관련한 문의는 서비스 운영자에게 연락해 주세요."
       }
     ]
+  },
+  "guide": {
+    "stepOf": "{{current}} / {{total}}",
+    "next": "다음",
+    "prev": "이전",
+    "close": "닫기",
+    "finish": "완료",
+    "navigateToInvoices": "인보이스 페이지로 이동",
+    "navigateToHistory": "기록 페이지로 이동",
+    "navigateToProfile": "프로필 페이지로 이동",
+    "steps": {
+      "welcome": {
+        "title": "TradeDocu 서비스 가이드",
+        "body": "프로포마 인보이스 작성부터 저장·내보내기까지 핵심 기능을 단계별로 안내합니다."
+      },
+      "nav-invoices": {
+        "title": "인보이스 메뉴",
+        "body": "새 인보이스를 작성하거나 기존 작업을 이어갈 때 이 메뉴를 사용합니다."
+      },
+      "invoice-form": {
+        "title": "인보이스 입력 폼",
+        "body": "문서 정보, 판매자·구매자, 거래 조건, 품목, 은행 정보를 입력합니다. 프로필에 저장된 판매자 정보가 자동으로 채워집니다."
+      },
+      "export-toolbar": {
+        "title": "내보내기 및 저장",
+        "body": "PDF·Excel로 내보내거나 인쇄할 수 있습니다. 저장하면 기록 페이지에서 다시 불러올 수 있습니다."
+      },
+      "preview": {
+        "title": "실시간 미리보기",
+        "body": "입력한 내용이 인보이스 형식으로 바로 반영됩니다. 내보내기 전에 최종 확인하세요."
+      },
+      "nav-history": {
+        "title": "기록 메뉴",
+        "body": "저장한 인보이스 목록을 확인하고 관리할 수 있습니다."
+      },
+      "history-actions": {
+        "title": "문서 관리",
+        "body": "보기로 상세 내용을 확인하고, 불러오기로 편집 화면에 적용하거나 삭제할 수 있습니다."
+      },
+      "nav-profile": {
+        "title": "프로필 설정",
+        "body": "판매자 정보와 서명을 등록하면 인보이스 작성 시 자동으로 반영됩니다."
+      },
+      "profile-seller": {
+        "title": "회사 및 서명",
+        "body": "회사명, 주소, 대표자 정보와 서명 이미지를 등록하세요. 모든 인보이스에 공통으로 사용됩니다."
+      },
+      "profile-bank": {
+        "title": "은행 정보",
+        "body": "SWIFT 코드, 계좌번호 등 결제에 필요한 은행 정보를 입력하세요."
+      },
+      "complete": {
+        "title": "가이드 완료",
+        "body": "이제 TradeDocu를 사용할 준비가 되었습니다. 언제든 사이드바 사용자 가이드에서 다시 볼 수 있습니다."
+      }
+    }
   }
 }

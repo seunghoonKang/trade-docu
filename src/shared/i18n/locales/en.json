@@ -1,6 +1,6 @@
 {
   "app": { "title": "Proforma Invoice" },
-  "nav": { "login": "Login", "logout": "Logout", "signup": "Sign Up", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Invoices", "packingLists": "Packing Lists", "helpCenter": "Help Center", "comingSoon": "Coming soon", "comingSoonSection": "Coming soon" },
+  "nav": { "login": "Login", "logout": "Logout", "signup": "Sign Up", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Invoices", "packingLists": "Packing Lists", "userGuide": "User Guide", "comingSoon": "Coming soon", "comingSoonSection": "Coming soon" },
   "export": { "pdf": "Export to PDF", "excel": "Export to Excel", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF." },
   "form": {
     "documentInfo": "Document Info",
@@ -324,5 +324,61 @@
         "body": "For privacy inquiries, contact the Service operator."
       }
     ]
+  },
+  "guide": {
+    "stepOf": "{{current}} / {{total}}",
+    "next": "Next",
+    "prev": "Previous",
+    "close": "Close",
+    "finish": "Finish",
+    "navigateToInvoices": "Go to Invoices",
+    "navigateToHistory": "Go to History",
+    "navigateToProfile": "Go to Profile",
+    "steps": {
+      "welcome": {
+        "title": "TradeDocu Service Guide",
+        "body": "A step-by-step tour from creating proforma invoices to saving and exporting."
+      },
+      "nav-invoices": {
+        "title": "Invoices menu",
+        "body": "Use this menu to create a new invoice or continue your current work."
+      },
+      "invoice-form": {
+        "title": "Invoice form",
+        "body": "Enter document info, seller and buyer details, trade terms, line items, and bank info. Seller details from your profile are prefilled automatically."
+      },
+      "export-toolbar": {
+        "title": "Export and save",
+        "body": "Export to PDF or Excel, print, or save to reload later from History."
+      },
+      "preview": {
+        "title": "Live preview",
+        "body": "See your invoice update in real time. Review everything before exporting."
+      },
+      "nav-history": {
+        "title": "History menu",
+        "body": "View and manage all saved invoices from this menu."
+      },
+      "history-actions": {
+        "title": "Document actions",
+        "body": "View details, load an invoice back into the editor, or delete documents you no longer need."
+      },
+      "nav-profile": {
+        "title": "Profile settings",
+        "body": "Register seller details and your signature so they appear automatically on every invoice."
+      },
+      "profile-seller": {
+        "title": "Company and signature",
+        "body": "Add your company name, address, representative, and signature image for use across invoices."
+      },
+      "profile-bank": {
+        "title": "Bank details",
+        "body": "Enter SWIFT code, account number, and other payment information."
+      },
+      "complete": {
+        "title": "Tour complete",
+        "body": "You're ready to use TradeDocu. Reopen this guide anytime from User Guide in the sidebar."
+      }
+    }
   }
 }
