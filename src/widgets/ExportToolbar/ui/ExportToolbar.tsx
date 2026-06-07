@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Printer } from "lucide-react";
+import { ChevronDown, FileSpreadsheet, FileText, Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getPageTitleKey, mainNavItems } from "@/widgets/AppSidebar/lib/mainNavItems";
@@ -22,7 +22,7 @@ type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
 interface Props {
   formData?: FormData;
-  page?: "documents" | "history";
+  page?: "documents" | "history" | "historyDetail";
 }
 
 export function ExportToolbar({ formData, page = "documents" }: Props) {
@@ -33,7 +33,7 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
-  const isHistoryPage = page === "history";
+  const isHistoryPage = page === "history" || page === "historyDetail";
   const pageTitle = t(getPageTitleKey(page));
   const data = formData ?? createEmptyInvoice();
 
@@ -93,6 +93,9 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
   const iconButtonClass =
     "flex items-center justify-center size-10 rounded-full text-muted-foreground hover:text-primary hover:bg-accent transition-colors active:opacity-80";
 
+  const exportMenuItemClass =
+    "flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted transition-colors";
+
   const menuItems = (
     <>
       {user && (
@@ -132,34 +135,37 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
           <Button
             variant="outline"
             size="sm"
-            className="w-full justify-start"
+            className="w-full justify-start gap-1.5"
             onClick={() => {
               handlePdf();
               setMenuOpen(false);
             }}
           >
+            <FileText className="size-4 shrink-0" aria-hidden />
             {t("export.pdf")}
           </Button>
           <Button
             variant="outline"
             size="sm"
-            className="w-full justify-start"
+            className="w-full justify-start gap-1.5"
             onClick={() => {
               handleExcel();
               setMenuOpen(false);
             }}
           >
+            <FileSpreadsheet className="size-4 shrink-0" aria-hidden />
             {t("export.excel")}
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start"
+            className="w-full justify-start gap-1.5"
             onClick={() => {
               handlePrint();
               setMenuOpen(false);
             }}
           >
+            <Printer className="size-4 shrink-0" aria-hidden />
             {t("export.print")}
           </Button>
         </>
@@ -251,22 +257,24 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
                 <div className="absolute right-0 top-full z-30 mt-2 min-w-[160px] rounded-lg border border-border bg-card py-1 shadow-md">
                   <button
                     type="button"
-                    className="block w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors"
+                    className={exportMenuItemClass}
                     onClick={() => {
                       handlePdf();
                       setExportOpen(false);
                     }}
                   >
+                    <FileText className="size-4 shrink-0" aria-hidden />
                     {t("export.pdf")}
                   </button>
                   <button
                     type="button"
-                    className="block w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors"
+                    className={exportMenuItemClass}
                     onClick={() => {
                       handleExcel();
                       setExportOpen(false);
                     }}
                   >
+                    <FileSpreadsheet className="size-4 shrink-0" aria-hidden />
                     {t("export.excel")}
                   </button>
                 </div>
