@@ -15,7 +15,7 @@ export function InvoiceForm({
   updateCharge, addCharge, removeCharge,
 }: InvoiceFormProps) {
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-6" data-guide="invoice-form">
       <DocumentInfoSection invoiceNo={form.invoiceNo} refNo={form.refNo} orderNo={form.orderNo} date={form.date} validity={form.validity} onUpdate={(key, value) => updateField(key as any, value)} />
       <SellerSection companyName={form.sellerCompanyName} address={form.sellerAddress} tel={form.sellerTel} fax={form.sellerFax} representative={form.sellerRepresentative} onUpdate={(key, value) => updateField(key as any, value)} />
       <BuyerSection companyName={form.buyerSnapshot.companyName} address={form.buyerSnapshot.address} tel={form.buyerSnapshot.tel} contactPerson={form.buyerSnapshot.contactPerson} onUpdate={(key, value) => updateBuyer(key as any, value)} />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   HelpCircle,
   LayoutDashboard,
@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { logout } from "@/features/auth";
+import { useServiceGuide, getGuideStep } from "@/features/service-guide";
 import {
   Tooltip,
   TooltipContent,
@@ -25,10 +26,19 @@ interface SidebarItem {
   labelKey: string;
   href?: string;
   disabled?: boolean;
-  action?: "logout";
+  action?: "logout" | "guide";
+  guideTarget?: string;
 }
 
-const activeItems: SidebarItem[] = mainNavItems.map((item) => ({ ...item }));
+const navGuideTargets: Record<string, string> = {
+  invoices: "nav-invoices",
+  history: "nav-history",
+};
+
+const activeItems: SidebarItem[] = mainNavItems.map((item) => ({
+  ...item,
+  guideTarget: navGuideTargets[item.id],
+}));
 
 const comingSoonItems: SidebarItem[] = [
   { id: "dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard", disabled: true },
@@ -36,7 +46,7 @@ const comingSoonItems: SidebarItem[] = [
 ];
 
 const bottomItems: SidebarItem[] = [
-  { id: "helpCenter", icon: HelpCircle, labelKey: "nav.helpCenter", disabled: true },
+  { id: "userGuide", icon: HelpCircle, labelKey: "nav.userGuide", action: "guide" },
   { id: "logout", icon: LogOut, labelKey: "nav.logout", action: "logout" },
 ];
 
@@ -46,12 +56,14 @@ function SidebarNavButton({
   expanded,
   onNavigate,
   onLogout,
+  onOpenGuide,
 }: {
   item: SidebarItem;
   active: boolean;
   expanded: boolean;
   onNavigate: (href: string) => void;
   onLogout: () => void;
+  onOpenGuide: () => void;
 }) {
   const { t } = useTranslation();
   const label = t(item.labelKey);
@@ -117,9 +129,12 @@ function SidebarNavButton({
       aria-label={label}
       title={label}
       aria-current={active ? "page" : undefined}
+      data-guide={item.guideTarget}
       onClick={() => {
         if (item.action === "logout") {
           onLogout();
+        } else if (item.action === "guide") {
+          onOpenGuide();
         } else if (item.href) {
           onNavigate(item.href);
         }
@@ -134,7 +149,16 @@ export function AppSidebar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { openGuide, isOpen, stepIndex } = useServiceGuide();
   const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const step = getGuideStep(stepIndex);
+    if (step?.target?.includes('data-guide="nav-')) {
+      setExpanded(true);
+    }
+  }, [isOpen, stepIndex]);
 
   function isActive(item: SidebarItem) {
     if (!item.href) return false;
@@ -166,6 +190,7 @@ export function AppSidebar() {
               expanded={expanded}
               onNavigate={navigate}
               onLogout={handleLogout}
+              onOpenGuide={openGuide}
             />
           ))}
         </nav>
@@ -198,6 +223,7 @@ export function AppSidebar() {
                 expanded={expanded}
                 onNavigate={navigate}
                 onLogout={handleLogout}
+                onOpenGuide={openGuide}
               />
             ))}
             </div>
@@ -212,6 +238,7 @@ export function AppSidebar() {
                 expanded={expanded}
                 onNavigate={navigate}
                 onLogout={handleLogout}
+                onOpenGuide={openGuide}
               />
             ))}
           </div>

@@ -91,6 +91,7 @@ export function InvoicePage() {
           </div>
           <div
             id="invoice-preview"
+            data-guide="preview"
             className="hidden min-w-0 xl:flex xl:w-1/2 bg-accent"
           >
             <InvoicePreviewPanel data={invoiceForm.form} />
