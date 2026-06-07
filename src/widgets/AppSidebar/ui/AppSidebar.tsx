@@ -138,7 +138,8 @@ export function AppSidebar() {
 
   function isActive(item: SidebarItem) {
     if (!item.href) return false;
-    return pathname === item.href;
+    if (pathname === item.href) return true;
+    return item.href !== "/" && pathname.startsWith(`${item.href}/`);
   }
 
   async function handleLogout() {

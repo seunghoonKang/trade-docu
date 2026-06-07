@@ -12,14 +12,21 @@ export const mainNavItems: MainNavItem[] = [
   { id: "history", icon: History, labelKey: "nav.history", href: "/history" },
 ];
 
-export type AppPageId = "documents" | "history";
+export type AppPageId = "documents" | "history" | "historyDetail";
 
 const pageIdToNavId: Record<AppPageId, MainNavItem["id"]> = {
   documents: "invoices",
   history: "history",
+  historyDetail: "history",
+};
+
+const pageTitleKeyOverrides: Partial<Record<AppPageId, string>> = {
+  historyDetail: "history.detailPageTitle",
 };
 
 export function getPageTitleKey(page: AppPageId): string {
+  const override = pageTitleKeyOverrides[page];
+  if (override) return override;
   const navId = pageIdToNavId[page];
   return mainNavItems.find((item) => item.id === navId)?.labelKey ?? "nav.invoices";
 }

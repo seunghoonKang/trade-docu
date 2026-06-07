@@ -4,21 +4,29 @@ import {
   ArrowUp,
   ChevronLeft,
   ChevronRight,
+  Eye,
   FolderInput,
   Search,
   Trash2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
+import { historyRowId } from "@/features/history/lib/historyFocus";
+import {
+  patchHistoryListParams,
+  readHistoryListParams,
+} from "@/features/history/lib/historyListParams";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
 import { cn } from "@/shared/lib/utils";
 import type { Invoice } from "@/entities/invoice/model";
 
 const PAGE_SIZE = 20;
 
-type SavedDateSort = "desc" | "asc";
-
 interface Props {
   invoices: Invoice[];
+  focusInvoiceId?: string | null;
+  onFocusHandled?: () => void;
+  onViewRequest: (invoice: Invoice) => void;
   onLoadRequest: (invoice: Invoice) => void;
   onDeleteRequest: (invoice: Invoice) => void;
 }
@@ -48,12 +56,30 @@ function matchesSearch(invoice: Invoice, query: string): boolean {
 const iconActionClass =
   "flex items-center justify-center size-8 rounded-md text-primary hover:bg-accent transition-colors active:opacity-80";
 
-export function InvoiceHistoryList({ invoices, onLoadRequest, onDeleteRequest }: Props) {
+export function InvoiceHistoryList({
+  invoices,
+  focusInvoiceId,
+  onFocusHandled,
+  onViewRequest,
+  onLoadRequest,
+  onDeleteRequest,
+}: Props) {
   const { t } = useTranslation();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [savedDateSort, setSavedDateSort] = useState<SavedDateSort>("desc");
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { page, query: urlQuery, sort: savedDateSort } = readHistoryListParams(searchParams);
+  const [searchQuery, setSearchQuery] = useState(urlQuery);
   const debouncedQuery = useDebouncedValue(searchQuery, 200);
+
+  useEffect(() => {
+    setSearchQuery(urlQuery);
+  }, [urlQuery]);
+
+  useEffect(() => {
+    const trimmed = debouncedQuery.trim();
+    if (trimmed !== urlQuery.trim()) {
+      patchHistoryListParams(setSearchParams, { query: trimmed, page: 1 });
+    }
+  }, [debouncedQuery, urlQuery, setSearchParams]);
 
   const filteredInvoices = useMemo(
     () => invoices.filter((inv) => matchesSearch(inv, debouncedQuery)),
@@ -72,17 +98,29 @@ export function InvoiceHistoryList({ invoices, onLoadRequest, onDeleteRequest }:
   const totalPages = Math.max(1, Math.ceil(sortedInvoices.length / PAGE_SIZE));
 
   useEffect(() => {
-    setPage(1);
-  }, [debouncedQuery, savedDateSort]);
-
-  useEffect(() => {
-    setPage((current) => Math.min(current, totalPages));
-  }, [totalPages]);
+    if (page > totalPages) {
+      patchHistoryListParams(setSearchParams, { page: Math.max(1, totalPages) });
+    }
+  }, [page, totalPages, setSearchParams]);
 
   const pageItems = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
     return sortedInvoices.slice(start, start + PAGE_SIZE);
   }, [sortedInvoices, page]);
+
+  useEffect(() => {
+    if (!focusInvoiceId) return;
+    if (!pageItems.some((inv) => inv.id === focusInvoiceId)) return;
+
+    const row = document.getElementById(historyRowId(focusInvoiceId));
+    if (!row) return;
+
+    const frame = requestAnimationFrame(() => {
+      row.scrollIntoView({ block: "center", behavior: "instant" });
+      onFocusHandled?.();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [focusInvoiceId, onFocusHandled, pageItems]);
 
   const rangeStart = sortedInvoices.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const rangeEnd = Math.min(page * PAGE_SIZE, sortedInvoices.length);
@@ -127,7 +165,12 @@ export function InvoiceHistoryList({ invoices, onLoadRequest, onDeleteRequest }:
                     <button
                       type="button"
                       className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
-                      onClick={() => setSavedDateSort((current) => (current === "desc" ? "asc" : "desc"))}
+                      onClick={() =>
+                        patchHistoryListParams(setSearchParams, {
+                          sort: savedDateSort === "desc" ? "asc" : "desc",
+                          page: 1,
+                        })
+                      }
                       aria-label={
                         savedDateSort === "desc"
                           ? t("history.sortSavedNewest")
@@ -145,14 +188,18 @@ export function InvoiceHistoryList({ invoices, onLoadRequest, onDeleteRequest }:
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
                     {t("history.buyer")}
                   </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider w-[88px]">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider w-[120px]">
                     {t("history.actions")}
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border bg-card">
                 {pageItems.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-muted/20 transition-colors group">
+                  <tr
+                    key={inv.id}
+                    id={historyRowId(inv.id)}
+                    className="hover:bg-muted/20 transition-colors group"
+                  >
                     <td className="px-4 py-4 text-sm font-semibold text-primary">
                       {inv.invoiceNo || t("history.noNumber")}
                     </td>
@@ -170,6 +217,15 @@ export function InvoiceHistoryList({ invoices, onLoadRequest, onDeleteRequest }:
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                        <button
+                          type="button"
+                          className={iconActionClass}
+                          title={t("history.view")}
+                          aria-label={t("history.view")}
+                          onClick={() => onViewRequest(inv)}
+                        >
+                          <Eye className="size-4" aria-hidden />
+                        </button>
                         <button
                           type="button"
                           className={iconActionClass}
@@ -209,7 +265,7 @@ export function InvoiceHistoryList({ invoices, onLoadRequest, onDeleteRequest }:
                 <button
                   type="button"
                   className="size-8 flex items-center justify-center border border-border rounded hover:bg-muted transition-colors disabled:opacity-40 disabled:pointer-events-none"
-                  onClick={() => setPage((p) => p - 1)}
+                  onClick={() => patchHistoryListParams(setSearchParams, { page: page - 1 })}
                   disabled={page <= 1}
                   aria-label={t("history.previousPage")}
                 >
@@ -226,7 +282,7 @@ export function InvoiceHistoryList({ invoices, onLoadRequest, onDeleteRequest }:
                           ? "bg-primary text-primary-foreground border-primary"
                           : "border-border hover:bg-muted text-muted-foreground",
                       )}
-                      onClick={() => setPage(pageNum)}
+                      onClick={() => patchHistoryListParams(setSearchParams, { page: pageNum })}
                       aria-current={pageNum === page ? "page" : undefined}
                     >
                       {pageNum}
@@ -240,7 +296,7 @@ export function InvoiceHistoryList({ invoices, onLoadRequest, onDeleteRequest }:
                 <button
                   type="button"
                   className="size-8 flex items-center justify-center border border-border rounded hover:bg-muted transition-colors disabled:opacity-40 disabled:pointer-events-none"
-                  onClick={() => setPage((p) => p + 1)}
+                  onClick={() => patchHistoryListParams(setSearchParams, { page: page + 1 })}
                   disabled={page >= totalPages}
                   aria-label={t("history.nextPage")}
                 >
