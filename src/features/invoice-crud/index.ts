@@ -1,4 +1,4 @@
-export { saveInvoice, listInvoices, deleteInvoice } from "./api";
+export { saveInvoice, listInvoices, getInvoice, deleteInvoice } from "./api";
 export {
   setPendingInvoiceLoad,
   consumePendingInvoiceLoad,
