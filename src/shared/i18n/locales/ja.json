@@ -1,6 +1,6 @@
 {
   "app": { "title": "プロフォーマインボイス" },
-  "nav": { "login": "ログイン", "logout": "ログアウト", "signup": "新規登録", "history": "履歴", "settings": "設定", "dashboard": "ダッシュボード", "invoices": "インボイス", "packingLists": "パッキングリスト", "helpCenter": "ヘルプセンター", "comingSoon": "準備中", "comingSoonSection": "準備中" },
+  "nav": { "login": "ログイン", "logout": "ログアウト", "signup": "新規登録", "history": "履歴", "settings": "設定", "dashboard": "ダッシュボード", "invoices": "インボイス", "packingLists": "パッキングリスト", "userGuide": "ユーザーガイド", "comingSoon": "準備中", "comingSoonSection": "準備中" },
   "export": { "pdf": "PDFでエクスポート", "excel": "Excelでエクスポート", "print": "印刷", "export": "エクスポート", "pdfFailed": "PDFの生成に失敗しました。" },
   "form": {
     "documentInfo": "書類情報",
@@ -324,5 +324,61 @@
         "body": "個人情報に関するお問い合わせは、サービス運営者までご連絡ください。"
       }
     ]
+  },
+  "guide": {
+    "stepOf": "{{current}} / {{total}}",
+    "next": "次へ",
+    "prev": "前へ",
+    "close": "閉じる",
+    "finish": "完了",
+    "navigateToInvoices": "インボイスページへ移動",
+    "navigateToHistory": "履歴ページへ移動",
+    "navigateToProfile": "プロフィールページへ移動",
+    "steps": {
+      "welcome": {
+        "title": "TradeDocu サービスガイド",
+        "body": "プロフォーマインボイスの作成から保存・エクスポートまで、主要機能を順番にご案内します。"
+      },
+      "nav-invoices": {
+        "title": "インボイスメニュー",
+        "body": "新しいインボイスを作成する、または作業を再開する際に使用します。"
+      },
+      "invoice-form": {
+        "title": "インボイス入力フォーム",
+        "body": "文書情報、売主・買主、取引条件、品目、銀行情報を入力します。プロフィールの売主情報が自動入力されます。"
+      },
+      "export-toolbar": {
+        "title": "エクスポートと保存",
+        "body": "PDF・Excelで出力したり印刷できます。保存すると履歴ページから再読み込みできます。"
+      },
+      "preview": {
+        "title": "リアルタイムプレビュー",
+        "body": "入力内容がインボイス形式で即座に反映されます。出力前に最終確認してください。"
+      },
+      "nav-history": {
+        "title": "履歴メニュー",
+        "body": "保存したインボイス一覧の確認と管理ができます。"
+      },
+      "history-actions": {
+        "title": "ドキュメント操作",
+        "body": "表示で詳細を確認し、読み込みで編集画面に適用、または削除できます。"
+      },
+      "nav-profile": {
+        "title": "プロフィール設定",
+        "body": "売主情報と署名を登録すると、インボイス作成時に自動反映されます。"
+      },
+      "profile-seller": {
+        "title": "会社情報と署名",
+        "body": "会社名、住所、代表者、署名画像を登録してください。すべてのインボイスで共通利用されます。"
+      },
+      "profile-bank": {
+        "title": "銀行情報",
+        "body": "SWIFTコード、口座番号など、支払いに必要な銀行情報を入力してください。"
+      },
+      "complete": {
+        "title": "ガイド完了",
+        "body": "TradeDocuの準備が整いました。サイドバーのユーザーガイドからいつでも再表示できます。"
+      }
+    }
   }
 }
