@@ -231,7 +231,7 @@ export function ProfilePage() {
               <Building2 className="size-5" aria-hidden />
               {t("profile.businessProfile")}
             </h3>
-            <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
+            <div className="bg-card p-6 rounded-xl border border-border shadow-sm" data-guide="profile-seller">
               <CompanyFields
                 profile={profile}
                 onUpdate={update}
@@ -245,7 +245,7 @@ export function ProfilePage() {
               <Landmark className="size-5" aria-hidden />
               {t("profile.financialInfo")}
             </h3>
-            <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
+            <div className="bg-card p-6 rounded-xl border border-border shadow-sm" data-guide="profile-bank">
               <BankFields profile={profile} onUpdate={update} />
             </div>
           </section>

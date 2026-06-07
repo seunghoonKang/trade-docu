@@ -224,7 +224,7 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
       <AppHeaderBrand pageTitle={pageTitle} />
 
       {/* Desktop */}
-      <div className="hidden md:flex items-center gap-2 shrink-0">
+      <div className="hidden md:flex items-center gap-2 shrink-0" data-guide="export-toolbar">
         <div className={cn("flex items-center gap-1 mr-2", !isHistoryPage && "border-r border-border pr-4")}>
           <GlobeLanguageSwitcher placement="below" showLabel={false} />
           {!isHistoryPage && (

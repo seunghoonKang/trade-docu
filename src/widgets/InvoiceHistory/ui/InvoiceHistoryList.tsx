@@ -127,7 +127,10 @@ export function InvoiceHistoryList({
 
   return (
     <section className="bg-card/80 backdrop-blur border border-border rounded-xl overflow-hidden flex flex-col">
-      <div className="px-6 py-4 bg-muted/30 border-b border-border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        className="px-6 py-4 bg-muted/30 border-b border-border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+        data-guide="history-actions"
+      >
         <h4 className="text-lg font-semibold text-primary shrink-0">{t("history.documentRepository")}</h4>
         <div className="flex items-center bg-card border border-border rounded-lg px-3 h-10 w-full sm:w-80 md:w-96 shrink-0">
           <Search className="size-4 text-muted-foreground shrink-0" aria-hidden />

@@ -38,7 +38,9 @@ export function ProfilePageHeader({ user, onBack }: ProfilePageHeaderProps) {
         <div className="flex items-center gap-4 shrink-0">
           <GlobeLanguageSwitcher placement="below" showLabel={false} />
           <div className="flex items-center border-l border-border pl-4">
-            <AvatarThumbnail user={user} />
+            <span data-guide="nav-profile" className="inline-flex">
+              <AvatarThumbnail user={user} />
+            </span>
           </div>
         </div>
       </header>
