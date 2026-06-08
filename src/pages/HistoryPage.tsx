@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useAuth } from "@/app/providers/AuthProvider";
+import { useAuth } from "@/entities/session";
 import { deleteInvoice, listInvoices, toInvoiceFormData } from "@/features/invoice-crud";
 import { HistoryPageSkeleton, HistorySummaryCards } from "@/features/history";
 import { consumeHistoryFocusInvoiceId, setHistoryFocusInvoiceId } from "@/features/history/lib/historyFocus";
@@ -88,7 +88,7 @@ export function HistoryPage() {
   const confirmInvoiceNo = confirmAction?.invoice.invoiceNo || t("history.noNumber");
 
   return (
-    <Layout toolbar={<ExportToolbar page="history" />}>
+    <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="history" />}>
       <div className="max-w-6xl mx-auto px-4 py-6 md:p-8 space-y-6 md:space-y-8 pb-8">
         {isLoading ? (
           <HistoryPageSkeleton />

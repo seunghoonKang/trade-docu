@@ -7,7 +7,7 @@ import {
   cloneInvoiceForCapture,
   createCaptureFrame,
   prepareCaptureFrame,
-} from "./invoiceCapture";
+} from "@/shared/lib/invoiceCapture";
 import { paginateInvoiceDom } from "./paginateInvoiceDom";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;

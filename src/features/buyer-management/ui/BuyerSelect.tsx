@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/app/providers/AuthProvider";
+import { useAuth } from "@/entities/session";
 import { listBuyers } from "../api";
 import type { Buyer } from "@/entities/buyer/model";
 

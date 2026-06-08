@@ -6,7 +6,7 @@ import {
   Package,
   type LucideIcon,
 } from "lucide-react";
-import { mainNavItems } from "../lib/mainNavItems";
+import { mainNavItems } from "@/shared/config/mainNavItems";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";

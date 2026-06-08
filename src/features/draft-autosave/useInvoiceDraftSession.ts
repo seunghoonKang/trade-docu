@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { createEmptyInvoice } from "@/entities/invoice/model";
-import { peekPendingInvoiceLoad } from "@/features/invoice-crud";
-import { clearDraft, isEmptyDraft, loadDraft, saveDraft, type InvoiceDraft } from "./lib";
+import { peekPendingInvoiceLoad } from "@/entities/invoice/pendingLoad";
+import { clearDraft, isEmptyDraft, loadDraft, saveDraft, type InvoiceDraft } from "@/entities/invoice/draftStorage";
 
 interface UseInvoiceDraftSessionOptions {
   ownerId: string | null;

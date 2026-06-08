@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useAuth } from "@/app/providers/AuthProvider";
+import { useAuth } from "@/entities/session";
 import { generateExcel } from "@/features/export-excel";
 import { generatePdf } from "@/features/export-pdf";
 import {
@@ -137,7 +137,7 @@ export function InvoiceDetailPage() {
   const confirmInvoiceNo = invoice?.invoiceNo || t("history.noNumber");
 
   return (
-    <Layout toolbar={<ExportToolbar page="historyDetail" />}>
+    <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="historyDetail" />}>
       <div className="max-w-6xl mx-auto px-4 py-6 md:p-8 space-y-6 md:space-y-8 pb-8">
         {isLoading ? (
           <InvoiceDetailSkeleton />

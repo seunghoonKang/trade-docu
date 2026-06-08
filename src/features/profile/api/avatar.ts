@@ -5,8 +5,8 @@ import {
   getAvatarStoragePath,
   getAvatarStoragePaths,
   hasCustomAvatar,
-} from "../lib/avatar";
-import { getStoredAvatarPublicUrl } from "../lib/avatarStorage";
+  getStoredAvatarPublicUrl,
+} from "@/entities/session";
 import type { User } from "@supabase/supabase-js";
 import { AVATAR_OUTPUT_TYPE, prepareAvatarFile } from "../lib/optimizeAvatar";
 

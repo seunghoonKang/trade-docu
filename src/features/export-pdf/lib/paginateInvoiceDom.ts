@@ -1,4 +1,4 @@
-import { A4_PAGE_HEIGHT_PX, CAPTURE_WIDTH_PX } from "./invoiceCapture";
+import { A4_PAGE_HEIGHT_PX, CAPTURE_WIDTH_PX } from "@/shared/lib/invoiceCapture";
 
 const PAGE_HEIGHT_PX = A4_PAGE_HEIGHT_PX;
 
