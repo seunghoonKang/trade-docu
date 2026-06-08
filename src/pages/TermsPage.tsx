@@ -1,4 +1,4 @@
-import { LegalDocumentPage } from "@/features/legal/ui/LegalDocumentPage";
+import { LegalDocumentPage } from "@/features/legal";
 
 export function TermsPage() {
   return <LegalDocumentPage document="terms" />;

@@ -9,9 +9,9 @@ import { useAuth } from "@/entities/session";
 import { useRestoreInvoiceFromHistory } from "@/features/invoice-crud";
 import { DraftRestoreBanner, useInvoiceDraftSession } from "@/features/draft-autosave";
 import { ProfileNudgeBanner, dismissProfileNudge, isProfileNudgeDismissed } from "@/features/seller-management";
-import { getSeller } from "@/entities/seller/api";
+import { getSeller } from "@/entities/seller";
 import type { BankInfo } from "@/shared/lib/bankInfo";
-import type { Seller } from "@/entities/seller/model";
+import type { Seller } from "@/entities/seller";
 
 export function InvoicePage() {
   const invoiceForm = useInvoiceForm();

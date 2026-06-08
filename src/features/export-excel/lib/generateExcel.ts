@@ -1,8 +1,8 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-import type { Invoice } from "@/entities/invoice/model";
-import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice/documentLabels";
-import { buildBuyerDetailLines, buildSellerDetailLines } from "@/entities/invoice/partyDetails";
+import type { Invoice } from "@/entities/invoice";
+import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice";
+import { buildBuyerDetailLines, buildSellerDetailLines } from "@/entities/invoice";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 

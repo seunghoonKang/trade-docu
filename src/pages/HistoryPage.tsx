@@ -5,12 +5,12 @@ import { toast } from "sonner";
 import { useAuth } from "@/entities/session";
 import { deleteInvoice, listInvoices, toInvoiceFormData } from "@/features/invoice-crud";
 import { HistoryPageSkeleton, HistorySummaryCards } from "@/features/history";
-import { consumeHistoryFocusInvoiceId, setHistoryFocusInvoiceId } from "@/features/history/lib/historyFocus";
-import type { HistoryListLocationState } from "@/features/history/lib/historyNavigationState";
+import { consumeHistoryFocusInvoiceId, setHistoryFocusInvoiceId } from "@/features/history";
+import type { HistoryListLocationState } from "@/features/history";
 import { InvoiceHistoryList } from "@/widgets/InvoiceHistory";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { ConfirmDialog, Layout } from "@/shared/ui";
-import type { Invoice } from "@/entities/invoice/model";
+import type { Invoice } from "@/entities/invoice";
 
 const RECENT_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 

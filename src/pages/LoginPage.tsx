@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/entities/session";
-import { needsOAuthOnboarding } from "@/features/auth/lib/profile";
-import { LoginMobileLayout } from "@/features/auth/ui/LoginMobileLayout";
-import { LoginHero } from "@/features/auth/ui/LoginHero";
-import { LoginPanel } from "@/features/auth/ui/LoginPanel";
+import { needsOAuthOnboarding } from "@/features/auth";
+import { LoginMobileLayout } from "@/features/auth";
+import { LoginHero } from "@/features/auth";
+import { LoginPanel } from "@/features/auth";
 
 export function LoginPage() {
   const { user, loading } = useAuth();

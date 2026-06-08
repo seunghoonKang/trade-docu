@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Input, Textarea } from "@/shared/ui";
 import { FormSection } from "@/shared/ui";
 import { BuyerSelect } from "@/features/buyer-management";
-import type { Buyer } from "@/entities/buyer/model";
+import type { Buyer } from "@/entities/buyer";
 
 interface Props {
   companyName: string; address: string; tel: string; contactPerson: string;

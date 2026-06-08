@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Languages } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/shared/lib/utils";
-import { APP_LANGUAGES, resolveAppLanguage } from "@/shared/i18n/languages";
+import { APP_LANGUAGES, resolveAppLanguage } from "@/shared/i18n";
 
 interface GlobeLanguageSwitcherProps {
   placement?: "above" | "below";

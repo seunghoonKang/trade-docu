@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
-import type { Invoice, InvoiceItem, AdditionalCharge } from "@/entities/invoice/model";
-import { createEmptyInvoice, createEmptyItem } from "@/entities/invoice/model";
-import { calcItemAmount, calcTotalAmount } from "@/entities/invoice/lib";
+import type { Invoice, InvoiceItem, AdditionalCharge } from "@/entities/invoice";
+import { createEmptyInvoice, createEmptyItem } from "@/entities/invoice";
+import { calcItemAmount, calcTotalAmount } from "@/entities/invoice";
 
 type InvoiceForm = Omit<Invoice, "id" | "userId" | "createdAt">;
 

@@ -11,14 +11,14 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
-import { historyRowId } from "@/features/history/lib/historyFocus";
+import { historyRowId } from "@/features/history";
 import {
   patchHistoryListParams,
   readHistoryListParams,
-} from "@/features/history/lib/historyListParams";
+} from "@/features/history";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
 import { cn } from "@/shared/lib/utils";
-import type { Invoice } from "@/entities/invoice/model";
+import type { Invoice } from "@/entities/invoice";
 
 const PAGE_SIZE = 20;
 
