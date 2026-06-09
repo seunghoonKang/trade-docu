@@ -1,7 +1,9 @@
 import { supabase } from "@/shared/lib/supabase";
 import type { Invoice } from "@/entities/invoice";
 
-type InvoiceData = Omit<Invoice, "id" | "userId" | "createdAt">;
+// S2(#30): 기존 invoices는 거래 건 모델로 백필된 뒤 invoices_legacy로 보존(rename)된다.
+// 신규 저장은 거래 건(features/deal-crud)로 가고, 여기서는 과거 문서(legacy)만 읽는다.
+const LEGACY_TABLE = "invoices_legacy";
 
 type InvoiceRow = {
   id: string;
@@ -63,41 +65,22 @@ function mapInvoiceRow(row: InvoiceRow): Invoice {
   };
 }
 
-export async function saveInvoice(userId: string, invoice: InvoiceData) {
-  const { error } = await supabase.from("invoices").insert({
-    user_id: userId, invoice_no: invoice.invoiceNo,
-    ref_no: invoice.refNo, order_no: invoice.orderNo,
-    date: invoice.date || null, validity: invoice.validity || null,
-    seller_company_name: invoice.sellerCompanyName,
-    seller_address: invoice.sellerAddress, seller_tel: invoice.sellerTel,
-    seller_fax: invoice.sellerFax, seller_representative: invoice.sellerRepresentative,
-    seller_signature_url: invoice.sellerSignatureUrl,
-    buyer_snapshot: invoice.buyerSnapshot, commodity: invoice.commodity,
-    currency: invoice.currency, payment_terms: invoice.paymentTerms,
-    incoterms: invoice.incoterms, delivery: invoice.delivery,
-    packing: invoice.packing, remarks: invoice.remarks,
-    items: invoice.items, additional_charges: invoice.additionalCharges,
-    total_amount: invoice.totalAmount, bank_info: invoice.bankInfo,
-  });
-  if (error) throw error;
-}
-
 export async function listInvoices(userId: string): Promise<Invoice[]> {
   const { data, error } = await supabase
-    .from("invoices").select("*").eq("user_id", userId).order("created_at", { ascending: false });
+    .from(LEGACY_TABLE).select("*").eq("user_id", userId).order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []).map((row) => mapInvoiceRow(row as InvoiceRow));
 }
 
 export async function getInvoice(id: string): Promise<Invoice | null> {
   const { data, error } = await supabase
-    .from("invoices").select("*").eq("id", id).maybeSingle();
+    .from(LEGACY_TABLE).select("*").eq("id", id).maybeSingle();
   if (error) throw error;
   if (!data) return null;
   return mapInvoiceRow(data as InvoiceRow);
 }
 
 export async function deleteInvoice(id: string) {
-  const { error } = await supabase.from("invoices").delete().eq("id", id);
+  const { error } = await supabase.from(LEGACY_TABLE).delete().eq("id", id);
   if (error) throw error;
 }
