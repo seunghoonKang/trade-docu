@@ -5,10 +5,10 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Input } from "@/shared/ui";
 import { useAuth } from "@/entities/session";
-import { clearOAuthLinkCallbackUrl, consumeOAuthLinkCallback } from "@/features/auth/lib/oauthLinkCallback";
-import i18n from "@/shared/i18n/config";
-import { LinkedAuthMethods } from "@/features/auth/ui/LinkedAuthMethods";
-import { restoreAvatarMetadataIfNeeded } from "@/features/profile/api/avatar";
+import { clearOAuthLinkCallbackUrl, consumeOAuthLinkCallback } from "@/features/auth";
+import i18n from "@/shared/i18n";
+import { LinkedAuthMethods } from "@/features/auth";
+import { restoreAvatarMetadataIfNeeded } from "@/features/profile";
 import {
   ProfileHeader,
   ProfilePageHeader,
@@ -20,8 +20,8 @@ import {
   seedSellerFromMetadata,
   SignatureUpload,
 } from "@/features/seller-management";
-import { getSeller, upsertSeller } from "@/entities/seller/api";
-import type { SellerProfile } from "@/entities/seller/model";
+import { getSeller, upsertSeller } from "@/entities/seller";
+import type { SellerProfile } from "@/entities/seller";
 import { cn } from "@/shared/lib/utils";
 
 interface ProfileFormFieldsProps {

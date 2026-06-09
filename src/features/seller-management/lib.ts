@@ -1,5 +1,5 @@
 import type { User } from "@supabase/supabase-js";
-import type { Seller, SellerProfile } from "@/entities/seller/model";
+import type { Seller, SellerProfile } from "@/entities/seller";
 import type { BankInfo } from "@/shared/lib/bankInfo";
 
 const EMPTY_PROFILE: SellerProfile = {

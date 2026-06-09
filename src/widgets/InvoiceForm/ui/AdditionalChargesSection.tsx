@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FormSection } from "@/shared/ui";
 import { editorInputClassName, editorInlineDismissButtonClassName } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
-import type { AdditionalCharge } from "@/entities/invoice/model";
+import type { AdditionalCharge } from "@/entities/invoice";
 
 interface Props {
   charges: AdditionalCharge[];

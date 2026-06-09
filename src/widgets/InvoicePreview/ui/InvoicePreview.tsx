@@ -1,6 +1,6 @@
-import type { Invoice } from "@/entities/invoice/model";
-import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice/documentLabels";
-import { buildBuyerDetailLines, buildSellerDetailLines } from "@/entities/invoice/partyDetails";
+import type { Invoice } from "@/entities/invoice";
+import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice";
+import { buildBuyerDetailLines, buildSellerDetailLines } from "@/entities/invoice";
 import { cn } from "@/shared/lib/utils";
 
 type PreviewData = Omit<Invoice, "id" | "userId" | "createdAt">;

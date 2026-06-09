@@ -2,8 +2,8 @@ import { Plus, X, Package } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Input, editorDismissButtonClassName } from "@/shared/ui";
 import { FormSection } from "@/shared/ui";
-import { calcSubtotal } from "@/entities/invoice/lib";
-import type { InvoiceItem } from "@/entities/invoice/model";
+import { calcSubtotal } from "@/entities/invoice";
+import type { InvoiceItem } from "@/entities/invoice";
 
 interface Props {
   items: InvoiceItem[];

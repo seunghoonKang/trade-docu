@@ -1,6 +1,6 @@
 import { supabase } from "@/shared/lib/supabase";
-import i18n from "@/shared/i18n/config";
-import { upsertSeller } from "@/entities/seller/api";
+import i18n from "@/shared/i18n";
+import { upsertSeller } from "@/entities/seller";
 import type { LinkableOAuthProvider } from "./lib/profile";
 
 export async function login(email: string, password: string) {

@@ -1,6 +1,6 @@
 import { Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { Invoice } from "@/entities/invoice/model";
+import type { Invoice } from "@/entities/invoice";
 
 interface Props {
   invoice: Invoice;

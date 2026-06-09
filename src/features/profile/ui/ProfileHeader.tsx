@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Pencil, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import type { SellerProfile } from "@/entities/seller/model";
+import type { SellerProfile } from "@/entities/seller";
 import { useAuth, useResolvedAvatarUrl, hasCustomAvatar } from "@/entities/session";
 import { Button } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";

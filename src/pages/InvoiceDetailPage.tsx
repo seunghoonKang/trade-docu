@@ -11,16 +11,16 @@ import {
   InvoiceDetailMetadata,
   InvoiceDetailSkeleton,
 } from "@/features/history";
-import { clearHistoryFocusInvoiceId } from "@/features/history/lib/historyFocus";
-import type { HistoryDetailLocationState } from "@/features/history/lib/historyNavigationState";
+import { clearHistoryFocusInvoiceId } from "@/features/history";
+import type { HistoryDetailLocationState } from "@/features/history";
 import {
   deleteInvoice,
   getInvoice,
   toInvoiceFormData,
 } from "@/features/invoice-crud";
 import { triggerPrint } from "@/features/print";
-import { validateInvoice } from "@/entities/invoice/validate";
-import type { Invoice } from "@/entities/invoice/model";
+import { validateInvoice } from "@/entities/invoice";
+import type { Invoice } from "@/entities/invoice";
 import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { Button, ConfirmDialog, Layout } from "@/shared/ui";
