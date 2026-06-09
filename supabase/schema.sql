@@ -90,3 +90,7 @@ alter table invoices add column if not exists seller_signature_url text not null
 alter table invoices enable row level security;
 create policy "Users can manage own invoices" on invoices
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- 멀티문서 모델(거래 건 → 선적 → 문서)은 supabase/migrations/ 에서 버전 관리한다.
+-- 새 환경 셋업 시 이 파일 적용 후 supabase/migrations/*.sql 을 순서대로 실행할 것.
+-- 0001_deal_shipment_document.sql — deals / shipments / documents + RLS (S1, #29)
