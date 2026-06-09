@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { Button } from "@/shared/ui/primitives/button";
+import { Button } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 import { getCardStyle, shouldSkipScrollIntoView } from "../lib/cardPosition";
 import {

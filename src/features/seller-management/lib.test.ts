@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import type { User } from "@supabase/supabase-js";
 import { seedSellerFromMetadata } from "./lib";
-import type { Seller } from "@/entities/seller/model";
-import type { BankInfo } from "@/entities/bank-info/model";
+import type { Seller } from "@/entities/seller";
+import type { BankInfo } from "@/shared/lib/bankInfo";
 
 function makeUser(metadata: Record<string, unknown>): User {
   return { user_metadata: metadata } as unknown as User;

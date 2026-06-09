@@ -6,7 +6,7 @@ import {
   Package,
   type LucideIcon,
 } from "lucide-react";
-import { mainNavItems } from "../lib/mainNavItems";
+import { mainNavItems } from "@/shared/config";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -17,7 +17,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/shared/ui/primitives/tooltip";
+} from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 
 interface SidebarItem {

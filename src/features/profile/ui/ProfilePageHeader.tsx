@@ -1,8 +1,8 @@
 import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
-import { GlobeLanguageSwitcher } from "@/features/i18n-switch";
-import { AppHeaderBrand, AvatarThumbnail } from "@/shared/ui";
+import { AppHeaderBrand, GlobeLanguageSwitcher } from "@/shared/ui";
+import { AvatarThumbnail } from "@/entities/session";
 
 interface ProfilePageHeaderProps {
   user: SupabaseUser;

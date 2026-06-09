@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/ui";
-import type { Invoice } from "@/entities/invoice/model";
+import type { Invoice } from "@/entities/invoice";
 
 interface Props {
   invoice: Invoice;

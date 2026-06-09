@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Invoice } from "@/entities/invoice/model";
+import type { Invoice } from "@/entities/invoice";
 import { InvoicePreview } from "./InvoicePreview";
 
 const PAPER_WIDTH_PX = 794;

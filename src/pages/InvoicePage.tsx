@@ -5,12 +5,13 @@ import { InvoiceForm } from "@/widgets/InvoiceForm";
 import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { useInvoiceForm } from "@/widgets/InvoiceForm";
-import { useAuth } from "@/app/providers/AuthProvider";
+import { useAuth } from "@/entities/session";
 import { useRestoreInvoiceFromHistory } from "@/features/invoice-crud";
 import { DraftRestoreBanner, useInvoiceDraftSession } from "@/features/draft-autosave";
-import { getSeller, ProfileNudgeBanner, dismissProfileNudge, isProfileNudgeDismissed } from "@/features/seller-management";
-import type { BankInfo } from "@/entities/bank-info/model";
-import type { Seller } from "@/entities/seller/model";
+import { ProfileNudgeBanner, dismissProfileNudge, isProfileNudgeDismissed } from "@/features/seller-management";
+import { getSeller } from "@/entities/seller";
+import type { BankInfo } from "@/shared/lib/bankInfo";
+import type { Seller } from "@/entities/seller";
 
 export function InvoicePage() {
   const invoiceForm = useInvoiceForm();
@@ -71,7 +72,7 @@ export function InvoicePage() {
   }, [user]);
 
   return (
-    <Layout toolbar={<ExportToolbar formData={invoiceForm.form} page="documents" />}>
+    <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar formData={invoiceForm.form} page="documents" />}>
       <div className="flex h-[calc(100vh-4rem)] flex-col">
         {needsProfile && !profileNudgeDismissed && (
           <ProfileNudgeBanner

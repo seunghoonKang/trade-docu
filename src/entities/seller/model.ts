@@ -1,3 +1,5 @@
+import type { BankInfo } from "@/shared/lib/bankInfo";
+
 export interface Seller {
   id: string;
   userId: string;
@@ -8,3 +10,5 @@ export interface Seller {
   representative: string;
   signatureUrl: string;
 }
+
+export type SellerProfile = Omit<Seller, "id" | "userId"> & BankInfo;

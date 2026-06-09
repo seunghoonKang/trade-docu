@@ -4,25 +4,24 @@ import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Input } from "@/shared/ui";
-import { useAuth } from "@/app/providers/AuthProvider";
-import { clearOAuthLinkCallbackUrl, consumeOAuthLinkCallback } from "@/features/auth/lib/oauthLinkCallback";
-import i18n from "@/shared/i18n/config";
-import { LinkedAuthMethods } from "@/features/auth/ui/LinkedAuthMethods";
-import { restoreAvatarMetadataIfNeeded } from "@/features/profile/api/avatar";
+import { useAuth } from "@/entities/session";
+import { clearOAuthLinkCallbackUrl, consumeOAuthLinkCallback } from "@/features/auth";
+import i18n from "@/shared/i18n";
+import { LinkedAuthMethods } from "@/features/auth";
+import { restoreAvatarMetadataIfNeeded } from "@/features/profile";
 import {
   ProfileHeader,
   ProfilePageHeader,
   ProfilePageSkeleton,
   ProfileSaveBar,
-  ProfileSectionCard,
 } from "@/features/profile";
+import { ProfileSectionCard } from "@/shared/ui";
 import {
-  getSeller,
-  upsertSeller,
   seedSellerFromMetadata,
   SignatureUpload,
-  type SellerProfile,
 } from "@/features/seller-management";
+import { getSeller, upsertSeller } from "@/entities/seller";
+import type { SellerProfile } from "@/entities/seller";
 import { cn } from "@/shared/lib/utils";
 
 interface ProfileFormFieldsProps {

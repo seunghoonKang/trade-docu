@@ -11,10 +11,10 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
-import { LinkedAuthSkeleton, ProfileSectionCard } from "@/features/profile";
-import { useAuth } from "@/app/providers/AuthProvider";
+import { LinkedAuthSkeleton, ProfileSectionCard } from "@/shared/ui";
+import { useAuth } from "@/entities/session";
 import { linkOAuthProvider, unlinkOAuthProvider } from "../api";
-import { useLinkedIdentities } from "../hooks/useLinkedIdentities";
+import { useLinkedIdentities } from "../lib/useLinkedIdentities";
 import { getAuthErrorMessage } from "../lib/errors";
 import { KakaoIcon } from "./KakaoIcon";
 import {

@@ -4,11 +4,11 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import type { User } from "@supabase/supabase-js";
 import { User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/app/providers/AuthProvider";
-import { completeOAuthProfile } from "@/features/auth/api";
-import { getOAuthDisplayName, needsOAuthOnboarding } from "@/features/auth/lib/profile";
+import { useAuth } from "@/entities/session";
+import { completeOAuthProfile } from "@/features/auth";
+import { getOAuthDisplayName, needsOAuthOnboarding } from "@/features/auth";
 import { Button } from "@/shared/ui";
-import { AuthTextField } from "@/features/auth/ui/AuthTextField";
+import { AuthTextField } from "@/features/auth";
 
 function OnboardingForm({ user }: { user: User }) {
   const { t } = useTranslation();

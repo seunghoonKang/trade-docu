@@ -7,8 +7,11 @@ export { Select } from "./select";
 export { FormSection } from "./form-section";
 export { Layout } from "./layout";
 export { ConfirmDialog } from "./confirm-dialog";
-export { AvatarThumbnail } from "./AvatarThumbnail";
 export { DatePicker } from "./date-picker";
+export { GlobeLanguageSwitcher } from "./GlobeLanguageSwitcher";
+export { LanguageSwitcher } from "./LanguageSwitcher";
+export { ProfileSectionCard } from "./ProfileSectionCard";
+export { LinkedAuthSkeleton } from "./LinkedAuthSkeleton";
 
 // shadcn primitives
 export * from "./primitives/calendar";

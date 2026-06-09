@@ -1,6 +1,6 @@
 import { FolderOpen, Info, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/primitives/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui";
 
 interface Props {
   totalCount: number;

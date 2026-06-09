@@ -2,13 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { Pencil, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import type { SellerProfile } from "@/features/seller-management";
-import { useAuth } from "@/app/providers/AuthProvider";
+import type { SellerProfile } from "@/entities/seller";
+import { useAuth, useResolvedAvatarUrl, hasCustomAvatar } from "@/entities/session";
 import { Button } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 import { removeAvatar, uploadAvatar } from "../api/avatar";
-import { useResolvedAvatarUrl } from "../hooks/useResolvedAvatarUrl";
-import { hasCustomAvatar } from "../lib/avatar";
 
 interface ProfileHeaderProps {
   profile: SellerProfile;

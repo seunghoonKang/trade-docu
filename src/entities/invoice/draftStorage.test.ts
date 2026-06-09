@@ -1,5 +1,5 @@
 import { afterEach, describe, it, expect } from "vitest";
-import { isEmptyDraft, saveDraft, loadDraft, clearDraft } from "./lib";
+import { isEmptyDraft, saveDraft, loadDraft, clearDraft } from "./draftStorage";
 import { createEmptyInvoice } from "@/entities/invoice/model";
 
 describe("isEmptyDraft", () => {

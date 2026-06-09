@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { I18nextProvider } from "react-i18next";
 import { MemoryRouter } from "react-router-dom";
-import i18n from "@/shared/i18n/config";
+import i18n from "@/shared/i18n";
 import { ServiceGuideOverlay } from "./ServiceGuideOverlay";
 
 function renderOverlay(

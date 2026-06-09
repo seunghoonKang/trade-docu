@@ -1,5 +1,5 @@
 import { supabase } from "@/shared/lib/supabase";
-import type { Buyer } from "@/entities/buyer/model";
+import type { Buyer } from "@/entities/buyer";
 
 export async function listBuyers(userId: string): Promise<Buyer[]> {
   const { data, error } = await supabase

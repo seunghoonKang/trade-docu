@@ -2,15 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useAuth } from "@/app/providers/AuthProvider";
+import { useAuth } from "@/entities/session";
 import { deleteInvoice, listInvoices, toInvoiceFormData } from "@/features/invoice-crud";
 import { HistoryPageSkeleton, HistorySummaryCards } from "@/features/history";
-import { consumeHistoryFocusInvoiceId, setHistoryFocusInvoiceId } from "@/features/history/lib/historyFocus";
-import type { HistoryListLocationState } from "@/features/history/lib/historyNavigationState";
+import { consumeHistoryFocusInvoiceId, setHistoryFocusInvoiceId } from "@/features/history";
+import type { HistoryListLocationState } from "@/features/history";
 import { InvoiceHistoryList } from "@/widgets/InvoiceHistory";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { ConfirmDialog, Layout } from "@/shared/ui";
-import type { Invoice } from "@/entities/invoice/model";
+import type { Invoice } from "@/entities/invoice";
 
 const RECENT_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -88,7 +88,7 @@ export function HistoryPage() {
   const confirmInvoiceNo = confirmAction?.invoice.invoiceNo || t("history.noNumber");
 
   return (
-    <Layout toolbar={<ExportToolbar page="history" />}>
+    <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="history" />}>
       <div className="max-w-6xl mx-auto px-4 py-6 md:p-8 space-y-6 md:space-y-8 pb-8">
         {isLoading ? (
           <HistoryPageSkeleton />

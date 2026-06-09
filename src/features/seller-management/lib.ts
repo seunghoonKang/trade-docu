@@ -1,8 +1,6 @@
 import type { User } from "@supabase/supabase-js";
-import type { Seller } from "@/entities/seller/model";
-import type { BankInfo } from "@/entities/bank-info/model";
-
-export type SellerProfile = Omit<Seller, "id" | "userId"> & BankInfo;
+import type { Seller, SellerProfile } from "@/entities/seller";
+import type { BankInfo } from "@/shared/lib/bankInfo";
 
 const EMPTY_PROFILE: SellerProfile = {
   companyName: "",

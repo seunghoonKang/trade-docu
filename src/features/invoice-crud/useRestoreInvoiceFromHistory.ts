@@ -2,9 +2,9 @@ import { useLayoutEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import type { Invoice } from "@/entities/invoice/model";
-import { clearDraft } from "@/features/draft-autosave";
-import { clearPendingInvoiceLoad, consumePendingInvoiceLoad } from "./pendingLoad";
+import type { Invoice } from "@/entities/invoice";
+import { clearDraft } from "@/entities/invoice";
+import { clearPendingInvoiceLoad, consumePendingInvoiceLoad } from "@/entities/invoice";
 
 type InvoiceFormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 

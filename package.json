@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "lint:fsd": "steiger ./src",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@feature-sliced/steiger-plugin": "0.6.0",
     "@playwright/test": "^1.59.1",
     "@tailwindcss/vite": "^4.2.2",
     "@testing-library/jest-dom": "^6.9.1",
@@ -54,6 +56,7 @@
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
     "jsdom": "^29.0.2",
+    "steiger": "0.5.13",
     "tailwindcss": "^4.2.2",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.18.2",
