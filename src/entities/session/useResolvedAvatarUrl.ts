@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
-import { getAvatarUrl } from "../lib/avatar";
-import { getStoredAvatarPublicUrl } from "../lib/avatarStorage";
+import { getAvatarUrl } from "./avatar";
+import { getStoredAvatarPublicUrl } from "./avatarStorage";
 
 export function useResolvedAvatarUrl(
   user: User | null | undefined,

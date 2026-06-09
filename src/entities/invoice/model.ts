@@ -1,4 +1,4 @@
-import type { BankInfo } from "../bank-info/model";
+import type { BankInfo } from "@/shared/lib/bankInfo";
 
 export interface InvoiceItem {
   description: string;

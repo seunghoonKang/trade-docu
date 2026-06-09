@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "@/app/providers/AuthProvider";
+import { useAuth } from "@/entities/session";
 import { needsOAuthOnboarding } from "@/features/auth/lib/profile";
 import { AppSidebar } from "@/widgets/AppSidebar";
 

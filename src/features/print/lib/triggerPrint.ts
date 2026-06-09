@@ -5,7 +5,7 @@ import {
   cloneInvoiceForCapture,
   waitForImages,
   waitForLayout,
-} from "@/features/export-pdf/lib/invoiceCapture";
+} from "@/shared/lib/invoiceCapture";
 
 /** Typical browser "Default" print margin (Chrome/Safari ~10–12 mm per side). */
 const PRINT_MARGIN_MM = 12;

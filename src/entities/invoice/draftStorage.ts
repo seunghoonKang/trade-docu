@@ -1,4 +1,4 @@
-import type { Invoice } from "@/entities/invoice/model";
+import type { Invoice } from "./model";
 
 export type InvoiceDraft = Omit<Invoice, "id" | "userId" | "createdAt">;
 

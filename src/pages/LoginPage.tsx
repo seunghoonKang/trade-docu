@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/app/providers/AuthProvider";
+import { useAuth } from "@/entities/session";
 import { needsOAuthOnboarding } from "@/features/auth/lib/profile";
 import { LoginMobileLayout } from "@/features/auth/ui/LoginMobileLayout";
 import { LoginHero } from "@/features/auth/ui/LoginHero";

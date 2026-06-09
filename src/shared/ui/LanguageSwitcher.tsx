@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { cn } from "@/shared/lib/utils";
-import { Select } from "@/shared/ui";
+import { Select } from "./select";
 import { APP_LANGUAGES, resolveAppLanguage } from "@/shared/i18n/languages";
 
 export function LanguageSwitcher({

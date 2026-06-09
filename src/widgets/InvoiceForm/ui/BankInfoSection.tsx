@@ -2,7 +2,7 @@ import { Landmark } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/shared/ui";
 import { FormSection } from "@/shared/ui";
-import type { BankInfo } from "@/entities/bank-info/model";
+import type { BankInfo } from "@/shared/lib/bankInfo";
 
 interface Props {
   bankInfo: BankInfo;

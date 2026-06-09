@@ -4,7 +4,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import type { User } from "@supabase/supabase-js";
 import { User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/app/providers/AuthProvider";
+import { useAuth } from "@/entities/session";
 import { completeOAuthProfile } from "@/features/auth/api";
 import { getOAuthDisplayName, needsOAuthOnboarding } from "@/features/auth/lib/profile";
 import { Button } from "@/shared/ui";

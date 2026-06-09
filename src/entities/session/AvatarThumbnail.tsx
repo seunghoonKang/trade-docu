@@ -1,6 +1,6 @@
 import { User } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
-import { useResolvedAvatarUrl } from "@/features/profile/hooks/useResolvedAvatarUrl";
+import { useResolvedAvatarUrl } from "./useResolvedAvatarUrl";
 import { cn } from "@/shared/lib/utils";
 
 interface AvatarThumbnailProps {
