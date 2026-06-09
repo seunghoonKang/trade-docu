@@ -13,7 +13,7 @@ import type { Invoice } from "@/entities/invoice";
 import { validateInvoice } from "@/entities/invoice";
 import { generatePdf } from "@/features/export-pdf";
 import { generateExcel } from "@/features/export-excel";
-import { saveInvoice } from "@/features/invoice-crud";
+import { saveDeal } from "@/features/deal-crud";
 import { triggerPrint } from "@/features/print";
 import { clearDraft } from "@/entities/invoice";
 import { cn } from "@/shared/lib/utils";
@@ -85,9 +85,11 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
 
   async function handleSave() {
     if (!user || !passesValidation()) return;
-    await saveInvoice(user.id, data);
+    // ADR-0002: 첫 명시적 저장 시에만 서버에 거래 건(+PI 문서)이 생성된다.
+    const dealId = await saveDeal(user.id, data);
     clearDraft();
     toast.success(t("history.saved"));
+    navigate(`/deals/${dealId}`);
   }
 
   const iconButtonClass =
