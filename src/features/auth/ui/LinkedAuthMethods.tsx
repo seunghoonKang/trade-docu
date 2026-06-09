@@ -14,7 +14,7 @@ import { cn } from "@/shared/lib/utils";
 import { LinkedAuthSkeleton, ProfileSectionCard } from "@/shared/ui";
 import { useAuth } from "@/entities/session";
 import { linkOAuthProvider, unlinkOAuthProvider } from "../api";
-import { useLinkedIdentities } from "../hooks/useLinkedIdentities";
+import { useLinkedIdentities } from "../lib/useLinkedIdentities";
 import { getAuthErrorMessage } from "../lib/errors";
 import { KakaoIcon } from "./KakaoIcon";
 import {

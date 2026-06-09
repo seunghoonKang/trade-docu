@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GUIDE_STEPS, isOnGuideRoute } from "../lib/steps";
-import { ServiceGuideContext, type ServiceGuideContextValue } from "../hooks/useServiceGuide";
+import { ServiceGuideContext, type ServiceGuideContextValue } from "../lib/useServiceGuide";
 import { ServiceGuideOverlay } from "./ServiceGuideOverlay";
 
 export function ServiceGuideProvider({ children }: { children: React.ReactNode }) {
