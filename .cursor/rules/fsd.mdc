@@ -1,0 +1,33 @@
+---
+description: Feature-Sliced Design architecture rules (layers, imports, public API)
+globs: src/**
+alwaysApply: true
+---
+
+# Feature-Sliced Design — MUST follow for any code under `src/`
+
+Layers, top → bottom: `app → pages → widgets → features → entities → shared`
+
+## Import rules
+1. **Downward only.** A layer imports lower layers, never higher/sideways-up.
+   `shared` must not import `entities`/`features`; `entities` must not import `features`.
+2. **No imports between slices on the same layer** (e.g. `features/auth` → `features/profile` ✗).
+   If sibling slices must share, move the shared thing **down** (push-down rule).
+3. **Import only via a slice's public API (`index.ts`).** No deep imports.
+   ✗ `@/entities/invoice/model` → ✓ `@/entities/invoice`.
+   (Importing `shared` segments by path like `@/shared/lib/utils`, `@/shared/ui` is fine.)
+
+## push-down rule
+Move a shared dependency down only when ≥2 sibling slices use it (1 user → colocate).
+Where to put it is decided by its **nature**: value object/util/contract → `shared`;
+domain type/data access → `entities`.
+
+## Conventions
+- Session / current user → `entities/session` (provider rendered by `app`).
+- `entities` = flat files + a **curated** `index.ts` (export only what's consumed).
+- Segments named by purpose: `ui/ model/ lib/ api/ config/`. No `hooks/` segment — use `lib/`.
+- A `shared` component needing domain data stays dumb (inject via props, e.g. `Layout`'s `showSidebar`).
+
+## Before finishing
+Run `npm run lint:fsd` (Steiger) — it must report "No problems found". CI blocks violating PRs.
+Full detail: `docs/agents/fsd.md`.
