@@ -33,3 +33,6 @@ docs/superpowers/
 
 # Stitch design references (local only)
 design/stitch/
+
+.vercel
+.env*
