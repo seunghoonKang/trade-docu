@@ -2,7 +2,7 @@
   "app": { "title": "プロフォーマインボイス" },
   "nav": {"login": "ログイン", "logout": "ログアウト", "signup": "新規登録", "history": "履歴", "settings": "設定", "dashboard": "ダッシュボード", "invoices": "書類作成", "userGuide": "ユーザーガイド", "comingSoon": "準備中", "comingSoonSection": "準備中"},
   "export": { "pdf": "PDFでエクスポート", "excel": "Excelでエクスポート", "print": "印刷", "export": "エクスポート", "pdfFailed": "PDFの生成に失敗しました。" },
-  "deal": {"documents": "書類", "issue": "発行", "issued": "発行済み", "shipment": "船積", "addShipment": "船積を追加", "ordered": "注文", "allocated": "船積済", "remaining": "残量", "allocation": "配分", "thisShipment": "今回の配分", "save": "保存", "overAllocated": "過剰配分", "remainingWarning": "未船積の残量があります。", "complete": "取引を完了", "item": "品目", "ctn": "箱数(CTN)", "netWeight": "純重量", "grossWeight": "総重量", "cbm": "CBM", "cartonNo": "カートンNo.", "showPrice": "価格を表示", "statusOpen": "進行中", "statusClosed": "完了", "issuedDocuments": "発行済み書類"},
+  "deal": {"documents": "書類", "issue": "発行", "issued": "発行済み", "shipment": "船積", "addShipment": "船積みを追加", "ordered": "注文", "allocated": "船積済", "remaining": "残量", "allocation": "配分", "thisShipment": "今回の配分", "save": "保存", "overAllocated": "過剰配分", "remainingWarning": "未船積の残量があります。", "complete": "取引を完了", "item": "品目", "ctn": "箱数(CTN)", "netWeight": "純重量", "grossWeight": "総重量", "cbm": "CBM", "cartonNo": "カートンNo.", "showPrice": "価格を表示", "statusOpen": "進行中", "statusClosed": "完了", "issuedDocuments": "発行済み書類", "backToDeal": "取引に戻る", "issueTitle": "{{doc}}発行", "alreadyIssued": "この船積みには既に発行済みです。", "unissuedDocuments": "未発行の書類", "goIssue": "発行する", "issuedCount": "船積み{{total}}件中{{issued}}件発行済み", "issueDocAction": "{{doc}}を発行", "ciOptions": "CIオプション", "reopen": "取引を再開", "reopened": "取引を再開しました。", "closedNotice": "完了した取引です — 発行するには取引を再開してください。", "sharedShipmentHint": "船積み・配分の内容は取引に保存され、CIとPLで共有されます — 一度入力すれば両方の書類に反映されます。", "confirmIssueNoOriginTitle": "原産国なしで発行しますか？", "confirmIssueNoOriginDescription": "原産国が未入力です。このまま{{doc}}を発行しますか？", "reissue": "取消して再発行", "confirmReissueTitle": "再発行しますか？", "confirmReissueDescription": "発行済みの{{id}}は削除され、修正後に再発行できます。", "fullShipmentSummary": "全量を1回で出荷 · 合計{{total}}", "splitShipment": "分割船積みにする", "issueTargetHint": "発行対象は選択中の船積みタブです。残量は全船積みを合算して自動計算されます。", "packingDetails": "梱包情報", "cancelSplit": "全量出荷に戻す", "confirmCancelSplitTitle": "分割船積みを取り消しますか？", "confirmCancelSplitDescription": "船積み2以降が削除され（発行済みのCI/PLを含む）、全量が船積み1に配分されます。", "issuedNext": "発行しました。船積み{{seq}}に移動しました — 続けて発行してください。", "allIssued": "すべての船積みに{{doc}}を発行しました。"},
   "form": {
     "originCountry": "原産国",
     "documentInfo": "書類情報",
@@ -385,7 +385,7 @@
     "navigateToProfile": "プロフィールページへ移動",
     "coachmarks": {
       "split-shipment": "分割船積みが可能です — 船積みを追加し、品目数量を船積みごとに配分してください。",
-      "doc-tabs": "1つの取引 = 複数の書類 — タブを切り替えて同じデータからPI・CI・PLを発行できます。",
+      "doc-tabs": "1つの取引 = 複数の書類 — 発行ボタンでこの取引のデータからCI・PLを作成できます。",
       "field-toggle": "価格表示トグルで梱包明細書(PL)に価格を含めるか隠すかを選べます。"
     },
     "steps": {
@@ -419,7 +419,7 @@
       },
       "member-deal-docs": {
         "title": "取引からCI・PLを発行",
-        "body": "取引の中で船積みを選び、書類タブを切り替えて商業送り状(CI)・梱包明細書(PL)を発行してください。ガイドはサイドバーからいつでも再表示できます。"
+        "body": "取引の中で「CI発行/PL発行」を押してください — 船積みを選び、配分・オプションを調整してプレビュー後に発行します。ガイドはサイドバーからいつでも再表示できます。"
       }
     }
   }

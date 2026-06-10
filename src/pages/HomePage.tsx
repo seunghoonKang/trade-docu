@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, FilePlus2, LogIn } from "lucide-react";
+import { ArrowRight, LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/entities/session";
@@ -7,10 +7,9 @@ import { getLastDocType } from "@/entities/document";
 import type { DocType } from "@/entities/document";
 import { listDealSummaries } from "@/features/deal-crud";
 import type { DealSummary } from "@/features/deal-crud";
-import { HistoryPageSkeleton } from "@/features/history";
 import { TemplateGallery } from "@/widgets/TemplateGallery";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
-import { Button, Layout } from "@/shared/ui";
+import { Button, Layout, Skeleton } from "@/shared/ui";
 
 const CONTINUE_LIMIT = 3;
 const DOC_BADGES: DocType[] = ["PI", "CI", "PL"];
@@ -51,10 +50,11 @@ export function HomePage() {
     <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="home" />}>
       <div className="max-w-6xl mx-auto px-4 py-8 md:p-10 space-y-10 pb-12">
         {isLoading ? (
-          <HistoryPageSkeleton />
-        ) : user && openDeals.length > 0 ? (
+          <HomeSkeleton />
+        ) : (
           <>
-            {/* 이어서 — 진행 중 거래 건 우선 */}
+            {/* 이어서 — 진행 중 거래 건 우선(로그인 + 진행 중 거래가 있을 때만) */}
+            {user && openDeals.length > 0 && (
             <section>
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl md:text-2xl font-bold text-primary">
@@ -106,23 +106,9 @@ export function HomePage() {
                 ))}
               </div>
             </section>
+            )}
 
-            {/* 새 문서 — 마지막 사용 양식 원클릭 */}
-            <section className="flex flex-wrap items-center gap-3">
-              <Button className="gap-1.5" onClick={() => startDoc("PI")}>
-                <FilePlus2 className="size-4" aria-hidden />
-                {t("home.newDocument")}
-              </Button>
-              {lastDocType && lastDocType !== "PI" && (
-                <Button variant="outline" className="gap-1.5" onClick={() => startDoc(lastDocType)}>
-                  {t("home.continueWithDoc", { doc: lastDocType })}
-                </Button>
-              )}
-            </section>
-          </>
-        ) : (
-          <>
-            {/* 갤러리 — 게스트 랜딩 + 로그인 빈/첫 로그인 폴백 */}
+            {/* 갤러리 — 게스트 랜딩 + 로그인 홈에서도 양식 단건 작성 진입 */}
             <TemplateGallery onSelect={startDoc} lastDocType={lastDocType} />
 
             {!user && (
@@ -143,5 +129,22 @@ export function HomePage() {
         )}
       </div>
     </Layout>
+  );
+}
+
+/** 갤러리/이어서 카드 그리드에 맞춘 홈 스켈레톤. */
+function HomeSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-4 w-80" />
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Skeleton className="h-44 rounded-xl" />
+        <Skeleton className="h-44 rounded-xl" />
+        <Skeleton className="h-44 rounded-xl" />
+      </div>
+    </div>
   );
 }

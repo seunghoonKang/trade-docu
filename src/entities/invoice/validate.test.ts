@@ -50,18 +50,20 @@ describe("validateInvoice", () => {
 });
 
 describe("validateDocument (양식별, #27)", () => {
-  it("CI는 원산지가 비면 차단하고, 채우면 통과한다", () => {
+  it("CI는 원산지가 비면 경고하고(차단 아님), 채우면 경고도 없다", () => {
     const form = validInvoice();
-    expect(validateDocument(form, "CI").blocking).toContain("originCountry");
+    const empty = validateDocument(form, "CI");
+    expect(empty.blocking).not.toContain("originCountry");
+    expect(empty.warnings).toContain("originCountry");
 
     form.originCountry = "KOREA";
-    expect(validateDocument(form, "CI").blocking).toEqual([]);
+    expect(validateDocument(form, "CI").warnings).not.toContain("originCountry");
   });
 
   it("PI/PL은 원산지를 요구하지 않는다", () => {
     const form = validInvoice();
-    expect(validateDocument(form, "PI").blocking).not.toContain("originCountry");
-    expect(validateDocument(form, "PL").blocking).not.toContain("originCountry");
+    expect(validateDocument(form, "PI").warnings).not.toContain("originCountry");
+    expect(validateDocument(form, "PL").warnings).not.toContain("originCountry");
   });
 
   it("PL은 단가 0이어도 명세+수량만 있으면 품목을 통과시킨다(가격 숨김 양식)", () => {
@@ -77,9 +79,9 @@ describe("validateDocument (양식별, #27)", () => {
     expect(validateDocument(form, "PL").warnings).not.toContain("bankInfo");
   });
 
-  it("legacy 폼(originCountry 필드 없음)도 CI 검증이 안전하게 차단한다", () => {
+  it("legacy 폼(originCountry 필드 없음)도 CI 검증이 안전하게 경고한다", () => {
     const form = validInvoice();
     delete form.originCountry;
-    expect(validateDocument(form, "CI").blocking).toContain("originCountry");
+    expect(validateDocument(form, "CI").warnings).toContain("originCountry");
   });
 });

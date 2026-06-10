@@ -1,5 +1,4 @@
-import { FileText, Package, Receipt } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { DocType } from "@/entities/document";
 
@@ -8,17 +7,12 @@ interface Props {
   lastDocType?: DocType | null; // 마지막 사용 양식 — 배지로 표시(원클릭 진입, #31)
 }
 
-const TEMPLATE_ICONS: Record<DocType, LucideIcon> = {
-  PI: FileText,
-  CI: Receipt,
-  PL: Package,
-};
-
 const TEMPLATES: DocType[] = ["PI", "CI", "PL"];
 
 /**
  * 템플릿 갤러리(#31): 양식(PI/CI/PL) 카드에서 단건 작성으로 진입한다.
- * 게스트 랜딩과 로그인 홈(빈/첫 로그인 폴백) 양쪽에서 쓰는 표현 위젯.
+ * Stitch 'Document Templates' 시안 기반 — 상단 문서 썸네일(양식별 미니 목업) +
+ * 하단 제목/양식 배지/설명. 게스트 랜딩과 로그인 홈 양쪽에서 쓰는 표현 위젯.
  */
 export function TemplateGallery({ onSelect, lastDocType = null }: Props) {
   const { t } = useTranslation();
@@ -29,39 +23,91 @@ export function TemplateGallery({ onSelect, lastDocType = null }: Props) {
         <h2 className="text-xl md:text-2xl font-bold text-primary">{t("home.galleryTitle")}</h2>
         <p className="text-sm text-muted-foreground">{t("home.gallerySubtitle")}</p>
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {TEMPLATES.map((docType) => {
-          const Icon = TEMPLATE_ICONS[docType];
-          return (
-            <button
-              key={docType}
-              type="button"
-              onClick={() => onSelect(docType)}
-              className="group relative flex flex-col items-start gap-3 rounded-xl border border-border bg-card/80 p-5 text-left transition-colors hover:border-primary/40 hover:bg-accent/40"
-            >
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        {TEMPLATES.map((docType) => (
+          <button
+            key={docType}
+            type="button"
+            onClick={() => onSelect(docType)}
+            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all hover:border-primary/40 hover:shadow-md"
+          >
+            <div className="relative flex items-center justify-center bg-accent/60 py-7 transition-colors group-hover:bg-accent">
               {docType === lastDocType && (
-                <span className="absolute right-3 top-3 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                <span className="absolute left-3 top-3 rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
                   {t("home.lastUsedBadge")}
                 </span>
               )}
-              <span className="flex size-11 items-center justify-center rounded-lg bg-primary/5 text-primary border border-primary/10">
-                <Icon className="size-5" aria-hidden />
-              </span>
-              <span>
-                <span className="block text-base font-semibold text-foreground">
+              <PaperThumbnail docType={docType} />
+            </div>
+            <div className="space-y-1.5 border-t border-border p-5">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-base font-bold text-foreground leading-snug">
                   {t(`home.template.${docType}.title`)}
                 </span>
-                <span className="mt-1 block text-sm leading-snug text-muted-foreground">
-                  {t(`home.template.${docType}.desc`)}
+                <span className="shrink-0 rounded bg-accent px-2 py-0.5 text-[11px] font-bold tracking-wide text-primary">
+                  {docType}
                 </span>
-              </span>
-              <span className="mt-auto text-sm font-semibold text-primary group-hover:underline">
-                {t("home.create")} →
-              </span>
-            </button>
-          );
-        })}
+              </div>
+              <p className="text-sm leading-snug text-muted-foreground">
+                {t(`home.template.${docType}.desc`)}
+              </p>
+            </div>
+          </button>
+        ))}
       </div>
     </section>
+  );
+}
+
+/** 양식별 미니 문서 목업 — Stitch 시안의 카드 썸네일을 CSS로 재현. */
+function PaperThumbnail({ docType }: { docType: DocType }) {
+  const paper =
+    "flex h-40 w-[7.5rem] flex-col gap-1.5 rounded-sm bg-white p-3 shadow-md ring-1 ring-black/5 transition-transform group-hover:-translate-y-0.5";
+
+  if (docType === "PI") {
+    // 다크 타이틀 바 + 텍스트 라인 + 점선 본문 영역(시안의 Proforma Invoice)
+    return (
+      <div className={`${paper} -rotate-2`}>
+        <div className="h-2.5 w-3/4 rounded-[2px] bg-slate-800" />
+        <div className="h-1.5 w-1/2 rounded-full bg-gray-300" />
+        <div className="h-1.5 w-2/3 rounded-full bg-gray-200" />
+        <div className="mt-1 flex flex-1 items-center justify-center rounded-sm border border-dashed border-gray-300">
+          <FileText className="size-6 text-gray-300" aria-hidden />
+        </div>
+      </div>
+    );
+  }
+
+  if (docType === "CI") {
+    // 로고 블록 + 라인 + 본문 블록 + 다크 푸터(시안의 Commercial Invoice)
+    return (
+      <div className={paper}>
+        <div className="flex items-start justify-between">
+          <div className="size-6 rounded-[2px] bg-slate-800" />
+          <div className="mt-1 h-1.5 w-8 rounded-full bg-gray-300" />
+        </div>
+        <div className="h-1.5 w-2/3 rounded-full bg-gray-300" />
+        <div className="h-1.5 w-1/2 rounded-full bg-gray-200" />
+        <div className="mt-1 flex-1 rounded-sm bg-blue-100/80" />
+        <div className="h-2 w-3/5 self-center rounded-[2px] bg-slate-800" />
+      </div>
+    );
+  }
+
+  // PL: 라인 + 체크 항목 행(파란 사각형) + 합계 블록(시안의 Packing List)
+  return (
+    <div className={paper}>
+      <div className="ml-auto h-1.5 w-2/3 rounded-full bg-gray-300" />
+      <div className="ml-auto h-1.5 w-1/2 rounded-full bg-gray-200" />
+      <div className="mt-1 flex items-center gap-1.5">
+        <div className="size-4 rounded-[2px] bg-blue-200" />
+        <div className="h-1.5 flex-1 rounded-full bg-gray-300" />
+      </div>
+      <div className="flex items-center gap-1.5">
+        <div className="size-4 rounded-[2px] bg-blue-200" />
+        <div className="h-1.5 flex-1 rounded-full bg-gray-200" />
+      </div>
+      <div className="mt-auto h-6 rounded-sm bg-gray-200/80" />
+    </div>
   );
 }

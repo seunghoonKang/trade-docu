@@ -2,7 +2,7 @@
   "app": { "title": "Proforma Invoice" },
   "nav": {"login": "Login", "logout": "Logout", "signup": "Sign Up", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Create Document", "userGuide": "User Guide", "comingSoon": "Coming soon", "comingSoonSection": "Coming soon"},
   "export": { "pdf": "Export to PDF", "excel": "Export to Excel", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF." },
-  "deal": {"documents": "Documents", "issue": "Issue", "issued": "Issued", "shipment": "Shipment", "addShipment": "Add shipment", "ordered": "Ordered", "allocated": "Allocated", "remaining": "Remaining", "allocation": "Allocation", "thisShipment": "This shipment", "save": "Save", "overAllocated": "Over-allocated", "remainingWarning": "Some quantity is not yet shipped.", "complete": "Complete deal", "item": "Item", "ctn": "CTN", "netWeight": "N.W.", "grossWeight": "G.W.", "cbm": "CBM", "cartonNo": "Carton No.", "showPrice": "Show prices", "statusOpen": "Open", "statusClosed": "Closed", "issuedDocuments": "Issued documents"},
+  "deal": {"documents": "Documents", "issue": "Issue", "issued": "Issued", "shipment": "Shipment", "addShipment": "Add shipment", "ordered": "Ordered", "allocated": "Allocated", "remaining": "Remaining", "allocation": "Allocation", "thisShipment": "This shipment", "save": "Save", "overAllocated": "Over-allocated", "remainingWarning": "Some quantity is not yet shipped.", "complete": "Complete deal", "item": "Item", "ctn": "CTN", "netWeight": "N.W.", "grossWeight": "G.W.", "cbm": "CBM", "cartonNo": "Carton No.", "showPrice": "Show prices", "statusOpen": "Open", "statusClosed": "Closed", "issuedDocuments": "Issued documents", "backToDeal": "Back to deal", "issueTitle": "Issue {{doc}}", "alreadyIssued": "Already issued for this shipment.", "unissuedDocuments": "Not issued yet", "goIssue": "Issue now", "issuedCount": "Issued for {{issued}} of {{total}} shipments", "issueDocAction": "Issue {{doc}}", "ciOptions": "CI options", "reopen": "Reopen deal", "reopened": "Deal reopened.", "closedNotice": "This deal is completed — reopen it to issue documents.", "sharedShipmentHint": "Shipments and allocations are saved on the deal and shared by CI and PL — enter them once and both documents use them.", "confirmIssueNoOriginTitle": "Issue without country of origin?", "confirmIssueNoOriginDescription": "Country of origin is empty. Issue {{doc}} anyway?", "reissue": "Cancel & reissue", "confirmReissueTitle": "Reissue this document?", "confirmReissueDescription": "The issued document {{id}} will be deleted, and you can edit and issue it again.", "fullShipmentSummary": "Ship everything at once · {{total}} in total", "splitShipment": "Split into multiple shipments", "issueTargetHint": "The selected shipment tab is what gets issued. Remaining is computed across all shipments.", "packingDetails": "Packing details", "cancelSplit": "Back to single shipment", "confirmCancelSplitTitle": "Cancel split shipments?", "confirmCancelSplitDescription": "Shipment 2 and later will be deleted (including their issued CI/PL), and the full quantity goes back to shipment 1.", "issuedNext": "Issued. Moved to shipment {{seq}} — continue there.", "allIssued": "{{doc}} issued for all shipments."},
   "form": {
     "originCountry": "Country of Origin",
     "documentInfo": "Document Info",
@@ -385,7 +385,7 @@
     "navigateToProfile": "Go to Profile",
     "coachmarks": {
       "split-shipment": "Ship in parts: add shipments and allocate item quantities to each one.",
-      "doc-tabs": "One deal, many documents — switch tabs to issue PI, CI, and PL from the same data.",
+      "doc-tabs": "One deal, many documents — use the Issue buttons to create CI and PL from this deal's data.",
       "field-toggle": "Use the price toggle to include or hide prices on the Packing List."
     },
     "steps": {
@@ -419,7 +419,7 @@
       },
       "member-deal-docs": {
         "title": "Issue CI and PL from the deal",
-        "body": "Inside a deal, pick a shipment and switch the document tabs to issue a Commercial Invoice or Packing List. Reopen this guide anytime from the sidebar."
+        "body": "Inside a deal, press Issue CI or Issue PL: pick a shipment, adjust allocations and options, preview, and issue. Reopen this guide anytime from the sidebar."
       }
     }
   }
