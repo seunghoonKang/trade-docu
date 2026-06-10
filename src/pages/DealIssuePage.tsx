@@ -60,22 +60,28 @@ export function DealIssuePage() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [dealId, docType]);
 
-  const loadBundle = useCallback(async () => {
-    if (!dealId) return;
-    setFetching(true);
-    setNotFound(false);
-    try {
-      const data = await getDealBundle(dealId);
-      if (!data) {
-        setNotFound(true);
-        setBundle(null);
-      } else {
-        setBundle(data);
+  // background: 액션(선적 추가/삭제 등) 후 재조회 — 스켈레톤 없이 데이터만 갱신한다.
+  const loadBundle = useCallback(
+    async (opts: { background?: boolean } = {}) => {
+      if (!dealId) return;
+      if (!opts.background) {
+        setFetching(true);
+        setNotFound(false);
       }
-    } finally {
-      setFetching(false);
-    }
-  }, [dealId]);
+      try {
+        const data = await getDealBundle(dealId);
+        if (!data) {
+          setNotFound(true);
+          setBundle(null);
+        } else {
+          setBundle(data);
+        }
+      } finally {
+        if (!opts.background) setFetching(false);
+      }
+    },
+    [dealId],
+  );
 
   useEffect(() => {
     void loadBundle();
@@ -154,7 +160,7 @@ export function DealIssuePage() {
     await updateShipmentAllocations(first.id, fullAllocationsOf(first).map(normalizeAllocation));
     setActiveShipmentId(first.id);
     setSplitMode(false);
-    await loadBundle();
+    await loadBundle({ background: true });
   }
 
   // 활성 선적: 유지 → URL 지정(?shipment=) → 첫 선적 순.
@@ -352,14 +358,14 @@ export function DealIssuePage() {
       remainingAllocations(bundle.deal, shipments),
     );
     setActiveShipmentId(id);
-    await loadBundle();
+    await loadBundle({ background: true });
   }
 
   async function handleDeleteShipment(id: string) {
     if (!bundle || shipments.length <= 1) return;
     await flushPendingSaves();
     await deleteShipment(id);
-    await loadBundle();
+    await loadBundle({ background: true });
   }
 
   // CI 옵션 저장: 선적 비용(선적 레벨) + 원산지(거래 건 레벨)를 함께 저장한다.
@@ -373,7 +379,7 @@ export function DealIssuePage() {
       updateDealOriginCountry(bundle.deal.id, ciOrigin.trim()),
     ]);
     toast.success(t("deal.save"));
-    await loadBundle();
+    await loadBundle({ background: true });
   }
 
   if (!authLoading && !user) return <Navigate to="/login" replace />;

@@ -40,22 +40,28 @@ export function DealDetailPage() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [dealId]);
 
-  const loadBundle = useCallback(async () => {
-    if (!dealId) return;
-    setFetching(true);
-    setNotFound(false);
-    try {
-      const data = await getDealBundle(dealId);
-      if (!data) {
-        setNotFound(true);
-        setBundle(null);
-      } else {
-        setBundle(data);
+  // background: 완료/재개 등 액션 후 재조회 — 스켈레톤 없이 데이터만 갱신한다.
+  const loadBundle = useCallback(
+    async (opts: { background?: boolean } = {}) => {
+      if (!dealId) return;
+      if (!opts.background) {
+        setFetching(true);
+        setNotFound(false);
       }
-    } finally {
-      setFetching(false);
-    }
-  }, [dealId]);
+      try {
+        const data = await getDealBundle(dealId);
+        if (!data) {
+          setNotFound(true);
+          setBundle(null);
+        } else {
+          setBundle(data);
+        }
+      } finally {
+        if (!opts.background) setFetching(false);
+      }
+    },
+    [dealId],
+  );
 
   useEffect(() => {
     void loadBundle();
@@ -86,7 +92,7 @@ export function DealDetailPage() {
     }
     await setDealStatus(bundle.deal.id, "closed");
     toast.success(t("deal.complete"));
-    await loadBundle();
+    await loadBundle({ background: true });
   }
 
   // 거래 재개(완료 취소) — 재개해야 미발행 문서를 발행할 수 있다.
@@ -94,7 +100,7 @@ export function DealDetailPage() {
     if (!bundle) return;
     await setDealStatus(bundle.deal.id, "open");
     toast.success(t("deal.reopened"));
-    await loadBundle();
+    await loadBundle({ background: true });
   }
 
   async function handleDelete() {
