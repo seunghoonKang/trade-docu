@@ -275,156 +275,184 @@ export function DealIssuePage() {
 
   const isLoading = authLoading || fetching;
 
-  return (
-    <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="historyDetail" />}>
-      <div className="max-w-6xl mx-auto px-4 py-6 md:p-8 space-y-6 pb-8">
-        {isLoading ? (
-          <DealIssueSkeleton />
-        ) : notFound || !bundle || !dealForm ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-            <p className="text-muted-foreground">{t("history.detailNotFound")}</p>
-            <Button variant="outline" className="gap-1.5" onClick={() => navigate("/history")}>
-              <ArrowLeft className="size-4" aria-hidden />
-              {t("history.backToList")}
-            </Button>
-          </div>
-        ) : bundle.deal.status === "closed" ? (
-          // 완료된 거래는 발행 불가 — 재개 후 발행하도록 안내.
-          <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-            <p className="text-muted-foreground">{t("deal.closedNotice")}</p>
-            <Button
-              variant="outline"
-              className="gap-1.5"
-              onClick={() => navigate(`/deals/${bundle.deal.id}`)}
-            >
-              <ArrowLeft className="size-4" aria-hidden />
-              {t("deal.backToDeal")}
-            </Button>
-          </div>
-        ) : (
-          <>
-            <div className="space-y-4">
+  if (isLoading || notFound || !bundle || !dealForm || bundle.deal.status === "closed") {
+    return (
+      <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="historyDetail" />}>
+        <div className="max-w-6xl mx-auto px-4 py-6 md:p-8 space-y-6 pb-8">
+          {isLoading ? (
+            <DealIssueSkeleton />
+          ) : notFound || !bundle || !dealForm ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
+              <p className="text-muted-foreground">{t("history.detailNotFound")}</p>
+              <Button variant="outline" className="gap-1.5" onClick={() => navigate("/history")}>
+                <ArrowLeft className="size-4" aria-hidden />
+                {t("history.backToList")}
+              </Button>
+            </div>
+          ) : (
+            // 완료된 거래는 발행 불가 — 재개 후 발행하도록 안내.
+            <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
+              <p className="text-muted-foreground">{t("deal.closedNotice")}</p>
               <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(`/deals/${bundle.deal.id}`)}
-                className="-ml-2.5 gap-1.5 text-muted-foreground hover:text-foreground"
+                variant="outline"
+                className="gap-1.5"
+                onClick={() => navigate(`/deals/${bundle!.deal.id}`)}
               >
                 <ArrowLeft className="size-4" aria-hidden />
                 {t("deal.backToDeal")}
               </Button>
-              <div className="space-y-1 min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {dealForm.buyerSnapshot.companyName || dealForm.invoiceNo || t("history.noNumber")}
-                </p>
-                <h1 className="text-2xl md:text-3xl font-bold text-primary">
-                  {t("deal.issueTitle", { doc: variant })}
-                </h1>
-              </div>
             </div>
+          )}
+        </div>
+      </Layout>
+    );
+  }
 
-            {/* ① 선적 선택 + 배분/포장 편집 — 분할이 의미 있을 때(총 주문 수량 > 1)만 1회 안내(#28). */}
-            {bundle.deal.items.reduce((sum, it) => sum + it.orderedQty, 0) > 1 && (
-              <Coachmark id="split-shipment" />
-            )}
-            <ShipmentManager
-              deal={bundle.deal}
-              shipments={bundle.shipments}
-              activeShipmentId={activeShipmentId}
-              onSelectShipment={setActiveShipmentId}
-              onAddShipment={() => void handleAddShipment()}
-              onDeleteShipment={(id) => void handleDeleteShipment(id)}
-              onSaveAllocations={(id, allocations) => void handleSaveAllocations(id, allocations)}
-            />
-
-            {/* ② 양식별 옵션 */}
-            {variant === "CI" && (
-              <div className="rounded-lg border border-border p-4 space-y-5">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold">{t("deal.ciOptions")}</h3>
-                  <Button variant="default" size="sm" onClick={() => void handleSaveCharges()}>
-                    {t("deal.save")}
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Input
-                    variant="editor"
-                    label={t("form.originCountry")}
-                    value={ciOrigin}
-                    onChange={(e) => setCiOrigin(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <h4 className="mb-2 text-sm font-medium text-secondary-foreground">
-                    {t("form.additionalCharges")}
-                  </h4>
-                  <ChargesEditor charges={ciCharges} currency={bundle.deal.currency} onChange={setCiCharges} />
-                </div>
-              </div>
-            )}
-            {variant === "PL" && (
+  // 서류 작성과 같은 좌(편집)/우(미리보기) 2분할 — 왼쪽을 만지면 오른쪽이 실시간 반영.
+  return (
+    <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="historyDetail" />}>
+      <div className="flex h-[calc(100vh-4rem)] flex-col">
+        {/* 상단 액션 바: 복귀 · 제목 · 발행/PDF/인쇄 */}
+        <div className="flex flex-wrap items-center gap-2 border-b border-border bg-card px-4 py-2.5">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/deals/${bundle.deal.id}`)}
+            className="gap-1.5 text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            {t("deal.backToDeal")}
+          </Button>
+          <div className="min-w-0">
+            <h1 className="text-base font-bold text-primary leading-tight">
+              {t("deal.issueTitle", { doc: variant })}
+            </h1>
+            <p className="truncate text-xs text-muted-foreground">
+              {dealForm.buyerSnapshot.companyName || dealForm.invoiceNo || t("history.noNumber")}
+            </p>
+          </div>
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            {issuedDoc ? (
               <>
-                <Coachmark id="field-toggle" />
-                <label className="flex w-fit items-center gap-2 text-sm text-muted-foreground">
-                  <input
-                    type="checkbox"
-                    checked={plShowPrice}
-                    onChange={(e) => setPlShowPrice(e.target.checked)}
-                    className="size-4 accent-primary"
-                  />
-                  {t("deal.showPrice")}
-                </label>
-              </>
-            )}
-
-            {/* ③ 미리보기 → 발행 */}
-            <div className="flex flex-wrap items-center gap-2">
-              {issuedDoc ? (
-                <>
-                  <span className="text-sm text-green-600">{t("deal.alreadyIssued")}</span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/deals/${bundle.deal.id}/docs/${issuedDoc.id}`)}
-                  >
-                    {t("history.view")}
-                  </Button>
-                </>
-              ) : (
+                <span className="text-sm text-green-600">{t("deal.alreadyIssued")}</span>
                 <Button
-                  variant="default"
+                  variant="outline"
                   size="sm"
-                  className="gap-1.5"
-                  disabled={issuing}
-                  onClick={() => void handleIssue()}
+                  onClick={() => navigate(`/deals/${bundle.deal.id}/docs/${issuedDoc.id}`)}
                 >
-                  <FolderInput className="size-4" aria-hidden />
-                  {t("deal.issueDocAction", { doc: variant })}
+                  {t("history.view")}
                 </Button>
-              )}
-              <Button variant="outline" size="sm" className="gap-1.5" onClick={() => void handlePdf()}>
-                <FileText className="size-4" aria-hidden />
-                {t("export.pdf")}
+              </>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                className="gap-1.5"
+                disabled={issuing}
+                onClick={() => void handleIssue()}
+              >
+                <FolderInput className="size-4" aria-hidden />
+                {t("deal.issueDocAction", { doc: variant })}
               </Button>
-              <Button variant="outline" size="sm" className="gap-1.5" onClick={handlePrint}>
-                <Printer className="size-4" aria-hidden />
-                {t("export.print")}
-              </Button>
-            </div>
+            )}
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => void handlePdf()}>
+              <FileText className="size-4" aria-hidden />
+              {t("export.pdf")}
+            </Button>
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={handlePrint}>
+              <Printer className="size-4" aria-hidden />
+              {t("export.print")}
+            </Button>
+          </div>
+        </div>
 
-            {variantData && (
-              <div className="min-h-[500px] rounded-xl border border-border bg-accent overflow-hidden">
-                <InvoicePreviewPanel
-                  data={variantData}
-                  variant={variant}
-                  packingLines={plPackingLines}
-                  showPrice={plShowPrice}
+        <div className="flex min-h-0 flex-1 flex-col xl:flex-row">
+          {/* 좌: 편집(선적/배분 → 양식 옵션) — 서류 작성 폼과 같은 에디터 영역 */}
+          <div className="editor-container w-full overflow-y-auto border-b border-border bg-[#cbdbf5] xl:w-1/2 xl:border-b-0 xl:border-r">
+            <div className="space-y-6 p-6">
+              {/* ① 선적 선택 + 배분/포장 편집 — 분할이 의미 있을 때(총 주문 수량 > 1)만 1회 안내(#28). */}
+              {bundle.deal.items.reduce((sum, it) => sum + it.orderedQty, 0) > 1 && (
+                <Coachmark id="split-shipment" />
+              )}
+              <div className="rounded-xl border border-border bg-card p-5">
+                <ShipmentManager
+                  deal={bundle.deal}
+                  shipments={bundle.shipments}
+                  activeShipmentId={activeShipmentId}
+                  onSelectShipment={setActiveShipmentId}
+                  onAddShipment={() => void handleAddShipment()}
+                  onDeleteShipment={(id) => void handleDeleteShipment(id)}
+                  onSaveAllocations={(id, allocations) => void handleSaveAllocations(id, allocations)}
                 />
               </div>
+
+              {/* ② 양식별 옵션 */}
+              {variant === "CI" && (
+                <div className="rounded-xl border border-border bg-card p-5 space-y-5">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold">{t("deal.ciOptions")}</h3>
+                    <Button variant="default" size="sm" onClick={() => void handleSaveCharges()}>
+                      {t("deal.save")}
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Input
+                      variant="editor"
+                      label={t("form.originCountry")}
+                      value={ciOrigin}
+                      onChange={(e) => setCiOrigin(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <h4 className="mb-2 text-sm font-medium text-secondary-foreground">
+                      {t("form.additionalCharges")}
+                    </h4>
+                    <ChargesEditor charges={ciCharges} currency={bundle.deal.currency} onChange={setCiCharges} />
+                  </div>
+                </div>
+              )}
+              {variant === "PL" && (
+                <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+                  <Coachmark id="field-toggle" />
+                  <label className="flex w-fit items-center gap-2 text-sm text-muted-foreground">
+                    <input
+                      type="checkbox"
+                      checked={plShowPrice}
+                      onChange={(e) => setPlShowPrice(e.target.checked)}
+                      className="size-4 accent-primary"
+                    />
+                    {t("deal.showPrice")}
+                  </label>
+                </div>
+              )}
+
+              {/* 모바일(xl 미만)에서는 우측 패널이 없으므로 미리보기를 아래에 노출 */}
+              {variantData && (
+                <div className="min-h-[400px] overflow-hidden rounded-xl border border-border bg-accent xl:hidden">
+                  <InvoicePreviewPanel
+                    data={variantData}
+                    variant={variant}
+                    packingLines={plPackingLines}
+                    showPrice={plShowPrice}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 우: 실시간 미리보기 — 서류 작성과 동일한 구도 */}
+          <div className="hidden min-w-0 bg-accent xl:flex xl:w-1/2">
+            {variantData && (
+              <InvoicePreviewPanel
+                data={variantData}
+                variant={variant}
+                packingLines={plPackingLines}
+                showPrice={plShowPrice}
+              />
             )}
-          </>
-        )}
+          </div>
+        </div>
       </div>
     </Layout>
   );
