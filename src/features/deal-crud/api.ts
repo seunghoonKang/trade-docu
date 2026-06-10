@@ -2,6 +2,8 @@ import { supabase } from "@/shared/lib/supabase";
 import type { InvoiceDraft } from "@/entities/invoice";
 import type { Deal, DealInput, PartySnapshot } from "@/entities/deal";
 import type { TradeDocument, DocType, DocStatus } from "@/entities/document";
+import type { Shipment, ShipmentInput, Allocation } from "@/entities/shipment";
+import { createDefaultShipment } from "@/entities/shipment";
 import { formToDeal } from "./lib/mapping";
 
 // ── Row 타입 (Supabase snake_case) ──────────────────────────────────────────
@@ -47,6 +49,33 @@ type DocumentRow = {
   status: DocStatus;
   field_options: Record<string, unknown>;
   snapshot: Record<string, unknown>;
+  created_at: string;
+};
+
+type ShipmentRow = {
+  id: string;
+  user_id: string;
+  deal_id: string;
+  seq: number;
+  ship_date: string | null;
+  transport_mode: string;
+  carrier: string;
+  vessel_flight: string;
+  container_no: string;
+  seal_no: string;
+  port_loading: string;
+  port_discharge: string;
+  final_destination: string;
+  bl_no: string;
+  bl_date: string | null;
+  net_weight: string;
+  gross_weight: string;
+  total_cbm: string;
+  package_count: string;
+  carton_size: string;
+  marks: string;
+  allocations: Shipment["allocations"];
+  charges: Shipment["charges"];
   created_at: string;
 };
 
@@ -103,6 +132,62 @@ function mapDocumentRow(row: DocumentRow): TradeDocument {
   };
 }
 
+function mapShipmentRow(row: ShipmentRow): Shipment {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    dealId: row.deal_id,
+    seq: row.seq,
+    shipDate: row.ship_date ?? "",
+    transportMode: row.transport_mode,
+    carrier: row.carrier,
+    vesselFlight: row.vessel_flight,
+    containerNo: row.container_no,
+    sealNo: row.seal_no,
+    portLoading: row.port_loading,
+    portDischarge: row.port_discharge,
+    finalDestination: row.final_destination,
+    blNo: row.bl_no,
+    blDate: row.bl_date ?? "",
+    netWeight: row.net_weight,
+    grossWeight: row.gross_weight,
+    totalCbm: row.total_cbm,
+    packageCount: row.package_count,
+    cartonSize: row.carton_size,
+    marks: row.marks,
+    allocations: row.allocations ?? [],
+    charges: row.charges ?? [],
+    createdAt: row.created_at,
+  };
+}
+
+function shipmentInsertPayload(userId: string, ship: ShipmentInput) {
+  return {
+    user_id: userId,
+    deal_id: ship.dealId,
+    seq: ship.seq,
+    ship_date: ship.shipDate || null,
+    transport_mode: ship.transportMode,
+    carrier: ship.carrier,
+    vessel_flight: ship.vesselFlight,
+    container_no: ship.containerNo,
+    seal_no: ship.sealNo,
+    port_loading: ship.portLoading,
+    port_discharge: ship.portDischarge,
+    final_destination: ship.finalDestination,
+    bl_no: ship.blNo,
+    bl_date: ship.blDate || null,
+    net_weight: ship.netWeight,
+    gross_weight: ship.grossWeight,
+    total_cbm: ship.totalCbm,
+    package_count: ship.packageCount,
+    carton_size: ship.cartonSize,
+    marks: ship.marks,
+    allocations: ship.allocations,
+    charges: ship.charges,
+  };
+}
+
 function dealInsertPayload(userId: string, deal: DealInput) {
   return {
     user_id: userId,
@@ -134,21 +219,35 @@ function dealInsertPayload(userId: string, deal: DealInput) {
   };
 }
 
-export type DealWithPi = { deal: Deal; pi: TradeDocument | null };
+export type DealBundle = { deal: Deal; shipments: Shipment[]; documents: TradeDocument[] };
+
+function fullAllocations(deal: Deal | DealInput): Allocation[] {
+  return deal.items.map((it) => ({ itemId: it.id, qty: it.orderedQty }));
+}
 
 /**
- * 첫 명시적 저장(ADR-0002): PI 폼 → 거래 건 1 + PI 문서 1 생성. dealId 반환.
- * 문서 생성에 실패하면 고아 거래 건을 남기지 않도록 보정한다.
+ * 첫 명시적 저장(ADR-0002): PI 폼 → 거래 건 1 + 기본 선적 1(전량 배분) + PI 문서 1 생성.
+ * dealId 반환. 중간 단계 실패 시 고아 거래 건을 남기지 않도록 보정(선적/문서는 FK cascade).
  */
 export async function saveDeal(userId: string, form: InvoiceDraft): Promise<string> {
+  const dealInput = formToDeal(form);
   const { data: dealData, error: dealError } = await supabase
     .from("deals")
-    .insert(dealInsertPayload(userId, formToDeal(form)))
+    .insert(dealInsertPayload(userId, dealInput))
     .select("id")
     .single();
   if (dealError) throw dealError;
 
   const dealId = (dealData as { id: string }).id;
+
+  // 기본 선적 1개(전량 배분) — CI/PL 발행의 선적 레벨 컨테이너(거래 건은 최소 1선적).
+  const { error: shipError } = await supabase
+    .from("shipments")
+    .insert(shipmentInsertPayload(userId, createDefaultShipment(dealId, fullAllocations(dealInput))));
+  if (shipError) {
+    await supabase.from("deals").delete().eq("id", dealId);
+    throw shipError;
+  }
 
   const { error: docError } = await supabase.from("documents").insert({
     user_id: userId,
@@ -169,8 +268,8 @@ export async function saveDeal(userId: string, form: InvoiceDraft): Promise<stri
   return dealId;
 }
 
-/** 거래 상세: 거래 건 + 그 PI 문서를 함께 조회. */
-export async function getDealWithPi(dealId: string): Promise<DealWithPi | null> {
+/** 거래 상세: 거래 건 + 선적들 + 문서들을 함께 조회. */
+export async function getDealBundle(dealId: string): Promise<DealBundle | null> {
   const { data: dealData, error: dealError } = await supabase
     .from("deals")
     .select("*")
@@ -179,20 +278,67 @@ export async function getDealWithPi(dealId: string): Promise<DealWithPi | null> 
   if (dealError) throw dealError;
   if (!dealData) return null;
 
-  const { data: docData, error: docError } = await supabase
-    .from("documents")
-    .select("*")
-    .eq("deal_id", dealId)
-    .eq("doc_type", "PI")
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
-  if (docError) throw docError;
+  const [shipResult, docResult] = await Promise.all([
+    supabase.from("shipments").select("*").eq("deal_id", dealId).order("seq", { ascending: true }),
+    supabase.from("documents").select("*").eq("deal_id", dealId).order("created_at", { ascending: true }),
+  ]);
+  if (shipResult.error) throw shipResult.error;
+  if (docResult.error) throw docResult.error;
 
   return {
     deal: mapDealRow(dealData as DealRow),
-    pi: docData ? mapDocumentRow(docData as DocumentRow) : null,
+    shipments: (shipResult.data ?? []).map((r) => mapShipmentRow(r as ShipmentRow)),
+    documents: (docResult.data ?? []).map((r) => mapDocumentRow(r as DocumentRow)),
   };
+}
+
+/**
+ * CI/PL 발행 시 선적이 필요하다. 기본 선적이 없으면(예: 본 슬라이스 이전에 저장된 거래 건)
+ * 전량 배분으로 하나 만들어 그 id를 반환한다.
+ */
+export async function ensureDefaultShipment(
+  userId: string,
+  deal: Deal,
+  existing: Shipment[],
+): Promise<string> {
+  if (existing.length > 0) return existing[0].id;
+  const { data, error } = await supabase
+    .from("shipments")
+    .insert(shipmentInsertPayload(userId, createDefaultShipment(deal.id, fullAllocations(deal))))
+    .select("id")
+    .single();
+  if (error) throw error;
+  return (data as { id: string }).id;
+}
+
+export type IssueDocumentParams = {
+  dealId: string;
+  shipmentId: string | null; // PI=null, CI/PL=선적 id
+  docType: DocType;
+  docNo: string;
+  docDate: string;
+  snapshot: Record<string, unknown>;
+};
+
+/** 문서 발행: 같은 거래 데이터로 양식(PI/CI/PL) 문서 1건을 생성. doc_id 반환. */
+export async function issueDocument(userId: string, params: IssueDocumentParams): Promise<string> {
+  const { data, error } = await supabase
+    .from("documents")
+    .insert({
+      user_id: userId,
+      deal_id: params.dealId,
+      shipment_id: params.shipmentId,
+      doc_type: params.docType,
+      doc_no: params.docNo,
+      doc_date: params.docDate || null,
+      status: "issued",
+      field_options: {},
+      snapshot: params.snapshot,
+    })
+    .select("id")
+    .single();
+  if (error) throw error;
+  return (data as { id: string }).id;
 }
 
 export async function listDeals(userId: string): Promise<Deal[]> {

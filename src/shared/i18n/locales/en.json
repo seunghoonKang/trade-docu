@@ -2,6 +2,7 @@
   "app": { "title": "Proforma Invoice" },
   "nav": { "login": "Login", "logout": "Logout", "signup": "Sign Up", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Invoices", "packingLists": "Packing Lists", "userGuide": "User Guide", "comingSoon": "Coming soon", "comingSoonSection": "Coming soon" },
   "export": { "pdf": "Export to PDF", "excel": "Export to Excel", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF." },
+  "deal": { "documents": "Documents", "issue": "Issue", "issued": "Issued" },
   "form": {
     "documentInfo": "Document Info",
     "invoiceNo": "Invoice No.",

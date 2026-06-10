@@ -62,7 +62,7 @@ async function capturePaginatedPages(): Promise<HTMLCanvasElement[]> {
   }
 }
 
-export async function generatePdf(data: FormData) {
+export async function generatePdf(data: FormData, docPrefix = "PI") {
   const canvases = await capturePaginatedPages();
   const pdf = new jsPDF("p", "mm", "a4");
 
@@ -70,6 +70,6 @@ export async function generatePdf(data: FormData) {
     addCanvasToPdfPage(pdf, canvas, index === 0);
   });
 
-  const filename = `PI_${data.invoiceNo || "draft"}_${data.date || "undated"}.pdf`;
+  const filename = `${docPrefix}_${data.invoiceNo || "draft"}_${data.date || "undated"}.pdf`;
   pdf.save(filename);
 }

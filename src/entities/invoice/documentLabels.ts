@@ -1,6 +1,13 @@
 /** Fixed English labels for invoice document output (preview, PDF, Excel, print). */
 export const INVOICE_DOCUMENT_LABELS = {
   proformaInvoice: "PROFORMA INVOICE",
+  commercialInvoice: "COMMERCIAL INVOICE",
+  packingList: "PACKING LIST",
+  ctn: "CTN",
+  netWeight: "NET WEIGHT",
+  grossWeight: "GROSS WEIGHT",
+  cbm: "CBM",
+  shippingMarks: "SHIPPING MARKS",
   to: "To:",
   from: "From:",
   attn: "Attn.",

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { Invoice } from "@/entities/invoice";
+import type { DocType } from "@/entities/document";
 import { InvoicePreview } from "./InvoicePreview";
+import { PackingListPreview } from "./PackingListPreview";
 
 const PAPER_WIDTH_PX = 794;
 const PAPER_MIN_HEIGHT_PX = 1123;
@@ -8,7 +10,13 @@ const PANEL_PADDING_PX = 64;
 
 type PreviewData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
-export function InvoicePreviewPanel({ data }: { data: PreviewData }) {
+export function InvoicePreviewPanel({
+  data,
+  variant = "PI",
+}: {
+  data: PreviewData;
+  variant?: DocType;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -62,7 +70,11 @@ export function InvoicePreviewPanel({ data }: { data: PreviewData }) {
             width: PAPER_WIDTH_PX,
           }}
         >
-          <InvoicePreview data={data} />
+          {variant === "PL" ? (
+            <PackingListPreview data={data} />
+          ) : (
+            <InvoicePreview data={data} variant={variant} />
+          )}
         </div>
       </div>
     </div>
