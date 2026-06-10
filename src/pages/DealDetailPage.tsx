@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { ArrowLeft, CheckCircle2, FolderInput, Trash2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, FolderInput, RotateCcw, Trash2 } from "lucide-react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -89,6 +89,14 @@ export function DealDetailPage() {
     await loadBundle();
   }
 
+  // 거래 재개(완료 취소) — 재개해야 미발행 문서를 발행할 수 있다.
+  async function handleReopenDeal() {
+    if (!bundle) return;
+    await setDealStatus(bundle.deal.id, "open");
+    toast.success(t("deal.reopened"));
+    await loadBundle();
+  }
+
   async function handleDelete() {
     if (!bundle) return;
     await deleteDeal(bundle.deal.id);
@@ -148,16 +156,27 @@ export function DealDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5"
-                    disabled={bundle.deal.status === "closed"}
-                    onClick={() => void handleCompleteDeal()}
-                  >
-                    <CheckCircle2 className="size-4" aria-hidden />
-                    {t("deal.complete")}
-                  </Button>
+                  {bundle.deal.status === "closed" ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={() => void handleReopenDeal()}
+                    >
+                      <RotateCcw className="size-4" aria-hidden />
+                      {t("deal.reopen")}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={() => void handleCompleteDeal()}
+                    >
+                      <CheckCircle2 className="size-4" aria-hidden />
+                      {t("deal.complete")}
+                    </Button>
+                  )}
                   <Button
                     variant="destructive"
                     size="sm"
@@ -220,8 +239,8 @@ export function DealDetailPage() {
               onOpen={(doc) => navigate(`/deals/${bundle.deal.id}/docs/${doc.id}`)}
             />
 
-            {/* 미발행 문서 — 양식별 발행 현황 + 발행 플로우 유도. 전부 발행되면 숨김. */}
-            {unissued.length > 0 && (
+            {/* 미발행 문서 — 양식별 발행 현황 + 발행 플로우 유도. 전부 발행되거나 거래 완료면 숨김. */}
+            {bundle.deal.status === "open" && unissued.length > 0 && (
               <div className="rounded-lg border border-border p-4">
                 <h3 className="mb-3 text-sm font-semibold">{t("deal.unissuedDocuments")}</h3>
                 <ul className="divide-y divide-border/60">

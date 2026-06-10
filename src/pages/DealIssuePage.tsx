@@ -288,6 +288,19 @@ export function DealIssuePage() {
               {t("history.backToList")}
             </Button>
           </div>
+        ) : bundle.deal.status === "closed" ? (
+          // 완료된 거래는 발행 불가 — 재개 후 발행하도록 안내.
+          <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
+            <p className="text-muted-foreground">{t("deal.closedNotice")}</p>
+            <Button
+              variant="outline"
+              className="gap-1.5"
+              onClick={() => navigate(`/deals/${bundle.deal.id}`)}
+            >
+              <ArrowLeft className="size-4" aria-hidden />
+              {t("deal.backToDeal")}
+            </Button>
+          </div>
         ) : (
           <>
             <div className="space-y-4">
@@ -311,8 +324,10 @@ export function DealIssuePage() {
               </div>
             </div>
 
-            {/* ① 선적 선택 + 배분/포장 편집 — 첫 분할선적 1회 안내(#28). */}
-            <Coachmark id="split-shipment" />
+            {/* ① 선적 선택 + 배분/포장 편집 — 분할이 의미 있을 때(총 주문 수량 > 1)만 1회 안내(#28). */}
+            {bundle.deal.items.reduce((sum, it) => sum + it.orderedQty, 0) > 1 && (
+              <Coachmark id="split-shipment" />
+            )}
             <ShipmentManager
               deal={bundle.deal}
               shipments={bundle.shipments}
