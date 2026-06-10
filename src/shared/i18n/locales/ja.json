@@ -4,6 +4,7 @@
   "export": { "pdf": "PDFでエクスポート", "excel": "Excelでエクスポート", "print": "印刷", "export": "エクスポート", "pdfFailed": "PDFの生成に失敗しました。" },
   "deal": {"documents": "書類", "issue": "発行", "issued": "発行済み", "shipment": "船積", "addShipment": "船積を追加", "ordered": "注文", "allocated": "船積済", "remaining": "残量", "allocation": "配分", "thisShipment": "今回の配分", "save": "保存", "overAllocated": "過剰配分", "remainingWarning": "未船積の残量があります。", "complete": "取引を完了", "item": "品目", "ctn": "箱数(CTN)", "netWeight": "純重量", "grossWeight": "総重量", "cbm": "CBM", "cartonNo": "カートンNo.", "showPrice": "価格を表示", "statusOpen": "進行中", "statusClosed": "完了", "issuedDocuments": "発行済み書類"},
   "form": {
+    "originCountry": "原産国",
     "documentInfo": "書類情報",
     "invoiceNo": "インボイス番号",
     "refNo": "売主参照番号",
@@ -153,6 +154,9 @@
     "discard": "新規作成"
   },
   "validation": {
+    "originCountry": "原産国(CI)",
+    "overAllocated": "配分数量が注文数量を超えています",
+    "unshippedRemaining": "取引完了ですが未船積みの残数量があります",
     "blockedTitle": "必須項目が未入力です",
     "invoiceNo": "インボイス番号",
     "buyerCompanyName": "買主の会社名",

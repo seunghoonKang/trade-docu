@@ -48,6 +48,7 @@ export const INVOICE_DOCUMENT_LABELS = {
   incoterms: "Incoterms",
   remarks: "Remarks",
   commodity: "Commodity",
+  originCountry: "Country of Origin",
   descriptionOfGoods: "DESCRIPTION OF GOODS",
   description: "Description",
   hsCode: "HS CODE",

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createEmptyDeal } from "@/entities/deal";
 import type { Deal, DealItem } from "@/entities/deal";
 import type { Shipment, Allocation } from "@/entities/shipment";
-import { computeBalance, remainingAllocations, nextSeq, suggestDocNo } from "./balance";
+import { computeBalance, quantityWarningKeys, remainingAllocations, nextSeq, suggestDocNo } from "./balance";
 
 function item(id: string, orderedQty: number): DealItem {
   return { id, description: id, hsCode: "", unit: "PCS", unitPrice: 1, orderedQty, remarks: "" };
@@ -74,5 +74,31 @@ describe("suggestDocNo", () => {
     expect(suggestDocNo("CI-141", 1)).toBe("CI-141");
     expect(suggestDocNo("CI-141", 2)).toBe("CI-141-2");
     expect(suggestDocNo("", 2)).toBe("");
+  });
+});
+
+describe("quantityWarningKeys (#27)", () => {
+  it("초과 배분이면 overAllocated 경고", () => {
+    const d = deal([item("a", 100)]);
+    const ships = [shipment("s1", 1, [{ itemId: "a", qty: 150 }])];
+    expect(quantityWarningKeys(d, ships)).toContain("overAllocated");
+  });
+
+  it("완료(closed) 거래에 잔여가 있으면 unshippedRemaining 경고", () => {
+    const d = { ...deal([item("a", 100)]), status: "closed" as const };
+    const ships = [shipment("s1", 1, [{ itemId: "a", qty: 40 }])];
+    expect(quantityWarningKeys(d, ships)).toContain("unshippedRemaining");
+  });
+
+  it("진행중(open) 거래의 잔여는 경고하지 않는다", () => {
+    const d = deal([item("a", 100)]);
+    const ships = [shipment("s1", 1, [{ itemId: "a", qty: 40 }])];
+    expect(quantityWarningKeys(d, ships)).toEqual([]);
+  });
+
+  it("전량 배분 + 완료면 경고 없음", () => {
+    const d = { ...deal([item("a", 100)]), status: "closed" as const };
+    const ships = [shipment("s1", 1, [{ itemId: "a", qty: 100 }])];
+    expect(quantityWarningKeys(d, ships)).toEqual([]);
   });
 });

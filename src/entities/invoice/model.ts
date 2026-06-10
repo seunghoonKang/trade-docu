@@ -74,6 +74,8 @@ export interface Invoice {
   // 결제: 방식 + L/C 상세.
   paymentMethod?: string; // T/T | L/C | ADVANCE | OTHER
   lcInfo?: LcInfoForm;
+  // 원산지 — CI 필수(검증 차단), 그 외 양식은 채우면 표기(#27).
+  originCountry?: string;
 }
 
 export function createEmptyInvoice(): Omit<Invoice, "id" | "userId" | "createdAt"> {
@@ -109,6 +111,7 @@ export function createEmptyInvoice(): Omit<Invoice, "id" | "userId" | "createdAt
     notify: null,
     paymentMethod: "",
     lcInfo: { no: "", issuingBank: "", date: "" },
+    originCountry: "",
     bankInfo: {
       bankName: "",
       bankSwift: "",

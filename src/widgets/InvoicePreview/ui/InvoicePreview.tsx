@@ -29,7 +29,7 @@ export function InvoicePreview({
   const notifyName = data.notify?.companyName ?? "";
   const hasExtraTerms =
     data.paymentTerms || data.packing || data.validity || data.remarks ||
-    paymentMethodText || consigneeName || notifyName;
+    paymentMethodText || consigneeName || notifyName || data.originCountry;
   const hasBankInfo = Boolean(data.bankInfo.bankName);
   const hasCharges = data.additionalCharges.length > 0;
   const buyerLines = buildBuyerDetailLines(data.buyerSnapshot);
@@ -123,6 +123,7 @@ export function InvoicePreview({
           {paymentMethodText && <><span className="font-bold uppercase">{L.paymentMethod}</span><span>{paymentMethodText}</span></>}
           {consigneeName && <><span className="font-bold uppercase">{L.consignee}</span><span>{consigneeName}</span></>}
           {notifyName && <><span className="font-bold uppercase">{L.notifyParty}</span><span>{notifyName}</span></>}
+          {data.originCountry && <><span className="font-bold uppercase">{L.originCountry}</span><span>{data.originCountry}</span></>}
           {data.paymentTerms && <><span className="font-bold uppercase">{L.paymentTerms}</span><span>{data.paymentTerms}</span></>}
           {data.packing && <><span className="font-bold uppercase">{L.packing}</span><span>{data.packing}</span></>}
           {data.validity && <><span className="font-bold uppercase">{L.validity}</span><span>{data.validity}</span></>}

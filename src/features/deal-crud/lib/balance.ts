@@ -57,6 +57,18 @@ export function computeBalance(
   };
 }
 
+/**
+ * 수량 위반 경고 키(#27, 차단 아님 — i18n validation.*와 1:1):
+ * 초과 배분(overAllocated), 거래 완료인데 잔여 미선적(unshippedRemaining).
+ */
+export function quantityWarningKeys(deal: Deal, shipments: Shipment[]): string[] {
+  const balance = computeBalance(deal, shipments);
+  const keys: string[] = [];
+  if (balance.hasOver) keys.push("overAllocated");
+  if (deal.status === "closed" && balance.hasRemaining) keys.push("unshippedRemaining");
+  return keys;
+}
+
 /** 새 선적의 기본 배분 = 현재 품목별 잔여(>0인 것만). */
 export function remainingAllocations(deal: Deal, shipments: Shipment[]): Allocation[] {
   return computeBalance(deal, shipments)

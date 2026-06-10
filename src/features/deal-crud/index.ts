@@ -19,6 +19,7 @@ export {
   remainingAllocations,
   nextSeq,
   suggestDocNo,
+  quantityWarningKeys,
 } from "./lib/balance";
 export type { ItemBalance, DealBalance } from "./lib/balance";
 export { buildDealSummaries, matchesDealSummary } from "./lib/summary";
