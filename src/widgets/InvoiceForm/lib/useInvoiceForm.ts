@@ -58,7 +58,7 @@ export function useInvoiceForm() {
   }, []);
 
   const addCharge = useCallback(() => {
-    setForm((prev) => ({ ...prev, additionalCharges: [...prev.additionalCharges, { description: "", amount: 0 }] }));
+    setForm((prev) => ({ ...prev, additionalCharges: [...prev.additionalCharges, { type: "other", description: "", amount: 0 }] }));
   }, []);
 
   const removeCharge = useCallback((index: number) => {

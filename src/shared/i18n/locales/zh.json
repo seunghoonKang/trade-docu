@@ -39,6 +39,7 @@
     "addItemCta": "添加商品",
     "removeItem": "删除",
     "additionalCharges": "附加费用",
+    "chargeTypes": { "freight": "运费", "insurance": "保险", "fee": "手续费", "tax": "税费", "other": "其他" },
     "chargeDescription": "费用项目",
     "addCharge": "添加费用",
     "removeCharge": "删除",

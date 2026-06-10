@@ -2,7 +2,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import type { Invoice } from "@/entities/invoice";
 import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice";
-import { buildBuyerDetailLines, buildSellerDetailLines } from "@/entities/invoice";
+import { buildBuyerDetailLines, buildSellerDetailLines, chargeDisplayLabel } from "@/entities/invoice";
 
 type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -113,7 +113,7 @@ export async function generateExcel(data: FormData) {
 
   // Additional charges
   for (const charge of data.additionalCharges) {
-    ws.getCell(`B${row}`).value = charge.description;
+    ws.getCell(`B${row}`).value = chargeDisplayLabel(charge);
     ws.getCell(`G${row}`).value = charge.amount;
     ws.getCell(`G${row}`).numFmt = "#,##0.00";
     ws.getCell(`G${row}`).alignment = { horizontal: "right" };

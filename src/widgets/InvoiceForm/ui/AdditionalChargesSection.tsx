@@ -3,7 +3,9 @@ import { useTranslation } from "react-i18next";
 import { FormSection } from "@/shared/ui";
 import { editorInputClassName, editorInlineDismissButtonClassName } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
-import type { AdditionalCharge } from "@/entities/invoice";
+import type { AdditionalCharge, ChargeType } from "@/entities/invoice";
+
+const CHARGE_TYPES: ChargeType[] = ["freight", "insurance", "fee", "tax", "other"];
 
 interface Props {
   charges: AdditionalCharge[];
@@ -20,6 +22,19 @@ export function AdditionalChargesSection({ charges, currency, onUpdateCharge, on
       <div className="space-y-4">
         {charges.map((charge, i) => (
           <div key={i} className="flex items-center gap-3">
+            <div className="w-32">
+              <select
+                className={editorInputClassName}
+                value={charge.type ?? "other"}
+                onChange={(e) => onUpdateCharge(i, "type", e.target.value)}
+              >
+                {CHARGE_TYPES.map((ct) => (
+                  <option key={ct} value={ct}>
+                    {t(`form.chargeTypes.${ct}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="flex-1">
               <input
                 className={editorInputClassName}

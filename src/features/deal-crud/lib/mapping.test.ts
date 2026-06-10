@@ -35,6 +35,14 @@ describe("formToDeal", () => {
     expect(deal.charges).toEqual([{ type: "other", label: "Freight", amount: 50 }]);
   });
 
+  it("비용 유형을 보존한다(운임/보험 등)", () => {
+    const deal = formToDeal({
+      ...sampleForm(),
+      additionalCharges: [{ type: "freight", description: "Sea freight", amount: 60 }],
+    });
+    expect(deal.charges).toEqual([{ type: "freight", label: "Sea freight", amount: 60 }]);
+  });
+
   it("거래 건 전용 필드는 기본값으로 둔다", () => {
     const deal = formToDeal(sampleForm());
     expect(deal.consigneeSnapshot).toBeNull();
@@ -85,7 +93,7 @@ describe("dealToForm", () => {
     const form = dealToForm(sampleDeal(), piDoc({}));
     expect(form.orderNo).toBe("PO-42");
     expect(form.items[0]).toMatchObject({ description: "Widget", qty: 100, amount: 500 });
-    expect(form.additionalCharges).toEqual([{ description: "Freight", amount: 50 }]);
+    expect(form.additionalCharges).toEqual([{ type: "other", description: "Freight", amount: 50 }]);
   });
 
   it("문서가 없어도(null) 거래 건만으로 폼을 만든다", () => {

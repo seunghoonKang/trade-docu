@@ -39,6 +39,7 @@
     "addItemCta": "品目を追加",
     "removeItem": "削除",
     "additionalCharges": "追加費用",
+    "chargeTypes": { "freight": "運賃", "insurance": "保険", "fee": "手数料", "tax": "税金", "other": "その他" },
     "chargeDescription": "費用項目",
     "addCharge": "費用追加",
     "removeCharge": "削除",
