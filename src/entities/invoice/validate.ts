@@ -14,8 +14,7 @@ export interface ValidationResult {
  * 양식별 차단/경고 검증(#27). 키는 i18n validation.* 라벨과 1:1.
  * - 공통 차단: 문서번호·구매자명·품목.
  * - 품목 규칙: PI/CI는 명세+수량+단가, PL은 가격을 숨기므로 명세+수량만.
- * - CI 차단: 원산지(originCountry).
- * - 경고: 은행정보 누락(가격 양식 PI/CI만 — PL은 결제정보가 없다).
+ * - 경고: CI 원산지 누락(차단 아님 — UX 피드백으로 완화), 은행정보 누락(가격 양식 PI/CI만).
  */
 export function validateDocument(form: InvoiceDraft, docType: DocValidationKind): ValidationResult {
   const blocking: string[] = [];
@@ -29,7 +28,7 @@ export function validateDocument(form: InvoiceDraft, docType: DocValidationKind)
   );
   if (!hasValidItem) blocking.push("items");
 
-  if (docType === "CI" && !form.originCountry?.trim()) blocking.push("originCountry");
+  if (docType === "CI" && !form.originCountry?.trim()) warnings.push("originCountry");
 
   if (docType !== "PL") {
     const hasBankInfo = form.bankInfo.bankName.trim() || form.bankInfo.accountNo.trim();

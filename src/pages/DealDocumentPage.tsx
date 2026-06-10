@@ -1,17 +1,16 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { ArrowLeft, FileText, Printer } from "lucide-react";
+import { ArrowLeft, FileText, Info, Printer } from "lucide-react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useAuth } from "@/entities/session";
 import { generatePdf } from "@/features/export-pdf";
-import { InvoiceDetailSkeleton } from "@/features/history";
 import { documentPreviewData, getDealBundle } from "@/features/deal-crud";
 import type { DealBundle } from "@/features/deal-crud";
 import { triggerPrint } from "@/features/print";
 import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
-import { Button, Layout } from "@/shared/ui";
+import { Button, Layout, Skeleton } from "@/shared/ui";
 
 /**
  * 발행 문서 보기 — 조회 전용(상세/발행 분리). 발행 시점 박제 snapshot을 그대로 렌더하고
@@ -77,7 +76,7 @@ export function DealDocumentPage() {
     <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="historyDetail" />}>
       <div className="max-w-6xl mx-auto px-4 py-6 md:p-8 space-y-6 pb-8">
         {isLoading ? (
-          <InvoiceDetailSkeleton />
+          <DealDocumentSkeleton />
         ) : missing ? (
           <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
             <p className="text-muted-foreground">{t("history.detailNotFound")}</p>
@@ -128,17 +127,83 @@ export function DealDocumentPage() {
               </div>
             </div>
 
-            <div className="min-h-[500px] rounded-xl border border-border bg-accent overflow-hidden">
-              <InvoicePreviewPanel
-                data={preview.form}
-                variant={doc.docType}
-                packingLines={preview.packingLines}
-                showPrice={preview.showPrice}
-              />
+            {/* 기존 인보이스 상세와 같은 구도: 미리보기(좌) + 문서 정보 패널(우). */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-8 min-h-[500px] rounded-xl border border-border bg-accent overflow-hidden">
+                <InvoicePreviewPanel
+                  data={preview.form}
+                  variant={doc.docType}
+                  packingLines={preview.packingLines}
+                  showPrice={preview.showPrice}
+                />
+              </div>
+              <div className="lg:col-span-4">
+                <section className="bg-card/80 backdrop-blur border border-border rounded-xl p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
+                    <Info className="size-5 shrink-0" aria-hidden />
+                    {t("history.documentMetadata")}
+                  </h3>
+                  <div className="space-y-0">
+                    <MetadataRow label={t("history.type")} value={doc.docType} />
+                    <MetadataRow
+                      label={t("history.documentDate")}
+                      value={doc.docDate || t("history.noDocumentDate")}
+                    />
+                    <MetadataRow
+                      label={t("history.savedDate")}
+                      value={new Date(doc.createdAt).toLocaleString()}
+                    />
+                    {shipmentSeq != null && (
+                      <MetadataRow label={t("deal.shipment")} value={String(shipmentSeq)} />
+                    )}
+                    <MetadataRow
+                      label={t("history.buyer")}
+                      value={preview.form.buyerSnapshot.companyName || t("history.noBuyer")}
+                    />
+                    <MetadataRow
+                      label={t("history.seller")}
+                      value={preview.form.sellerCompanyName || "—"}
+                    />
+                    <MetadataRow label={t("form.currency")} value={preview.form.currency} />
+                    {(doc.docType !== "PL" || preview.showPrice) && (
+                      <MetadataRow
+                        label={t("history.totalAmount")}
+                        value={`${preview.form.currency} ${preview.form.totalAmount.toFixed(2)}`}
+                      />
+                    )}
+                  </div>
+                </section>
+              </div>
             </div>
           </>
         )}
       </div>
     </Layout>
+  );
+}
+
+function MetadataRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4 py-2 border-b border-border last:border-b-0">
+      <span className="text-sm text-muted-foreground shrink-0">{label}</span>
+      <span className="text-sm font-semibold text-primary text-right">{value}</span>
+    </div>
+  );
+}
+
+/** 문서 보기 레이아웃에 맞춘 스켈레톤(헤더 + 미리보기/메타 8:4 그리드). */
+function DealDocumentSkeleton() {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-8 w-32" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-40" />
+        <Skeleton className="h-9 w-64" />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <Skeleton className="lg:col-span-8 h-[500px] rounded-xl" />
+        <Skeleton className="lg:col-span-4 h-80 rounded-xl" />
+      </div>
+    </div>
   );
 }

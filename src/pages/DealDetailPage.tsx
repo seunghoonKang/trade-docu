@@ -68,6 +68,17 @@ export function DealDetailPage() {
     [bundle],
   );
 
+  // 양식별 미발행 현황: 발행된 선적 수 < 전체 선적 수인 양식만(전부 발행되면 카드 숨김).
+  const unissued = useMemo(() => {
+    if (!bundle) return [];
+    return ISSUABLE.map((docType) => ({
+      docType,
+      issuedShipments: new Set(
+        bundle.documents.filter((d) => d.docType === docType && d.shipmentId).map((d) => d.shipmentId),
+      ).size,
+    })).filter(({ issuedShipments }) => issuedShipments < bundle.shipments.length);
+  }, [bundle]);
+
   async function handleCompleteDeal() {
     if (!bundle) return;
     if (computeBalance(bundle.deal, bundle.shipments).hasRemaining) {
@@ -209,21 +220,36 @@ export function DealDetailPage() {
               onOpen={(doc) => navigate(`/deals/${bundle.deal.id}/docs/${doc.id}`)}
             />
 
-            {/* 발행 유도 CTA — 발행은 별도 플로우에서(선적 선택·배분·옵션). */}
-            <div className="flex flex-wrap items-center gap-2">
-              {ISSUABLE.map((docType) => (
-                <Button
-                  key={docType}
-                  variant="default"
-                  size="sm"
-                  className="gap-1.5"
-                  onClick={() => navigate(`/deals/${bundle.deal.id}/issue/${docType}`)}
-                >
-                  <FolderInput className="size-4" aria-hidden />
-                  {t("deal.issue")} {docType}
-                </Button>
-              ))}
-            </div>
+            {/* 미발행 문서 — 양식별 발행 현황 + 발행 플로우 유도. 전부 발행되면 숨김. */}
+            {unissued.length > 0 && (
+              <div className="rounded-lg border border-border p-4">
+                <h3 className="mb-3 text-sm font-semibold">{t("deal.unissuedDocuments")}</h3>
+                <ul className="divide-y divide-border/60">
+                  {unissued.map(({ docType, issuedShipments }) => (
+                    <li key={docType} className="flex items-center gap-3 py-2">
+                      <span className="inline-flex items-center rounded border border-border px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                        {docType}
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        {t("deal.issuedCount", {
+                          issued: issuedShipments,
+                          total: bundle.shipments.length,
+                        })}
+                      </span>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="ml-auto gap-1.5"
+                        onClick={() => navigate(`/deals/${bundle.deal.id}/issue/${docType}`)}
+                      >
+                        <FolderInput className="size-4" aria-hidden />
+                        {t("deal.goIssue")}
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </>
         )}
       </div>

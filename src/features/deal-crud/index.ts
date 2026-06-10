@@ -7,6 +7,7 @@ export {
   issueDocument,
   ensureDefaultShipment,
   createShipment,
+  updateDealOriginCountry,
   updateShipmentAllocations,
   updateShipmentCharges,
   deleteShipment,

@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useAuth } from "@/entities/session";
 import { generatePdf } from "@/features/export-pdf";
-import { InvoiceDetailSkeleton } from "@/features/history";
 import {
   createShipment,
   dealToForm,
@@ -16,6 +15,7 @@ import {
   quantityWarningKeys,
   remainingAllocations,
   suggestDocNo,
+  updateDealOriginCountry,
   updateShipmentAllocations,
   updateShipmentCharges,
 } from "@/features/deal-crud";
@@ -31,7 +31,7 @@ import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { ShipmentManager } from "@/widgets/ShipmentManager";
 import { ChargesEditor } from "@/widgets/ChargesEditor";
-import { Button, Layout } from "@/shared/ui";
+import { Button, Input, Layout, Skeleton } from "@/shared/ui";
 
 /**
  * 발행 플로우(상세/발행 분리): 선적 선택·배분/포장 편집 → 양식별 옵션(CI 비용, PL 가격 토글)
@@ -92,6 +92,12 @@ export function DealIssuePage() {
     [bundle, activeShipmentId],
   );
 
+  // CI 원산지 초안(거래 건 레벨) — 미리보기에 즉시 반영, 저장 시 거래 건에 기록.
+  const [ciOrigin, setCiOrigin] = useState("");
+  useEffect(() => {
+    setCiOrigin(bundle?.deal.originCountry ?? "");
+  }, [bundle]);
+
   // CI/PL은 활성 선적의 배분 수량으로 렌더(거래 데이터 × 양식).
   const variantData = useMemo<InvoiceDraft | null>(() => {
     if (!bundle || !dealForm || !variant || !activeShipment) return null;
@@ -125,8 +131,9 @@ export function DealIssuePage() {
       additionalCharges,
       totalAmount: goods + chargesTotal,
       invoiceNo: suggestDocNo(dealForm.invoiceNo, activeShipment.seq),
+      ...(variant === "CI" ? { originCountry: ciOrigin } : {}),
     };
-  }, [bundle, dealForm, variant, activeShipment]);
+  }, [bundle, dealForm, variant, activeShipment, ciOrigin]);
 
   // PL per-line 포장: 활성 선적 배분에서 items와 같은 순서로 추출(채운 항목만 PL에 출력).
   const plPackingLines = useMemo<PackingLine[]>(() => {
@@ -249,12 +256,16 @@ export function DealIssuePage() {
     await loadBundle();
   }
 
+  // CI 옵션 저장: 선적 비용(선적 레벨) + 원산지(거래 건 레벨)를 함께 저장한다.
   async function handleSaveCharges() {
-    if (!activeShipmentId) return;
-    await updateShipmentCharges(
-      activeShipmentId,
-      ciCharges.map((c) => ({ type: c.type ?? "other", label: c.description, amount: c.amount })),
-    );
+    if (!activeShipmentId || !bundle) return;
+    await Promise.all([
+      updateShipmentCharges(
+        activeShipmentId,
+        ciCharges.map((c) => ({ type: c.type ?? "other", label: c.description, amount: c.amount })),
+      ),
+      updateDealOriginCountry(bundle.deal.id, ciOrigin.trim()),
+    ]);
     toast.success(t("deal.save"));
     await loadBundle();
   }
@@ -268,7 +279,7 @@ export function DealIssuePage() {
     <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="historyDetail" />}>
       <div className="max-w-6xl mx-auto px-4 py-6 md:p-8 space-y-6 pb-8">
         {isLoading ? (
-          <InvoiceDetailSkeleton />
+          <DealIssueSkeleton />
         ) : notFound || !bundle || !dealForm ? (
           <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
             <p className="text-muted-foreground">{t("history.detailNotFound")}</p>
@@ -314,14 +325,27 @@ export function DealIssuePage() {
 
             {/* ② 양식별 옵션 */}
             {variant === "CI" && (
-              <div className="rounded-lg border border-border p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold">{t("form.additionalCharges")}</h3>
+              <div className="rounded-lg border border-border p-4 space-y-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold">{t("deal.ciOptions")}</h3>
                   <Button variant="default" size="sm" onClick={() => void handleSaveCharges()}>
                     {t("deal.save")}
                   </Button>
                 </div>
-                <ChargesEditor charges={ciCharges} currency={bundle.deal.currency} onChange={setCiCharges} />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Input
+                    variant="editor"
+                    label={t("form.originCountry")}
+                    value={ciOrigin}
+                    onChange={(e) => setCiOrigin(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <h4 className="mb-2 text-sm font-medium text-secondary-foreground">
+                    {t("form.additionalCharges")}
+                  </h4>
+                  <ChargesEditor charges={ciCharges} currency={bundle.deal.currency} onChange={setCiCharges} />
+                </div>
               </div>
             )}
             {variant === "PL" && (
@@ -361,7 +385,7 @@ export function DealIssuePage() {
                   onClick={() => void handleIssue()}
                 >
                   <FolderInput className="size-4" aria-hidden />
-                  {t("deal.issue")} {variant}
+                  {t("deal.issueDocAction", { doc: variant })}
                 </Button>
               )}
               <Button variant="outline" size="sm" className="gap-1.5" onClick={() => void handlePdf()}>
@@ -388,5 +412,26 @@ export function DealIssuePage() {
         )}
       </div>
     </Layout>
+  );
+}
+
+/** 발행 플로우 레이아웃에 맞춘 스켈레톤(헤더 + 선적/배분 카드 + 옵션 + 버튼 + 프리뷰). */
+function DealIssueSkeleton() {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-8 w-32" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-48" />
+        <Skeleton className="h-9 w-44" />
+      </div>
+      <Skeleton className="h-52 w-full rounded-lg" />
+      <Skeleton className="h-28 w-full rounded-lg" />
+      <div className="flex gap-2">
+        <Skeleton className="h-9 w-32" />
+        <Skeleton className="h-9 w-24" />
+        <Skeleton className="h-9 w-24" />
+      </div>
+      <Skeleton className="h-[500px] w-full rounded-xl" />
+    </div>
   );
 }
