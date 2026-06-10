@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getDealWithPi, saveDeal } from "./api";
+import { getDealBundle, issueDocument, saveDeal } from "./api";
 import { createEmptyInvoice } from "@/entities/invoice";
 
 // 체이너블 Supabase 쿼리 빌더 목. 종단(single/maybeSingle/await)에서 queue를 순서대로 소비한다.
@@ -32,25 +32,61 @@ beforeEach(() => {
   (builder.delete as ReturnType<typeof vi.fn>).mockClear();
 });
 
+function dealRow(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "deal-1",
+    user_id: "user-1",
+    po_no: "PO-42",
+    po_date: null,
+    seller_company_name: "Seller Co.",
+    seller_address: "",
+    seller_tel: "",
+    seller_fax: "",
+    seller_representative: "",
+    seller_signature_url: "",
+    buyer_snapshot: { companyName: "Buyer Co." },
+    consignee_snapshot: {},
+    notify_snapshot: {},
+    currency: "USD",
+    incoterms: "FOB",
+    incoterms_place: "",
+    payment_terms: "",
+    payment_method: "",
+    lc_info: {},
+    commodity: "",
+    origin_country: "",
+    validity: null,
+    bank_info: {},
+    charges: [],
+    items: [],
+    remarks: "",
+    status: "open",
+    created_at: "2026-06-09T00:00:00.000Z",
+    ...overrides,
+  };
+}
+
 describe("saveDeal", () => {
-  it("거래 건과 PI 문서를 생성하고 dealId를 반환한다", async () => {
+  it("거래 건 + 기본 선적 + PI 문서를 생성하고 dealId를 반환한다", async () => {
     setQueue([
       { data: { id: "deal-1" }, error: null }, // deals insert → single
-      { data: null, error: null }, // documents insert
+      { data: null, error: null }, // shipments insert (기본 선적)
+      { data: null, error: null }, // documents insert (PI)
     ]);
 
     const dealId = await saveDeal("user-1", { ...createEmptyInvoice(), invoiceNo: "PI-1" });
 
     expect(dealId).toBe("deal-1");
     expect(from).toHaveBeenCalledWith("deals");
+    expect(from).toHaveBeenCalledWith("shipments");
     expect(from).toHaveBeenCalledWith("documents");
-    // 두 insert 모두 호출(거래 건 + PI 문서)
-    expect(builder.insert).toHaveBeenCalledTimes(2);
+    expect(builder.insert).toHaveBeenCalledTimes(3); // deal + 기본 선적 + PI
   });
 
   it("문서 생성 실패 시 고아 거래 건을 삭제하고 예외를 던진다", async () => {
     setQueue([
       { data: { id: "deal-1" }, error: null }, // deals insert → single
+      { data: null, error: null }, // shipments insert
       { data: null, error: { message: "doc fail" } }, // documents insert 실패
       { data: null, error: null }, // 보정 delete
     ]);
@@ -60,68 +96,63 @@ describe("saveDeal", () => {
   });
 });
 
-describe("getDealWithPi", () => {
+describe("getDealBundle", () => {
   it("거래 건이 없으면 null을 반환한다", async () => {
     setQueue([{ data: null, error: null }]);
-    await expect(getDealWithPi("missing")).resolves.toBeNull();
+    await expect(getDealBundle("missing")).resolves.toBeNull();
   });
 
-  it("거래 건과 PI 문서를 모델로 매핑한다", async () => {
+  it("거래 건 + 선적 + 문서를 모델로 매핑한다", async () => {
     setQueue([
+      { data: dealRow(), error: null }, // deal maybeSingle
       {
-        data: {
-          id: "deal-1",
-          user_id: "user-1",
-          po_no: "PO-42",
-          po_date: null,
-          seller_company_name: "Seller Co.",
-          seller_address: "",
-          seller_tel: "",
-          seller_fax: "",
-          seller_representative: "",
-          seller_signature_url: "",
-          buyer_snapshot: { companyName: "Buyer Co." },
-          consignee_snapshot: {},
-          notify_snapshot: {},
-          currency: "USD",
-          incoterms: "FOB",
-          incoterms_place: "",
-          payment_terms: "",
-          payment_method: "",
-          lc_info: {},
-          commodity: "",
-          origin_country: "",
-          validity: null,
-          bank_info: {},
-          charges: [],
-          items: [],
-          remarks: "",
-          status: "open",
-          created_at: "2026-06-09T00:00:00.000Z",
-        },
+        data: [
+          {
+            id: "ship-1", user_id: "user-1", deal_id: "deal-1", seq: 1, ship_date: null,
+            transport_mode: "", carrier: "", vessel_flight: "", container_no: "", seal_no: "",
+            port_loading: "", port_discharge: "", final_destination: "", bl_no: "", bl_date: null,
+            net_weight: "", gross_weight: "", total_cbm: "", package_count: "", carton_size: "",
+            marks: "", allocations: [{ itemId: "i1", qty: 100 }], charges: [],
+            created_at: "2026-06-09T00:00:00.000Z",
+          },
+        ],
         error: null,
-      },
+      }, // shipments
       {
-        data: {
-          id: "doc-1",
-          user_id: "user-1",
-          deal_id: "deal-1",
-          shipment_id: null,
-          doc_type: "PI",
-          doc_no: "PI-2026-001",
-          doc_date: "2026-06-09",
-          status: "issued",
-          field_options: {},
-          snapshot: { invoiceNo: "PI-2026-001" },
-          created_at: "2026-06-09T00:00:00.000Z",
-        },
+        data: [
+          {
+            id: "doc-1", user_id: "user-1", deal_id: "deal-1", shipment_id: null, doc_type: "PI",
+            doc_no: "PI-2026-001", doc_date: "2026-06-09", status: "issued", field_options: {},
+            snapshot: { invoiceNo: "PI-2026-001" }, created_at: "2026-06-09T00:00:00.000Z",
+          },
+        ],
         error: null,
-      },
+      }, // documents
     ]);
 
-    const result = await getDealWithPi("deal-1");
+    const bundle = await getDealBundle("deal-1");
 
-    expect(result?.deal).toMatchObject({ id: "deal-1", poNo: "PO-42", consigneeSnapshot: null });
-    expect(result?.pi).toMatchObject({ docType: "PI", docNo: "PI-2026-001", shipmentId: null });
+    expect(bundle?.deal).toMatchObject({ id: "deal-1", poNo: "PO-42", consigneeSnapshot: null });
+    expect(bundle?.shipments).toHaveLength(1);
+    expect(bundle?.shipments[0]).toMatchObject({ id: "ship-1", seq: 1, allocations: [{ itemId: "i1", qty: 100 }] });
+    expect(bundle?.documents[0]).toMatchObject({ docType: "PI", shipmentId: null });
+  });
+});
+
+describe("issueDocument", () => {
+  it("CI 문서를 선적 레벨로 발행하고 doc_id를 반환한다", async () => {
+    setQueue([{ data: { id: "doc-9" }, error: null }]);
+
+    const id = await issueDocument("user-1", {
+      dealId: "deal-1",
+      shipmentId: "ship-1",
+      docType: "CI",
+      docNo: "CI-2026-001",
+      docDate: "2026-06-09",
+      snapshot: { invoiceNo: "CI-2026-001" },
+    });
+
+    expect(id).toBe("doc-9");
+    expect(from).toHaveBeenCalledWith("documents");
   });
 });
