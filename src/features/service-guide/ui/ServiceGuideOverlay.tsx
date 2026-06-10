@@ -4,19 +4,16 @@ import { useLocation } from "react-router-dom";
 import { Button } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 import { getCardStyle, shouldSkipScrollIntoView } from "../lib/cardPosition";
-import {
-  getGuideStep,
-  getNavigateLabelKey,
-  isOnGuideRoute,
-} from "../lib/steps";
+import { getNavigateLabelKey, isOnGuideRoute } from "../lib/steps";
+import type { GuideStep } from "../lib/steps";
 
 const SPOTLIGHT_PADDING = 8;
 const DESKTOP_MEDIA = "(min-width: 768px)";
 
 interface ServiceGuideOverlayProps {
   isOpen: boolean;
+  steps: GuideStep[];
   stepIndex: number;
-  totalSteps: number;
   onClose: () => void;
   onNext: () => void;
   onPrev: () => void;
@@ -83,8 +80,8 @@ function useTargetRect(target: string | undefined, enabled: boolean, stepIndex: 
 
 export function ServiceGuideOverlay({
   isOpen,
+  steps,
   stepIndex,
-  totalSteps,
   onClose,
   onNext,
   onPrev,
@@ -94,7 +91,8 @@ export function ServiceGuideOverlay({
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const isDesktop = useIsDesktop();
-  const step = getGuideStep(stepIndex);
+  const totalSteps = steps.length;
+  const step = steps[stepIndex];
 
   const isCenterStep = step?.placement === "center";
   const onCorrectRoute = step ? isOnGuideRoute(pathname, step.route) : true;
@@ -107,7 +105,7 @@ export function ServiceGuideOverlay({
   const showCenterCard = isCenterStep || needsNavigation || targetMissing;
   const showSpotlight = Boolean(waitingForTarget && targetRect && !targetMissing);
 
-  const isCompleteStep = step?.id === "complete";
+  const isLastStep = stepIndex === totalSteps - 1;
   const isFirstStep = stepIndex === 0;
 
   useEffect(() => {
@@ -181,7 +179,7 @@ export function ServiceGuideOverlay({
                 {t("guide.prev")}
               </Button>
             )}
-            {isCompleteStep ? (
+            {isLastStep ? (
               <Button type="button" onClick={onFinish}>
                 {t("guide.finish")}
               </Button>

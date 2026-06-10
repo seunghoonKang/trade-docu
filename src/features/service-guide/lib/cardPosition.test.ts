@@ -5,7 +5,7 @@ import type { GuideStep } from "./steps";
 describe("cardPosition", () => {
   it("사이드바 타깃은 고정 left 위치를 사용한다", () => {
     const step: GuideStep = {
-      id: "nav-invoices",
+      id: "member-new-doc",
       target: '[data-guide="nav-invoices"]',
       placement: "right",
     };
@@ -16,7 +16,7 @@ describe("cardPosition", () => {
 
   it("오른쪽 끝 타깃은 카드가 viewport 안에 들어오도록 clamp한다", () => {
     const step: GuideStep = {
-      id: "export-toolbar",
+      id: "guest-export",
       target: '[data-guide="export-toolbar"]',
       placement: "left",
     };
@@ -29,7 +29,7 @@ describe("cardPosition", () => {
 
   it("프로필 아바타 타깃은 사이드바 고정 위치를 쓰지 않는다", () => {
     const step: GuideStep = {
-      id: "nav-profile",
+      id: "member-history",
       target: '[data-guide="nav-profile"]',
       placement: "left",
     };

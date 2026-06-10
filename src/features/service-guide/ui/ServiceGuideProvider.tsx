@@ -1,14 +1,19 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { GUIDE_STEPS, isOnGuideRoute } from "../lib/steps";
+import { useAuth } from "@/entities/session";
+import { getGuideSteps, isOnGuideRoute } from "../lib/steps";
 import { ServiceGuideContext, type ServiceGuideContextValue } from "../lib/useServiceGuide";
 import { ServiceGuideOverlay } from "./ServiceGuideOverlay";
 
+/** 계층형 가이드(#28): 로그인 여부로 게스트 미니/멤버 해피패스 플로우를 고른다. */
 export function ServiceGuideProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
+
+  const steps = useMemo(() => getGuideSteps(user ? "member" : "guest"), [user]);
 
   const openGuide = useCallback(() => {
     setStepIndex(0);
@@ -21,24 +26,24 @@ export function ServiceGuideProvider({ children }: { children: React.ReactNode }
 
   const nextStep = useCallback(() => {
     setStepIndex((current) => {
-      if (current >= GUIDE_STEPS.length - 1) {
+      if (current >= steps.length - 1) {
         setIsOpen(false);
         return current;
       }
       return current + 1;
     });
-  }, []);
+  }, [steps]);
 
   const prevStep = useCallback(() => {
     setStepIndex((current) => (current > 0 ? current - 1 : current));
   }, []);
 
   const goToStepRoute = useCallback(() => {
-    const step = GUIDE_STEPS[stepIndex];
+    const step = steps[stepIndex];
     if (step?.route && !isOnGuideRoute(pathname, step.route)) {
       navigate(step.route);
     }
-  }, [navigate, pathname, stepIndex]);
+  }, [navigate, pathname, stepIndex, steps]);
 
   const finishGuide = useCallback(() => {
     setIsOpen(false);
@@ -48,7 +53,8 @@ export function ServiceGuideProvider({ children }: { children: React.ReactNode }
     () => ({
       isOpen,
       stepIndex,
-      totalSteps: GUIDE_STEPS.length,
+      totalSteps: steps.length,
+      currentStep: steps[stepIndex],
       openGuide,
       closeGuide,
       nextStep,
@@ -56,7 +62,7 @@ export function ServiceGuideProvider({ children }: { children: React.ReactNode }
       goToStepRoute,
       finishGuide,
     }),
-    [closeGuide, finishGuide, goToStepRoute, isOpen, nextStep, openGuide, prevStep, stepIndex],
+    [closeGuide, finishGuide, goToStepRoute, isOpen, nextStep, openGuide, prevStep, stepIndex, steps],
   );
 
   return (
@@ -64,8 +70,8 @@ export function ServiceGuideProvider({ children }: { children: React.ReactNode }
       {children}
       <ServiceGuideOverlay
         isOpen={isOpen}
+        steps={steps}
         stepIndex={stepIndex}
-        totalSteps={GUIDE_STEPS.length}
         onClose={closeGuide}
         onNext={nextStep}
         onPrev={prevStep}
