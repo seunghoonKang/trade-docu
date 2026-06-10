@@ -1,8 +1,10 @@
 {
   "app": { "title": "Proforma Invoice" },
-  "nav": { "login": "Login", "logout": "Logout", "signup": "Sign Up", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Invoices", "packingLists": "Packing Lists", "userGuide": "User Guide", "comingSoon": "Coming soon", "comingSoonSection": "Coming soon" },
+  "nav": {"login": "Login", "logout": "Logout", "signup": "Sign Up", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Create Document", "userGuide": "User Guide", "comingSoon": "Coming soon", "comingSoonSection": "Coming soon"},
   "export": { "pdf": "Export to PDF", "excel": "Export to Excel", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF." },
+  "deal": {"documents": "Documents", "issue": "Issue", "issued": "Issued", "shipment": "Shipment", "addShipment": "Add shipment", "ordered": "Ordered", "allocated": "Allocated", "remaining": "Remaining", "allocation": "Allocation", "thisShipment": "This shipment", "save": "Save", "overAllocated": "Over-allocated", "remainingWarning": "Some quantity is not yet shipped.", "complete": "Complete deal", "item": "Item", "ctn": "CTN", "netWeight": "N.W.", "grossWeight": "G.W.", "cbm": "CBM", "cartonNo": "Carton No.", "showPrice": "Show prices", "statusOpen": "Open", "statusClosed": "Closed", "issuedDocuments": "Issued documents", "backToDeal": "Back to deal", "issueTitle": "Issue {{doc}}", "alreadyIssued": "Already issued for this shipment.", "unissuedDocuments": "Not issued yet", "goIssue": "Issue now", "issuedCount": "Issued for {{issued}} of {{total}} shipments", "issueDocAction": "Issue {{doc}}", "ciOptions": "CI options", "reopen": "Reopen deal", "reopened": "Deal reopened.", "closedNotice": "This deal is completed — reopen it to issue documents.", "sharedShipmentHint": "Shipments and allocations are saved on the deal and shared by CI and PL — enter them once and both documents use them.", "confirmIssueNoOriginTitle": "Issue without country of origin?", "confirmIssueNoOriginDescription": "Country of origin is empty. Issue {{doc}} anyway?", "reissue": "Cancel & reissue", "confirmReissueTitle": "Reissue this document?", "confirmReissueDescription": "The issued document {{id}} will be deleted, and you can edit and issue it again.", "fullShipmentSummary": "Ship everything at once · {{total}} in total", "splitShipment": "Split into multiple shipments", "issueTargetHint": "The selected shipment tab is what gets issued. Remaining is computed across all shipments.", "packingDetails": "Packing details", "cancelSplit": "Back to single shipment", "confirmCancelSplitTitle": "Cancel split shipments?", "confirmCancelSplitDescription": "Shipment 2 and later will be deleted (including their issued CI/PL), and the full quantity goes back to shipment 1.", "issuedNext": "Issued. Moved to shipment {{seq}} — continue there.", "allIssued": "{{doc}} issued for all shipments."},
   "form": {
+    "originCountry": "Country of Origin",
     "documentInfo": "Document Info",
     "invoiceNo": "Invoice No.",
     "refNo": "Our Ref No.",
@@ -38,6 +40,17 @@
     "addItemCta": "Add Item",
     "removeItem": "Remove",
     "additionalCharges": "Additional Charges",
+    "chargeTypes": { "freight": "Freight", "insurance": "Insurance", "fee": "Fee", "tax": "Tax", "other": "Other" },
+    "partiesPayment": "Parties & Payment",
+    "consignee": "Consignee",
+    "notifyParty": "Notify Party",
+    "sameAsBuyer": "Same as buyer",
+    "paymentMethod": "Payment Method",
+    "paymentSelect": "Select…",
+    "paymentOther": "Other",
+    "lcNo": "L/C No.",
+    "lcBank": "Issuing Bank",
+    "lcDate": "L/C Date",
     "chargeDescription": "Charge description",
     "addCharge": "Add Charge",
     "removeCharge": "Remove",
@@ -141,6 +154,9 @@
     "discard": "Start new"
   },
   "validation": {
+    "originCountry": "Country of origin (CI)",
+    "overAllocated": "Allocated quantity exceeds the order",
+    "unshippedRemaining": "Deal is completed but some quantity is unshipped",
     "blockedTitle": "Required fields are missing",
     "invoiceNo": "Invoice No.",
     "buyerCompanyName": "Buyer company name",
@@ -215,7 +231,40 @@
     "nudgeMessage": "Set up your profile once and it auto-fills every invoice.",
     "completeCta": "Complete profile"
   },
+  "home": {
+    "galleryTitle": "What do you want to create?",
+    "gallerySubtitle": "Pick a document template to start right away — no setup needed.",
+    "template": {
+      "PI": {
+        "title": "Proforma Invoice",
+        "desc": "Quote your buyer with items, prices, and trade terms."
+      },
+      "CI": {
+        "title": "Commercial Invoice",
+        "desc": "Invoice an actual shipment with charges and origin."
+      },
+      "PL": {
+        "title": "Packing List",
+        "desc": "List cartons, weights, and measurements for a shipment."
+      }
+    },
+    "create": "Create",
+    "lastUsedBadge": "Last used",
+    "continueTitle": "Continue where you left off",
+    "viewAllDeals": "View all deals",
+    "newDocument": "New document",
+    "continueWithDoc": "New {{doc}}",
+    "guestCtaTitle": "One deal, many documents",
+    "guestCtaBody": "Sign up to save your work as deals and issue PI, CI, and PL together with shipments and history.",
+    "guestCtaButton": "Log in / Sign up"
+  },
   "history": {
+    "dealRepository": "Deals",
+    "noDeals": "No saved deals.",
+    "dealNo": "Deal No.",
+    "status": "Status",
+    "shipments": "Shipments",
+    "confirmDeleteDealTitle": "Delete deal",
     "title": "Invoice History",
     "pageTitle": "History",
     "close": "Close",
@@ -334,50 +383,43 @@
     "navigateToInvoices": "Go to Invoices",
     "navigateToHistory": "Go to History",
     "navigateToProfile": "Go to Profile",
+    "coachmarks": {
+      "split-shipment": "Ship in parts: add shipments and allocate item quantities to each one.",
+      "doc-tabs": "One deal, many documents — use the Issue buttons to create CI and PL from this deal's data.",
+      "field-toggle": "Use the price toggle to include or hide prices on the Packing List."
+    },
     "steps": {
-      "welcome": {
-        "title": "TradeDocu Service Guide",
-        "body": "A step-by-step tour from creating proforma invoices to saving and exporting."
+      "guest-template": {
+        "title": "Document templates",
+        "body": "Preview your document in real time. The same data renders as a Proforma Invoice — sign up to issue Commercial Invoices and Packing Lists from one deal."
       },
-      "nav-invoices": {
-        "title": "Invoices menu",
-        "body": "Use this menu to create a new invoice or continue your current work."
+      "guest-form": {
+        "title": "Fill in the form",
+        "body": "Enter seller, buyer, items, and trade terms. Your draft is kept locally while you work."
       },
-      "invoice-form": {
-        "title": "Invoice form",
-        "body": "Enter document info, seller and buyer details, trade terms, line items, and bank info. Seller details from your profile are prefilled automatically."
+      "guest-export": {
+        "title": "Export",
+        "body": "Export to PDF or Excel, or print. Sign up to save your work and manage deals with multiple documents."
       },
-      "export-toolbar": {
-        "title": "Export and save",
-        "body": "Export to PDF or Excel, print, or save to reload later from History."
+      "member-welcome": {
+        "title": "One deal, many documents",
+        "body": "TradeDocu organizes your work around deals: one deal holds shipments, and each shipment issues its own documents (PI, CI, PL)."
       },
-      "preview": {
-        "title": "Live preview",
-        "body": "See your invoice update in real time. Review everything before exporting."
+      "member-new-doc": {
+        "title": "Create a new document",
+        "body": "Fill in seller, buyer, items, and terms. Seller details from your profile are prefilled automatically."
       },
-      "nav-history": {
-        "title": "History menu",
-        "body": "View and manage all saved invoices from this menu."
+      "member-save-deal": {
+        "title": "Save — it becomes a deal",
+        "body": "Saving creates a deal with a default shipment and the issued PI. Everything else builds on this deal."
       },
-      "history-actions": {
-        "title": "Document actions",
-        "body": "View details, load an invoice back into the editor, or delete documents you no longer need."
+      "member-history": {
+        "title": "History is organized by deal",
+        "body": "Each row is a deal: its status, shipments, and issued document badges (PI/CI/PL). Click a row to open the deal."
       },
-      "nav-profile": {
-        "title": "Profile settings",
-        "body": "Register seller details and your signature so they appear automatically on every invoice."
-      },
-      "profile-seller": {
-        "title": "Company and signature",
-        "body": "Add your company name, address, representative, and signature image for use across invoices."
-      },
-      "profile-bank": {
-        "title": "Bank details",
-        "body": "Enter SWIFT code, account number, and other payment information."
-      },
-      "complete": {
-        "title": "Tour complete",
-        "body": "You're ready to use TradeDocu. Reopen this guide anytime from User Guide in the sidebar."
+      "member-deal-docs": {
+        "title": "Issue CI and PL from the deal",
+        "body": "Inside a deal, press Issue CI or Issue PL: pick a shipment, adjust allocations and options, preview, and issue. Reopen this guide anytime from the sidebar."
       }
     }
   }

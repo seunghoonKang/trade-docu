@@ -1,17 +1,35 @@
 import type { Invoice } from "@/entities/invoice";
 import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice";
-import { buildBuyerDetailLines, buildSellerDetailLines } from "@/entities/invoice";
+import { buildBuyerDetailLines, buildSellerDetailLines, chargeDisplayLabel } from "@/entities/invoice";
 import { cn } from "@/shared/lib/utils";
 
 type PreviewData = Omit<Invoice, "id" | "userId" | "createdAt">;
+
+/** 가격 송장 양식. PI/CI는 같은 레이아웃, 제목만 다르다(양식 × 데이터). PL은 PackingListPreview. */
+type PricedVariant = "PI" | "CI";
 
 function formatTermsOfTrade(data: PreviewData) {
   const parts = [data.incoterms, data.commodity].filter(Boolean);
   return parts.length > 0 ? parts.join(" / ") : "—";
 }
 
-export function InvoicePreview({ data }: { data: PreviewData }) {
-  const hasExtraTerms = data.paymentTerms || data.packing || data.validity || data.remarks;
+export function InvoicePreview({
+  data,
+  variant = "PI",
+}: {
+  data: PreviewData;
+  variant?: PricedVariant;
+}) {
+  const title = variant === "CI" ? L.commercialInvoice : L.proformaInvoice;
+  const paymentMethodText =
+    data.paymentMethod && data.paymentMethod === "L/C" && data.lcInfo?.no
+      ? `${data.paymentMethod} · ${data.lcInfo.no}${data.lcInfo.issuingBank ? ` / ${data.lcInfo.issuingBank}` : ""}`
+      : data.paymentMethod || "";
+  const consigneeName = data.consignee?.companyName ?? "";
+  const notifyName = data.notify?.companyName ?? "";
+  const hasExtraTerms =
+    data.paymentTerms || data.packing || data.validity || data.remarks ||
+    paymentMethodText || consigneeName || notifyName || data.originCountry;
   const hasBankInfo = Boolean(data.bankInfo.bankName);
   const hasCharges = data.additionalCharges.length > 0;
   const buyerLines = buildBuyerDetailLines(data.buyerSnapshot);
@@ -39,7 +57,7 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
 
       <div className="mb-10 border-t-4 border-double border-black pt-4 text-center">
         <h3 className="text-2xl font-black uppercase tracking-[0.3em] sm:text-[28px] sm:tracking-[0.5em]">
-          {L.proformaInvoice}
+          {title}
         </h3>
       </div>
 
@@ -85,7 +103,7 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
             <tbody>
               {data.additionalCharges.map((charge, i) => (
                 <tr key={`charge-${i}`} className="border-b border-gray-200">
-                  <td className="py-2 text-left text-gray-600" colSpan={5}>{charge.description}</td>
+                  <td className="py-2 text-left text-gray-600" colSpan={5}>{chargeDisplayLabel(charge)}</td>
                   <td className="py-2 text-right">{charge.amount.toFixed(2)}</td>
                 </tr>
               ))}
@@ -102,6 +120,10 @@ export function InvoicePreview({ data }: { data: PreviewData }) {
 
       {hasExtraTerms && (
         <div className="mb-8 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 font-sans text-[11px] text-gray-600">
+          {paymentMethodText && <><span className="font-bold uppercase">{L.paymentMethod}</span><span>{paymentMethodText}</span></>}
+          {consigneeName && <><span className="font-bold uppercase">{L.consignee}</span><span>{consigneeName}</span></>}
+          {notifyName && <><span className="font-bold uppercase">{L.notifyParty}</span><span>{notifyName}</span></>}
+          {data.originCountry && <><span className="font-bold uppercase">{L.originCountry}</span><span>{data.originCountry}</span></>}
           {data.paymentTerms && <><span className="font-bold uppercase">{L.paymentTerms}</span><span>{data.paymentTerms}</span></>}
           {data.packing && <><span className="font-bold uppercase">{L.packing}</span><span>{data.packing}</span></>}
           {data.validity && <><span className="font-bold uppercase">{L.validity}</span><span>{data.validity}</span></>}

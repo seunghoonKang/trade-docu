@@ -1,8 +1,10 @@
 {
   "app": { "title": "プロフォーマインボイス" },
-  "nav": { "login": "ログイン", "logout": "ログアウト", "signup": "新規登録", "history": "履歴", "settings": "設定", "dashboard": "ダッシュボード", "invoices": "インボイス", "packingLists": "パッキングリスト", "userGuide": "ユーザーガイド", "comingSoon": "準備中", "comingSoonSection": "準備中" },
+  "nav": {"login": "ログイン", "logout": "ログアウト", "signup": "新規登録", "history": "履歴", "settings": "設定", "dashboard": "ダッシュボード", "invoices": "書類作成", "userGuide": "ユーザーガイド", "comingSoon": "準備中", "comingSoonSection": "準備中"},
   "export": { "pdf": "PDFでエクスポート", "excel": "Excelでエクスポート", "print": "印刷", "export": "エクスポート", "pdfFailed": "PDFの生成に失敗しました。" },
+  "deal": {"documents": "書類", "issue": "発行", "issued": "発行済み", "shipment": "船積", "addShipment": "船積みを追加", "ordered": "注文", "allocated": "船積済", "remaining": "残量", "allocation": "配分", "thisShipment": "今回の配分", "save": "保存", "overAllocated": "過剰配分", "remainingWarning": "未船積の残量があります。", "complete": "取引を完了", "item": "品目", "ctn": "箱数(CTN)", "netWeight": "純重量", "grossWeight": "総重量", "cbm": "CBM", "cartonNo": "カートンNo.", "showPrice": "価格を表示", "statusOpen": "進行中", "statusClosed": "完了", "issuedDocuments": "発行済み書類", "backToDeal": "取引に戻る", "issueTitle": "{{doc}}発行", "alreadyIssued": "この船積みには既に発行済みです。", "unissuedDocuments": "未発行の書類", "goIssue": "発行する", "issuedCount": "船積み{{total}}件中{{issued}}件発行済み", "issueDocAction": "{{doc}}を発行", "ciOptions": "CIオプション", "reopen": "取引を再開", "reopened": "取引を再開しました。", "closedNotice": "完了した取引です — 発行するには取引を再開してください。", "sharedShipmentHint": "船積み・配分の内容は取引に保存され、CIとPLで共有されます — 一度入力すれば両方の書類に反映されます。", "confirmIssueNoOriginTitle": "原産国なしで発行しますか？", "confirmIssueNoOriginDescription": "原産国が未入力です。このまま{{doc}}を発行しますか？", "reissue": "取消して再発行", "confirmReissueTitle": "再発行しますか？", "confirmReissueDescription": "発行済みの{{id}}は削除され、修正後に再発行できます。", "fullShipmentSummary": "全量を1回で出荷 · 合計{{total}}", "splitShipment": "分割船積みにする", "issueTargetHint": "発行対象は選択中の船積みタブです。残量は全船積みを合算して自動計算されます。", "packingDetails": "梱包情報", "cancelSplit": "全量出荷に戻す", "confirmCancelSplitTitle": "分割船積みを取り消しますか？", "confirmCancelSplitDescription": "船積み2以降が削除され（発行済みのCI/PLを含む）、全量が船積み1に配分されます。", "issuedNext": "発行しました。船積み{{seq}}に移動しました — 続けて発行してください。", "allIssued": "すべての船積みに{{doc}}を発行しました。"},
   "form": {
+    "originCountry": "原産国",
     "documentInfo": "書類情報",
     "invoiceNo": "インボイス番号",
     "refNo": "売主参照番号",
@@ -38,6 +40,17 @@
     "addItemCta": "品目を追加",
     "removeItem": "削除",
     "additionalCharges": "追加費用",
+    "chargeTypes": { "freight": "運賃", "insurance": "保険", "fee": "手数料", "tax": "税金", "other": "その他" },
+    "partiesPayment": "当事者・決済",
+    "consignee": "荷受人",
+    "notifyParty": "着荷通知先",
+    "sameAsBuyer": "買主と同じ",
+    "paymentMethod": "決済方法",
+    "paymentSelect": "選択…",
+    "paymentOther": "その他",
+    "lcNo": "L/C番号",
+    "lcBank": "開設銀行",
+    "lcDate": "L/C日付",
     "chargeDescription": "費用項目",
     "addCharge": "費用追加",
     "removeCharge": "削除",
@@ -141,6 +154,9 @@
     "discard": "新規作成"
   },
   "validation": {
+    "originCountry": "原産国(CI)",
+    "overAllocated": "配分数量が注文数量を超えています",
+    "unshippedRemaining": "取引完了ですが未船積みの残数量があります",
     "blockedTitle": "必須項目が未入力です",
     "invoiceNo": "インボイス番号",
     "buyerCompanyName": "買主の会社名",
@@ -215,7 +231,40 @@
     "nudgeMessage": "プロフィールを設定すると、毎回自動で入力されます。",
     "completeCta": "プロフィールを完成"
   },
+  "home": {
+    "galleryTitle": "どの書類を作成しますか？",
+    "gallerySubtitle": "テンプレートを選ぶとすぐに作成できます — 事前準備は不要です。",
+    "template": {
+      "PI": {
+        "title": "見積送り状 (PI)",
+        "desc": "品目・価格・取引条件で購入者に見積もりを送りましょう。"
+      },
+      "CI": {
+        "title": "商業送り状 (CI)",
+        "desc": "実際の船積みを費用・原産国とともに請求しましょう。"
+      },
+      "PL": {
+        "title": "梱包明細書 (PL)",
+        "desc": "船積みの箱数・重量・容積を整理しましょう。"
+      }
+    },
+    "create": "作成する",
+    "lastUsedBadge": "最後に使用",
+    "continueTitle": "続きから作業",
+    "viewAllDeals": "すべての取引を見る",
+    "newDocument": "新しい書類",
+    "continueWithDoc": "{{doc}}を新規作成",
+    "guestCtaTitle": "1つの取引 = 複数の書類",
+    "guestCtaBody": "登録すると作業が取引として保存され、船積み・履歴とともにPI・CI・PLを発行できます。",
+    "guestCtaButton": "ログイン / 登録"
+  },
   "history": {
+    "dealRepository": "取引一覧",
+    "noDeals": "保存された取引はありません。",
+    "dealNo": "取引番号",
+    "status": "ステータス",
+    "shipments": "船積",
+    "confirmDeleteDealTitle": "取引を削除",
     "title": "インボイス履歴",
     "pageTitle": "履歴",
     "close": "閉じる",
@@ -334,50 +383,43 @@
     "navigateToInvoices": "インボイスページへ移動",
     "navigateToHistory": "履歴ページへ移動",
     "navigateToProfile": "プロフィールページへ移動",
+    "coachmarks": {
+      "split-shipment": "分割船積みが可能です — 船積みを追加し、品目数量を船積みごとに配分してください。",
+      "doc-tabs": "1つの取引 = 複数の書類 — 発行ボタンでこの取引のデータからCI・PLを作成できます。",
+      "field-toggle": "価格表示トグルで梱包明細書(PL)に価格を含めるか隠すかを選べます。"
+    },
     "steps": {
-      "welcome": {
-        "title": "TradeDocu サービスガイド",
-        "body": "プロフォーマインボイスの作成から保存・エクスポートまで、主要機能を順番にご案内します。"
+      "guest-template": {
+        "title": "ドキュメントテンプレート",
+        "body": "入力内容がリアルタイムでプレビューされます。同じデータが見積送り状(PI)として出力され、登録すると1つの取引から商業送り状(CI)・梱包明細書(PL)も発行できます。"
       },
-      "nav-invoices": {
-        "title": "インボイスメニュー",
-        "body": "新しいインボイスを作成する、または作業を再開する際に使用します。"
+      "guest-form": {
+        "title": "フォーム入力",
+        "body": "販売者・購入者・品目・取引条件を入力してください。作成中の内容はブラウザに一時保存されます。"
       },
-      "invoice-form": {
-        "title": "インボイス入力フォーム",
-        "body": "文書情報、売主・買主、取引条件、品目、銀行情報を入力します。プロフィールの売主情報が自動入力されます。"
+      "guest-export": {
+        "title": "エクスポート",
+        "body": "PDF・Excelへのエクスポートや印刷ができます。登録すると保存して1つの取引の複数書類を管理できます。"
       },
-      "export-toolbar": {
-        "title": "エクスポートと保存",
-        "body": "PDF・Excelで出力したり印刷できます。保存すると履歴ページから再読み込みできます。"
+      "member-welcome": {
+        "title": "1つの取引 = 複数の書類",
+        "body": "TradeDocuは取引単位で動作します。1つの取引が船積みをまとめ、各船積みからPI・CI・PLを発行します。"
       },
-      "preview": {
-        "title": "リアルタイムプレビュー",
-        "body": "入力内容がインボイス形式で即座に反映されます。出力前に最終確認してください。"
+      "member-new-doc": {
+        "title": "新しい書類を作成",
+        "body": "販売者・購入者・品目・条件を入力してください。プロフィールの販売者情報が自動で入力されます。"
       },
-      "nav-history": {
-        "title": "履歴メニュー",
-        "body": "保存したインボイス一覧の確認と管理ができます。"
+      "member-save-deal": {
+        "title": "保存すると取引になります",
+        "body": "保存時にデフォルト船積み1件と発行済みPIを持つ取引が作成されます。以降の作業はこの取引の上で行われます。"
       },
-      "history-actions": {
-        "title": "ドキュメント操作",
-        "body": "表示で詳細を確認し、読み込みで編集画面に適用、または削除できます。"
+      "member-history": {
+        "title": "履歴は取引単位",
+        "body": "1行が1つの取引です — ステータス・船積み数・書類発行バッジ(PI/CI/PL)を表示します。行をクリックして取引を開いてください。"
       },
-      "nav-profile": {
-        "title": "プロフィール設定",
-        "body": "売主情報と署名を登録すると、インボイス作成時に自動反映されます。"
-      },
-      "profile-seller": {
-        "title": "会社情報と署名",
-        "body": "会社名、住所、代表者、署名画像を登録してください。すべてのインボイスで共通利用されます。"
-      },
-      "profile-bank": {
-        "title": "銀行情報",
-        "body": "SWIFTコード、口座番号など、支払いに必要な銀行情報を入力してください。"
-      },
-      "complete": {
-        "title": "ガイド完了",
-        "body": "TradeDocuの準備が整いました。サイドバーのユーザーガイドからいつでも再表示できます。"
+      "member-deal-docs": {
+        "title": "取引からCI・PLを発行",
+        "body": "取引の中で「CI発行/PL発行」を押してください — 船積みを選び、配分・オプションを調整してプレビュー後に発行します。ガイドはサイドバーからいつでも再表示できます。"
       }
     }
   }

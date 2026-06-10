@@ -3,7 +3,6 @@ import {
   HelpCircle,
   LayoutDashboard,
   LogOut,
-  Package,
   type LucideIcon,
 } from "lucide-react";
 import { mainNavItems } from "@/shared/config";
@@ -11,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { logout } from "@/features/auth";
-import { useServiceGuide, getGuideStep } from "@/features/service-guide";
+import { useServiceGuide } from "@/features/service-guide";
 import {
   Tooltip,
   TooltipContent,
@@ -42,7 +41,6 @@ const activeItems: SidebarItem[] = mainNavItems.map((item) => ({
 
 const comingSoonItems: SidebarItem[] = [
   { id: "dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard", disabled: true },
-  { id: "packingLists", icon: Package, labelKey: "nav.packingLists", disabled: true },
 ];
 
 const bottomItems: SidebarItem[] = [
@@ -149,16 +147,15 @@ export function AppSidebar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { openGuide, isOpen, stepIndex } = useServiceGuide();
+  const { openGuide, isOpen, currentStep } = useServiceGuide();
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
-    const step = getGuideStep(stepIndex);
-    if (step?.target?.includes('data-guide="nav-')) {
+    if (currentStep?.target?.includes('data-guide="nav-')) {
       setExpanded(true);
     }
-  }, [isOpen, stepIndex]);
+  }, [isOpen, currentStep]);
 
   function isActive(item: SidebarItem) {
     if (!item.href) return false;

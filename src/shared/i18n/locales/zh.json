@@ -1,8 +1,10 @@
 {
   "app": { "title": "形式发票" },
-  "nav": { "login": "登录", "logout": "退出", "signup": "注册", "history": "历史", "settings": "设置", "dashboard": "仪表盘", "invoices": "发票", "packingLists": "装箱单", "userGuide": "用户指南", "comingSoon": "即将推出", "comingSoonSection": "即将推出" },
+  "nav": {"login": "登录", "logout": "退出", "signup": "注册", "history": "历史", "settings": "设置", "dashboard": "仪表盘", "invoices": "创建单据", "userGuide": "用户指南", "comingSoon": "即将推出", "comingSoonSection": "即将推出"},
   "export": { "pdf": "导出为 PDF", "excel": "导出为 Excel", "print": "打印", "export": "导出", "pdfFailed": "PDF 生成失败。" },
+  "deal": {"documents": "单据", "issue": "签发", "issued": "已签发", "shipment": "装运", "addShipment": "添加装运", "ordered": "订购", "allocated": "已装运", "remaining": "剩余", "allocation": "分配", "thisShipment": "本次分配", "save": "保存", "overAllocated": "超额分配", "remainingWarning": "仍有未装运的剩余数量。", "complete": "完成交易", "item": "品目", "ctn": "箱数(CTN)", "netWeight": "净重", "grossWeight": "毛重", "cbm": "CBM", "cartonNo": "箱号", "showPrice": "显示价格", "statusOpen": "进行中", "statusClosed": "已完成", "issuedDocuments": "已签发单据", "backToDeal": "返回交易", "issueTitle": "签发{{doc}}", "alreadyIssued": "该装运已签发。", "unissuedDocuments": "未签发单据", "goIssue": "去签发", "issuedCount": "{{total}}个装运中已签发{{issued}}个", "issueDocAction": "签发{{doc}}", "ciOptions": "CI选项", "reopen": "重新打开交易", "reopened": "已重新打开交易。", "closedNotice": "交易已完成 — 如需签发请重新打开交易。", "sharedShipmentHint": "装运和分配内容保存在交易中，由CI和PL共享 — 填写一次即可同时用于两种单据。", "confirmIssueNoOriginTitle": "不填原产国直接签发？", "confirmIssueNoOriginDescription": "原产国为空。仍要签发{{doc}}吗？", "reissue": "取消并重新签发", "confirmReissueTitle": "重新签发？", "confirmReissueDescription": "已签发的{{id}}将被删除，修改后可重新签发。", "fullShipmentSummary": "一次性全部发货 · 共{{total}}", "splitShipment": "分批装运", "issueTargetHint": "签发对象为当前选中的装运标签。剩余数量按所有装运合计自动计算。", "packingDetails": "包装信息", "cancelSplit": "恢复整批发货", "confirmCancelSplitTitle": "取消分批装运？", "confirmCancelSplitDescription": "装运2及之后将被删除（包括其已签发的CI/PL），全部数量将归入装运1。", "issuedNext": "已签发。已切换到装运{{seq}} — 请继续签发。", "allIssued": "已为所有装运签发{{doc}}。"},
   "form": {
+    "originCountry": "原产国",
     "documentInfo": "文件信息",
     "invoiceNo": "发票号",
     "refNo": "卖方参考号",
@@ -38,6 +40,17 @@
     "addItemCta": "添加商品",
     "removeItem": "删除",
     "additionalCharges": "附加费用",
+    "chargeTypes": { "freight": "运费", "insurance": "保险", "fee": "手续费", "tax": "税费", "other": "其他" },
+    "partiesPayment": "当事方·付款",
+    "consignee": "收货人",
+    "notifyParty": "通知方",
+    "sameAsBuyer": "与买方相同",
+    "paymentMethod": "付款方式",
+    "paymentSelect": "选择…",
+    "paymentOther": "其他",
+    "lcNo": "信用证号",
+    "lcBank": "开证银行",
+    "lcDate": "信用证日期",
     "chargeDescription": "费用项目",
     "addCharge": "添加费用",
     "removeCharge": "删除",
@@ -141,6 +154,9 @@
     "discard": "新建"
   },
   "validation": {
+    "originCountry": "原产国(CI)",
+    "overAllocated": "分配数量超过订单数量",
+    "unshippedRemaining": "交易已完成但仍有未装运数量",
     "blockedTitle": "必填项尚未填写",
     "invoiceNo": "发票号",
     "buyerCompanyName": "买方公司名称",
@@ -215,7 +231,40 @@
     "nudgeMessage": "设置个人资料后，每张发票都会自动填入。",
     "completeCta": "完善资料"
   },
+  "home": {
+    "galleryTitle": "想创建哪种单据？",
+    "gallerySubtitle": "选择模板即可立即开始 — 无需任何准备。",
+    "template": {
+      "PI": {
+        "title": "形式发票 (PI)",
+        "desc": "用商品、价格和贸易条款向买方报价。"
+      },
+      "CI": {
+        "title": "商业发票 (CI)",
+        "desc": "为实际装运开票，包含费用和原产地。"
+      },
+      "PL": {
+        "title": "装箱单 (PL)",
+        "desc": "整理装运的箱数、重量和体积。"
+      }
+    },
+    "create": "开始创建",
+    "lastUsedBadge": "最近使用",
+    "continueTitle": "继续上次的工作",
+    "viewAllDeals": "查看全部交易",
+    "newDocument": "新建单据",
+    "continueWithDoc": "新建{{doc}}",
+    "guestCtaTitle": "一笔交易 = 多份单据",
+    "guestCtaBody": "注册后工作将保存为交易，可与装运、历史一起签发PI、CI和PL。",
+    "guestCtaButton": "登录 / 注册"
+  },
   "history": {
+    "dealRepository": "交易列表",
+    "noDeals": "没有已保存的交易。",
+    "dealNo": "交易编号",
+    "status": "状态",
+    "shipments": "装运",
+    "confirmDeleteDealTitle": "删除交易",
     "title": "发票历史",
     "pageTitle": "历史",
     "close": "关闭",
@@ -334,50 +383,43 @@
     "navigateToInvoices": "前往发票页面",
     "navigateToHistory": "前往历史页面",
     "navigateToProfile": "前往资料页面",
+    "coachmarks": {
+      "split-shipment": "支持分批装运 — 添加装运并按装运分配商品数量。",
+      "doc-tabs": "一笔交易 = 多份单据 — 使用签发按钮即可从这笔交易的数据创建CI和PL。",
+      "field-toggle": "使用价格开关可在装箱单(PL)中显示或隐藏价格。"
+    },
     "steps": {
-      "welcome": {
-        "title": "TradeDocu 服务指南",
-        "body": "逐步介绍从创建形式发票到保存和导出的核心功能。"
+      "guest-template": {
+        "title": "单据模板",
+        "body": "输入内容会实时预览。同一数据输出为形式发票(PI)，注册后可从一笔交易签发商业发票(CI)和装箱单(PL)。"
       },
-      "nav-invoices": {
-        "title": "发票菜单",
-        "body": "用于创建新发票或继续当前工作。"
+      "guest-form": {
+        "title": "填写表单",
+        "body": "输入卖方、买方、商品和贸易条款。编辑中的内容会暂存在浏览器中。"
       },
-      "invoice-form": {
-        "title": "发票输入表单",
-        "body": "填写文档信息、买卖双方、贸易条件、品项和银行信息。资料中的卖方信息会自动填入。"
+      "guest-export": {
+        "title": "导出",
+        "body": "可导出为PDF、Excel或打印。注册后可保存并管理一笔交易的多份单据。"
       },
-      "export-toolbar": {
-        "title": "导出与保存",
-        "body": "可导出 PDF、Excel 或打印。保存后可在历史页面重新加载。"
+      "member-welcome": {
+        "title": "一笔交易 = 多份单据",
+        "body": "TradeDocu以交易为中心：一笔交易包含多次装运，每次装运可签发各自的单据(PI·CI·PL)。"
       },
-      "preview": {
-        "title": "实时预览",
-        "body": "输入内容会即时反映在发票格式中。导出前请最终确认。"
+      "member-new-doc": {
+        "title": "创建新单据",
+        "body": "输入卖方、买方、商品和条款。个人资料中的卖方信息会自动填入。"
       },
-      "nav-history": {
-        "title": "历史菜单",
-        "body": "在此查看和管理所有已保存的发票。"
+      "member-save-deal": {
+        "title": "保存后成为交易",
+        "body": "保存时会创建一笔交易，包含1个默认装运和已签发的PI。之后的所有操作都基于这笔交易。"
       },
-      "history-actions": {
-        "title": "文档操作",
-        "body": "查看详情、加载到编辑页面，或删除不需要的文档。"
+      "member-history": {
+        "title": "历史按交易组织",
+        "body": "每行是一笔交易 — 显示状态、装运数和单据签发徽章(PI/CI/PL)。点击行打开交易。"
       },
-      "nav-profile": {
-        "title": "资料设置",
-        "body": "注册卖方信息和签名后，创建发票时会自动应用。"
-      },
-      "profile-seller": {
-        "title": "公司与签名",
-        "body": "填写公司名称、地址、代表人和签名图片，供所有发票共用。"
-      },
-      "profile-bank": {
-        "title": "银行信息",
-        "body": "填写 SWIFT 代码、账号等付款所需的银行信息。"
-      },
-      "complete": {
-        "title": "指南完成",
-        "body": "您已准备好使用 TradeDocu。可随时从侧边栏用户指南重新打开本指南。"
+      "member-deal-docs": {
+        "title": "在交易中签发CI·PL",
+        "body": "在交易中点击“签发CI/签发PL”——选择装运、调整分配和选项，预览后签发。可随时从侧边栏重新打开本指南。"
       }
     }
   }

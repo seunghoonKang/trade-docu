@@ -1,8 +1,10 @@
 {
   "app": { "title": "프로포마 인보이스" },
-  "nav": { "login": "로그인", "logout": "로그아웃", "signup": "회원가입", "history": "기록", "settings": "설정", "dashboard": "대시보드", "invoices": "인보이스", "packingLists": "패킹 리스트", "userGuide": "사용자 가이드", "comingSoon": "준비 중", "comingSoonSection": "준비 중" },
+  "nav": {"login": "로그인", "logout": "로그아웃", "signup": "회원가입", "history": "기록", "settings": "설정", "dashboard": "대시보드", "invoices": "서류 작성", "userGuide": "사용자 가이드", "comingSoon": "준비 중", "comingSoonSection": "준비 중"},
   "export": { "pdf": "PDF로 내보내기", "excel": "엑셀로 내보내기", "print": "인쇄", "export": "내보내기", "pdfFailed": "PDF 생성에 실패했습니다." },
+  "deal": {"documents": "문서", "issue": "발행", "issued": "발행됨", "shipment": "선적", "addShipment": "선적 추가하기", "ordered": "주문", "allocated": "기선적", "remaining": "잔여", "allocation": "배분", "thisShipment": "이번 배분", "save": "저장", "overAllocated": "초과 배분", "remainingWarning": "아직 선적되지 않은 잔여 수량이 있습니다.", "complete": "거래 완료", "item": "품목", "ctn": "박스수(CTN)", "netWeight": "순중량", "grossWeight": "총중량", "cbm": "CBM", "cartonNo": "카톤번호", "showPrice": "가격 표시", "statusOpen": "진행중", "statusClosed": "완료", "issuedDocuments": "발행된 문서", "backToDeal": "거래로 돌아가기", "issueTitle": "{{doc}} 발행", "alreadyIssued": "이 선적에는 이미 발행되었습니다.", "unissuedDocuments": "미발행 문서", "goIssue": "발행하러 가기", "issuedCount": "선적 {{total}}개 중 {{issued}}개 발행됨", "issueDocAction": "{{doc}} 발행하기", "ciOptions": "CI 옵션", "reopen": "거래 재개", "reopened": "거래를 재개했습니다.", "closedNotice": "완료된 거래입니다 — 발행하려면 거래를 재개하세요.", "sharedShipmentHint": "선적·배분 내용은 거래에 저장되어 CI와 PL이 함께 사용합니다 — 한 번 입력하면 다른 양식에도 반영돼요.", "confirmIssueNoOriginTitle": "원산지 없이 발행할까요?", "confirmIssueNoOriginDescription": "원산지 정보가 비어 있습니다. 그래도 {{doc}}을 발행할까요?", "reissue": "취소하고 다시 발행", "confirmReissueTitle": "다시 발행할까요?", "confirmReissueDescription": "발행본 {{id}}이(가) 삭제되고, 수정 후 다시 발행할 수 있습니다.", "fullShipmentSummary": "전량 1회 출고 · 총 {{total}}", "splitShipment": "분할선적으로 보내기", "issueTargetHint": "발행 대상은 선택된 선적 탭입니다. 잔여는 전체 선적을 합산해 자동 계산돼요.", "packingDetails": "포장 정보", "cancelSplit": "전량 출고로 되돌리기", "confirmCancelSplitTitle": "분할선적을 취소할까요?", "confirmCancelSplitDescription": "선적 2 이후가 삭제되고(그 선적의 발행된 CI/PL 포함) 전량이 선적 1로 배분됩니다.", "issuedNext": "발행 완료 — 선적 {{seq}}(으)로 이동했어요. 이어서 발행하세요.", "allIssued": "모든 선적에 {{doc}} 발행을 마쳤어요."},
   "form": {
+    "originCountry": "원산지",
     "documentInfo": "문서 정보",
     "invoiceNo": "인보이스 번호",
     "refNo": "판매자 참조번호",
@@ -38,6 +40,17 @@
     "addItemCta": "품목 추가하기",
     "removeItem": "삭제",
     "additionalCharges": "추가 비용",
+    "chargeTypes": { "freight": "운임", "insurance": "보험", "fee": "수수료", "tax": "세금", "other": "기타" },
+    "partiesPayment": "당사자 · 결제",
+    "consignee": "수하인",
+    "notifyParty": "착하통지처",
+    "sameAsBuyer": "구매자와 동일",
+    "paymentMethod": "결제수단",
+    "paymentSelect": "선택…",
+    "paymentOther": "기타",
+    "lcNo": "L/C 번호",
+    "lcBank": "개설은행",
+    "lcDate": "L/C 일자",
     "chargeDescription": "비용 항목",
     "addCharge": "비용 추가",
     "removeCharge": "삭제",
@@ -141,6 +154,9 @@
     "discard": "새로 시작"
   },
   "validation": {
+    "originCountry": "원산지(CI)",
+    "overAllocated": "배분 수량이 주문 수량을 초과합니다",
+    "unshippedRemaining": "거래가 완료됐지만 미선적 잔여 수량이 있습니다",
     "blockedTitle": "필수 항목이 비어 있습니다.",
     "invoiceNo": "인보이스 번호",
     "buyerCompanyName": "구매자 회사명",
@@ -215,7 +231,40 @@
     "nudgeMessage": "프로필을 설정하면 매번 자동으로 들어갑니다.",
     "completeCta": "프로필 완성"
   },
+  "home": {
+    "galleryTitle": "어떤 문서를 만들까요?",
+    "gallerySubtitle": "양식을 고르면 바로 작성할 수 있어요 — 준비 과정이 필요 없습니다.",
+    "template": {
+      "PI": {
+        "title": "견적송장 (PI)",
+        "desc": "품목·가격·거래조건으로 구매자에게 견적을 보내세요."
+      },
+      "CI": {
+        "title": "상업송장 (CI)",
+        "desc": "실제 선적 건을 비용·원산지와 함께 청구하세요."
+      },
+      "PL": {
+        "title": "포장명세서 (PL)",
+        "desc": "선적의 박스·중량·부피를 정리하세요."
+      }
+    },
+    "create": "작성하기",
+    "lastUsedBadge": "마지막 사용",
+    "continueTitle": "이어서 작업하기",
+    "viewAllDeals": "전체 거래 보기",
+    "newDocument": "새 문서",
+    "continueWithDoc": "{{doc}} 새로 작성",
+    "guestCtaTitle": "한 거래 = 여러 문서",
+    "guestCtaBody": "가입하면 작업이 거래 건으로 저장되고, 선적·이력과 함께 PI·CI·PL을 발행할 수 있습니다.",
+    "guestCtaButton": "로그인 / 가입"
+  },
   "history": {
+    "dealRepository": "거래 건 목록",
+    "noDeals": "저장된 거래 건이 없습니다.",
+    "dealNo": "거래 번호",
+    "status": "상태",
+    "shipments": "선적",
+    "confirmDeleteDealTitle": "거래 건 삭제",
     "title": "인보이스 이력",
     "pageTitle": "기록",
     "close": "닫기",
@@ -334,50 +383,43 @@
     "navigateToInvoices": "인보이스 페이지로 이동",
     "navigateToHistory": "기록 페이지로 이동",
     "navigateToProfile": "프로필 페이지로 이동",
+    "coachmarks": {
+      "split-shipment": "분할선적이 가능합니다 — 선적을 추가하고 품목 수량을 선적별로 배분하세요.",
+      "doc-tabs": "한 거래 = 여러 문서 — 발행 버튼으로 이 거래의 데이터에서 CI·PL을 만들 수 있어요.",
+      "field-toggle": "가격 표시 토글로 포장명세서(PL)에 가격을 포함하거나 숨길 수 있습니다."
+    },
     "steps": {
-      "welcome": {
-        "title": "TradeDocu 서비스 가이드",
-        "body": "프로포마 인보이스 작성부터 저장·내보내기까지 핵심 기능을 단계별로 안내합니다."
+      "guest-template": {
+        "title": "문서 템플릿",
+        "body": "작성하는 즉시 문서가 미리보기로 렌더됩니다. 같은 데이터가 견적송장(PI)으로 출력되며, 가입하면 한 거래에서 상업송장(CI)·포장명세서(PL)까지 발행할 수 있습니다."
       },
-      "nav-invoices": {
-        "title": "인보이스 메뉴",
-        "body": "새 인보이스를 작성하거나 기존 작업을 이어갈 때 이 메뉴를 사용합니다."
+      "guest-form": {
+        "title": "양식 작성",
+        "body": "판매자·구매자·품목·거래조건을 입력하세요. 작성 중인 내용은 브라우저에 임시 저장됩니다."
       },
-      "invoice-form": {
-        "title": "인보이스 입력 폼",
-        "body": "문서 정보, 판매자·구매자, 거래 조건, 품목, 은행 정보를 입력합니다. 프로필에 저장된 판매자 정보가 자동으로 채워집니다."
+      "guest-export": {
+        "title": "내보내기",
+        "body": "PDF·Excel로 내보내거나 인쇄할 수 있습니다. 가입하면 저장하고 한 거래의 여러 문서를 관리할 수 있습니다."
       },
-      "export-toolbar": {
-        "title": "내보내기 및 저장",
-        "body": "PDF·Excel로 내보내거나 인쇄할 수 있습니다. 저장하면 기록 페이지에서 다시 불러올 수 있습니다."
+      "member-welcome": {
+        "title": "한 거래 = 여러 문서",
+        "body": "TradeDocu는 거래 건 중심으로 동작합니다. 한 거래 건이 선적들을 묶고, 각 선적에서 PI·CI·PL 문서를 발행합니다."
       },
-      "preview": {
-        "title": "실시간 미리보기",
-        "body": "입력한 내용이 인보이스 형식으로 바로 반영됩니다. 내보내기 전에 최종 확인하세요."
+      "member-new-doc": {
+        "title": "새 문서 작성",
+        "body": "판매자·구매자·품목·조건을 입력하세요. 프로필의 판매자 정보가 자동으로 채워집니다."
       },
-      "nav-history": {
-        "title": "기록 메뉴",
-        "body": "저장한 인보이스 목록을 확인하고 관리할 수 있습니다."
+      "member-save-deal": {
+        "title": "저장하면 거래 건이 됩니다",
+        "body": "저장 시 기본 선적 1개와 발행된 PI를 가진 거래 건이 만들어집니다. 이후 모든 작업이 이 거래 건 위에서 이루어집니다."
       },
-      "history-actions": {
-        "title": "문서 관리",
-        "body": "보기로 상세 내용을 확인하고, 불러오기로 편집 화면에 적용하거나 삭제할 수 있습니다."
+      "member-history": {
+        "title": "History는 거래 건 단위",
+        "body": "한 행이 거래 건 하나입니다 — 상태·선적 수·문서 발행 배지(PI/CI/PL)를 보여줍니다. 행을 클릭해 거래 건을 여세요."
       },
-      "nav-profile": {
-        "title": "프로필 설정",
-        "body": "판매자 정보와 서명을 등록하면 인보이스 작성 시 자동으로 반영됩니다."
-      },
-      "profile-seller": {
-        "title": "회사 및 서명",
-        "body": "회사명, 주소, 대표자 정보와 서명 이미지를 등록하세요. 모든 인보이스에 공통으로 사용됩니다."
-      },
-      "profile-bank": {
-        "title": "은행 정보",
-        "body": "SWIFT 코드, 계좌번호 등 결제에 필요한 은행 정보를 입력하세요."
-      },
-      "complete": {
-        "title": "가이드 완료",
-        "body": "이제 TradeDocu를 사용할 준비가 되었습니다. 언제든 사이드바 사용자 가이드에서 다시 볼 수 있습니다."
+      "member-deal-docs": {
+        "title": "거래 건에서 CI·PL 발행",
+        "body": "거래 건 안에서 'CI 발행/PL 발행'을 누르세요 — 선적을 고르고 배분·옵션을 조정한 뒤 미리보고 발행합니다. 가이드는 사이드바에서 언제든 다시 열 수 있습니다."
       }
     }
   }

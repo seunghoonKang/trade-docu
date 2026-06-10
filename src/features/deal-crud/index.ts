@@ -1,0 +1,30 @@
+export {
+  saveDeal,
+  getDealBundle,
+  listDeals,
+  listDealSummaries,
+  deleteDeal,
+  issueDocument,
+  deleteDocument,
+  ensureDefaultShipment,
+  createShipment,
+  updateDealOriginCountry,
+  updateShipmentAllocations,
+  updateShipmentCharges,
+  deleteShipment,
+  setDealStatus,
+} from "./api";
+export type { DealBundle, IssueDocumentParams } from "./api";
+export { formToDeal, dealToForm } from "./lib/mapping";
+export {
+  computeBalance,
+  remainingAllocations,
+  nextSeq,
+  suggestDocNo,
+  quantityWarningKeys,
+} from "./lib/balance";
+export type { ItemBalance, DealBalance } from "./lib/balance";
+export { buildDealSummaries, matchesDealSummary } from "./lib/summary";
+export type { DealSummary, DealDocRef } from "./lib/summary";
+export { documentPreviewData } from "./lib/snapshot";
+export type { DocumentPreviewData } from "./lib/snapshot";

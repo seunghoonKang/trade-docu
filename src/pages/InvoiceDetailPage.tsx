@@ -109,7 +109,7 @@ export function InvoiceDetailPage() {
 
   function handleLoad() {
     if (!invoice) return;
-    navigate("/", { state: { restoreInvoice: toInvoiceFormData(invoice) } });
+    navigate("/new", { state: { restoreInvoice: toInvoiceFormData(invoice) } });
   }
 
   async function handleDelete() {

@@ -3,6 +3,7 @@ import { ChevronDown, FileSpreadsheet, FileText, Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getPageTitleKey, mainNavItems } from "@/shared/config";
+import type { AppPageId } from "@/shared/config";
 import { toast } from "sonner";
 import { AppHeaderBrand, Button } from "@/shared/ui";
 import { GlobeLanguageSwitcher } from "@/shared/ui";
@@ -10,10 +11,12 @@ import { useAuth, AvatarThumbnail } from "@/entities/session";
 import { logout } from "@/features/auth";
 import { createEmptyInvoice } from "@/entities/invoice";
 import type { Invoice } from "@/entities/invoice";
-import { validateInvoice } from "@/entities/invoice";
+import { validateDocument } from "@/entities/invoice";
 import { generatePdf } from "@/features/export-pdf";
 import { generateExcel } from "@/features/export-excel";
-import { saveInvoice } from "@/features/invoice-crud";
+import { saveDeal } from "@/features/deal-crud";
+import { setLastDocType } from "@/entities/document";
+import type { DocType } from "@/entities/document";
 import { triggerPrint } from "@/features/print";
 import { clearDraft } from "@/entities/invoice";
 import { cn } from "@/shared/lib/utils";
@@ -22,10 +25,12 @@ type FormData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
 interface Props {
   formData?: FormData;
-  page?: "documents" | "history" | "historyDetail";
+  page?: AppPageId;
+  /** 단건 작성 양식(#31) — 검증·PDF 템플릿·마지막 사용 양식 기록에 쓴다. */
+  docType?: DocType;
 }
 
-export function ExportToolbar({ formData, page = "documents" }: Props) {
+export function ExportToolbar({ formData, page = "documents", docType = "PI" }: Props) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -33,7 +38,7 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
-  const isHistoryPage = page === "history" || page === "historyDetail";
+  const showDocActions = page === "documents";
   const pageTitle = t(getPageTitleKey(page));
   const data = formData ?? createEmptyInvoice();
 
@@ -53,7 +58,7 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
   }
 
   function passesValidation(): boolean {
-    const { blocking, warnings } = validateInvoice(data);
+    const { blocking, warnings } = validateDocument(data, docType);
     if (blocking.length > 0) {
       toast.error(
         `${t("validation.blockedTitle")}: ${blocking.map((k) => t(`validation.${k}`)).join(", ")}`,
@@ -69,25 +74,34 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
   async function handlePdf() {
     if (!passesValidation()) return;
     try {
-      await generatePdf(data);
+      await generatePdf(data, docType);
+      setLastDocType(docType);
     } catch {
       toast.error(t("export.pdfFailed"));
     }
   }
 
   function handleExcel() {
-    if (passesValidation()) generateExcel(data);
+    if (!passesValidation()) return;
+    generateExcel(data);
+    setLastDocType(docType);
   }
 
   function handlePrint() {
-    if (passesValidation()) triggerPrint();
+    if (!passesValidation()) return;
+    triggerPrint();
+    setLastDocType(docType);
   }
 
+  const canSave = docType === "PI";
+
   async function handleSave() {
-    if (!user || !passesValidation()) return;
-    await saveInvoice(user.id, data);
+    if (!user || !canSave || !passesValidation()) return;
+    // ADR-0002: 첫 명시적 저장 시에만 서버에 거래 건(+PI 문서)이 생성된다.
+    const dealId = await saveDeal(user.id, data);
     clearDraft();
     toast.success(t("history.saved"));
+    navigate(`/deals/${dealId}`);
   }
 
   const iconButtonClass =
@@ -130,7 +144,7 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
           <div className="w-full h-px bg-border my-1 md:hidden" />
         </>
       )}
-      {!isHistoryPage && (
+      {showDocActions && (
         <>
           <Button
             variant="outline"
@@ -172,8 +186,8 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
       )}
       {user && (
         <>
-          {!isHistoryPage && <div className="w-full h-px bg-border my-1" />}
-          {!isHistoryPage && (
+          {showDocActions && canSave && <div className="w-full h-px bg-border my-1" />}
+          {showDocActions && canSave && (
             <Button
               variant="default"
               size="sm"
@@ -225,9 +239,9 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
 
       {/* Desktop */}
       <div className="hidden md:flex items-center gap-2 shrink-0" data-guide="export-toolbar">
-        <div className={cn("flex items-center gap-1 mr-2", !isHistoryPage && "border-r border-border pr-4")}>
+        <div className={cn("flex items-center gap-1 mr-2", showDocActions && "border-r border-border pr-4")}>
           <GlobeLanguageSwitcher placement="below" showLabel={false} />
-          {!isHistoryPage && (
+          {showDocActions && (
             <button
               type="button"
               className={iconButtonClass}
@@ -240,7 +254,7 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
           )}
         </div>
 
-        {!isHistoryPage && (
+        {showDocActions && (
           <>
             <div ref={exportRef} className="relative">
               <Button
@@ -281,7 +295,7 @@ export function ExportToolbar({ formData, page = "documents" }: Props) {
               )}
             </div>
 
-            {user && (
+            {user && canSave && (
               <Button variant="default" size="sm" className="font-semibold text-xs tracking-wide shadow-sm" onClick={handleSave}>
                 {t("history.save")}
               </Button>

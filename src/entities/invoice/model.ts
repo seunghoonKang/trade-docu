@@ -10,9 +10,17 @@ export interface InvoiceItem {
   remarks: string;
 }
 
+/** 비용 유형. 비우면 단가 포함(CIF inclusive), 채우면 내역 표기(CONTEXT.md). */
+export type ChargeType = "freight" | "insurance" | "fee" | "tax" | "other";
+
 export interface AdditionalCharge {
+  type?: ChargeType; // 미지정 = other (기존 데이터 호환)
   description: string;
   amount: number;
+}
+
+export function createEmptyCharge(): AdditionalCharge {
+  return { type: "other", description: "", amount: 0 };
 }
 
 export interface BuyerSnapshot {
@@ -20,6 +28,17 @@ export interface BuyerSnapshot {
   address: string;
   tel: string;
   contactPerson: string;
+}
+
+export function createEmptyParty(): BuyerSnapshot {
+  return { companyName: "", address: "", tel: "", contactPerson: "" };
+}
+
+/** 신용장 상세(결제수단 L/C일 때). */
+export interface LcInfoForm {
+  no: string;
+  issuingBank: string;
+  date: string;
 }
 
 export interface Invoice {
@@ -49,6 +68,14 @@ export interface Invoice {
   totalAmount: number;
   bankInfo: BankInfo;
   createdAt: string;
+  // 당사자: 수하인/착하통지처는 비면(null) 구매자와 동일.
+  consignee?: BuyerSnapshot | null;
+  notify?: BuyerSnapshot | null;
+  // 결제: 방식 + L/C 상세.
+  paymentMethod?: string; // T/T | L/C | ADVANCE | OTHER
+  lcInfo?: LcInfoForm;
+  // 원산지 — CI 필수(검증 차단), 그 외 양식은 채우면 표기(#27).
+  originCountry?: string;
 }
 
 export function createEmptyInvoice(): Omit<Invoice, "id" | "userId" | "createdAt"> {
@@ -80,6 +107,11 @@ export function createEmptyInvoice(): Omit<Invoice, "id" | "userId" | "createdAt
     items: [createEmptyItem()],
     additionalCharges: [],
     totalAmount: 0,
+    consignee: null,
+    notify: null,
+    paymentMethod: "",
+    lcInfo: { no: "", issuingBank: "", date: "" },
+    originCountry: "",
     bankInfo: {
       bankName: "",
       bankSwift: "",

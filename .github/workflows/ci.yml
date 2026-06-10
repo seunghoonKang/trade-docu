@@ -37,5 +37,8 @@ jobs:
       - name: FSD architecture lint
         run: pnpm lint:fsd
 
+      - name: ESLint
+        run: pnpm lint
+
       - name: Unit tests
         run: pnpm test

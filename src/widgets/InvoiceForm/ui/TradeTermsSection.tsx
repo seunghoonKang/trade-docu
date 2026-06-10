@@ -6,7 +6,7 @@ import { FormSection } from "@/shared/ui";
 
 interface Props {
   commodity: string; currency: string; paymentTerms: string; incoterms: string;
-  delivery: string; packing: string; remarks: string;
+  delivery: string; packing: string; remarks: string; originCountry: string;
   onUpdate: (key: string, value: string) => void;
 }
 
@@ -22,7 +22,7 @@ const INCOTERMS_OPTIONS = [
   { value: "DDP", label: "DDP" }, { value: "DAP", label: "DAP" },
 ];
 
-export function TradeTermsSection({ commodity, currency, paymentTerms, incoterms, delivery, packing, remarks, onUpdate }: Props) {
+export function TradeTermsSection({ commodity, currency, paymentTerms, incoterms, delivery, packing, remarks, originCountry, onUpdate }: Props) {
   const { t } = useTranslation();
   return (
     <FormSection title={t("form.tradeTerms")} icon={Handshake} variant="card">
@@ -31,6 +31,7 @@ export function TradeTermsSection({ commodity, currency, paymentTerms, incoterms
         <Select variant="editor" label={t("form.currency")} options={CURRENCY_OPTIONS} value={currency} onChange={(e) => onUpdate("currency", e.target.value)} />
         <Select variant="editor" label={t("form.incoterms")} options={INCOTERMS_OPTIONS} value={incoterms} onChange={(e) => onUpdate("incoterms", e.target.value)} />
         <Input variant="editor" label={t("form.paymentTerms")} value={paymentTerms} onChange={(e) => onUpdate("paymentTerms", e.target.value)} />
+        <Input variant="editor" label={t("form.originCountry")} value={originCountry} onChange={(e) => onUpdate("originCountry", e.target.value)} />
         <Input variant="editor" label={t("form.delivery")} value={delivery} onChange={(e) => onUpdate("delivery", e.target.value)} />
         <Input variant="editor" label={t("form.packing")} value={packing} onChange={(e) => onUpdate("packing", e.target.value)} />
         <Input variant="editor" label={t("form.remarks")} value={remarks} onChange={(e) => onUpdate("remarks", e.target.value)} />
