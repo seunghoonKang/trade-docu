@@ -83,106 +83,112 @@ export function ShipmentManager({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-semibold">{t("deal.allocation")}</h3>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-1.5 text-muted-foreground hover:text-foreground"
-            onClick={onCancelSplit}
-          >
-            <Undo2 className="size-4" aria-hidden />
-            {t("deal.cancelSplit")}
-          </Button>
-          <Button variant="outline" size="sm" className="gap-1.5" onClick={onAddShipment}>
-            <Plus className="size-4" aria-hidden />
-            {t("deal.addShipment")}
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5 text-muted-foreground hover:text-foreground"
+          onClick={onCancelSplit}
+        >
+          <Undo2 className="size-4" aria-hidden />
+          {t("deal.cancelSplit")}
+        </Button>
       </div>
 
-      {/* 품목×선적 매트릭스 — 한 표에서 전체 분배, 잔여 자동 계산. */}
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[420px] text-sm">
-          <thead>
-            <tr className="text-left text-xs text-muted-foreground">
-              <th className="py-1.5 pr-2 font-medium">{t("deal.item")}</th>
-              <th className="py-1.5 pr-2 text-right font-medium">{t("deal.ordered")}</th>
-              {shipments.map((s) => (
-                <th key={s.id} className="px-1 py-1">
-                  <button
-                    type="button"
-                    onClick={() => onSelectShipment(s.id)}
-                    className={cn(
-                      "flex w-full items-center justify-center gap-1 rounded-md border px-2 py-1 font-semibold transition-colors",
-                      s.id === activeShipmentId
-                        ? "border-primary bg-accent text-primary"
-                        : "border-border text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    {t("deal.shipment")} {s.seq}
-                    {shipments.length > 1 && (
-                      <X
-                        role="button"
-                        aria-label="delete shipment"
-                        className="size-3.5 text-muted-foreground hover:text-red-600"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteShipment(s.id);
-                        }}
-                      />
-                    )}
-                  </button>
-                </th>
-              ))}
-              <th className="py-1.5 pl-2 text-right font-medium">{t("deal.remaining")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {deal.items.map((it) => {
-              const remaining = it.orderedQty - allocatedSum(it.id);
-              return (
-                <tr key={it.id} className="border-t border-border/60">
-                  <td className="max-w-[160px] truncate py-1.5 pr-2">{it.description || "—"}</td>
-                  <td className="py-1.5 pr-2 text-right tabular-nums text-muted-foreground">
-                    {it.orderedQty}
-                  </td>
-                  {shipments.map((s) => {
-                    const qty = allocationFor(s, it.id).qty || 0;
-                    return (
-                      <td key={s.id} className="px-1 py-1.5">
-                        <input
-                          type="number"
-                          min={0}
-                          value={qty === 0 ? "" : qty}
-                          onChange={(e) =>
-                            patchAllocation(s, it.id, { qty: Number(e.target.value) || 0 })
-                          }
-                          className={cn(
-                            "w-full min-w-16 rounded border px-2 py-1 text-right tabular-nums",
-                            s.id === activeShipmentId ? "border-primary/40 bg-accent/40" : "border-border",
-                          )}
-                        />
-                      </td>
-                    );
-                  })}
-                  <td
-                    className={cn(
-                      "py-1.5 pl-2 text-right font-medium tabular-nums",
-                      remaining < 0
-                        ? "text-red-600"
-                        : remaining > 0
-                          ? "text-amber-600"
-                          : "text-muted-foreground",
-                    )}
-                  >
-                    {remaining}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      {/* 선적 탭 — 폭이 늘지 않아 좁은 패널에서도 안정적. 발행 대상 = 선택된 탭. */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        {shipments.map((s) => {
+          const allocated = s.allocations.reduce((sum, a) => sum + (a.qty || 0), 0);
+          return (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => onSelectShipment(s.id)}
+              className={cn(
+                "shrink-0 rounded-full border px-3 py-1 text-sm font-semibold transition-colors",
+                s.id === activeShipmentId
+                  ? "border-primary bg-accent text-primary"
+                  : "border-border text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {t("deal.shipment")} {s.seq}
+              <span className="ml-1 text-xs font-normal tabular-nums">({allocated})</span>
+            </button>
+          );
+        })}
+        <Button variant="outline" size="sm" className="shrink-0 gap-1" onClick={onAddShipment}>
+          <Plus className="size-4" aria-hidden />
+          {t("deal.addShipment")}
+        </Button>
       </div>
+
+      {/* 활성 선적 배분 편집 — 잔여는 전체 선적 합산으로 자동 계산. */}
+      {active && (
+        <div className="rounded-lg border border-border/70 p-3">
+          <div className="mb-2 flex items-center justify-between">
+            <h4 className="text-sm font-semibold">
+              {t("deal.shipment")} {active.seq} · {t("deal.allocation")}
+            </h4>
+            {shipments.length > 1 && (
+              <button
+                type="button"
+                onClick={() => onDeleteShipment(active.id)}
+                aria-label="delete shipment"
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-red-600 transition-colors"
+              >
+                <X className="size-3.5" aria-hidden />
+                {t("history.delete")}
+              </button>
+            )}
+          </div>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-xs text-muted-foreground">
+                <th className="py-1 pr-2 font-medium">{t("deal.item")}</th>
+                <th className="py-1 pr-2 text-right font-medium">{t("deal.ordered")}</th>
+                <th className="py-1 pr-2 text-right font-medium">{t("deal.thisShipment")}</th>
+                <th className="py-1 text-right font-medium">{t("deal.remaining")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {deal.items.map((it) => {
+                const remaining = it.orderedQty - allocatedSum(it.id);
+                const qty = allocationFor(active, it.id).qty || 0;
+                return (
+                  <tr key={it.id} className="border-t border-border/60">
+                    <td className="max-w-[180px] truncate py-1.5 pr-2">{it.description || "—"}</td>
+                    <td className="py-1.5 pr-2 text-right tabular-nums text-muted-foreground">
+                      {it.orderedQty}
+                    </td>
+                    <td className="py-1.5 pr-2 text-right">
+                      <input
+                        type="number"
+                        min={0}
+                        value={qty === 0 ? "" : qty}
+                        onChange={(e) =>
+                          patchAllocation(active, it.id, { qty: Number(e.target.value) || 0 })
+                        }
+                        className="w-24 rounded border border-border px-2 py-1 text-right tabular-nums"
+                      />
+                    </td>
+                    <td
+                      className={cn(
+                        "py-1.5 text-right font-medium tabular-nums",
+                        remaining < 0
+                          ? "text-red-600"
+                          : remaining > 0
+                            ? "text-amber-600"
+                            : "text-muted-foreground",
+                      )}
+                    >
+                      {remaining}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
       <p className="text-xs text-muted-foreground">{t("deal.issueTargetHint")}</p>
 
       {/* 활성 선적의 per-line 포장(전부 선택, S7) — PL 플로우에서만. */}
