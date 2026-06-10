@@ -231,6 +231,33 @@
     "nudgeMessage": "设置个人资料后，每张发票都会自动填入。",
     "completeCta": "完善资料"
   },
+  "home": {
+    "galleryTitle": "想创建哪种单据？",
+    "gallerySubtitle": "选择模板即可立即开始 — 无需任何准备。",
+    "template": {
+      "PI": {
+        "title": "形式发票 (PI)",
+        "desc": "用商品、价格和贸易条款向买方报价。"
+      },
+      "CI": {
+        "title": "商业发票 (CI)",
+        "desc": "为实际装运开票，包含费用和原产地。"
+      },
+      "PL": {
+        "title": "装箱单 (PL)",
+        "desc": "整理装运的箱数、重量和体积。"
+      }
+    },
+    "create": "开始创建",
+    "lastUsedBadge": "最近使用",
+    "continueTitle": "继续上次的工作",
+    "viewAllDeals": "查看全部交易",
+    "newDocument": "新建单据",
+    "continueWithDoc": "新建{{doc}}",
+    "guestCtaTitle": "一笔交易 = 多份单据",
+    "guestCtaBody": "注册后工作将保存为交易，可与装运、历史一起签发PI、CI和PL。",
+    "guestCtaButton": "登录 / 注册"
+  },
   "history": {
     "dealRepository": "交易列表",
     "noDeals": "没有已保存的交易。",

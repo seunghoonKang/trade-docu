@@ -12,9 +12,10 @@ export const mainNavItems: MainNavItem[] = [
   { id: "history", icon: History, labelKey: "nav.history", href: "/history" },
 ];
 
-export type AppPageId = "documents" | "history" | "historyDetail";
+export type AppPageId = "home" | "documents" | "history" | "historyDetail";
 
 const pageIdToNavId: Record<AppPageId, MainNavItem["id"]> = {
+  home: "invoices",
   documents: "invoices",
   history: "history",
   historyDetail: "history",

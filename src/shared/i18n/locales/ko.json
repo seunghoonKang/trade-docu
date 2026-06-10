@@ -231,6 +231,33 @@
     "nudgeMessage": "프로필을 설정하면 매번 자동으로 들어갑니다.",
     "completeCta": "프로필 완성"
   },
+  "home": {
+    "galleryTitle": "어떤 문서를 만들까요?",
+    "gallerySubtitle": "양식을 고르면 바로 작성할 수 있어요 — 준비 과정이 필요 없습니다.",
+    "template": {
+      "PI": {
+        "title": "견적송장 (PI)",
+        "desc": "품목·가격·거래조건으로 구매자에게 견적을 보내세요."
+      },
+      "CI": {
+        "title": "상업송장 (CI)",
+        "desc": "실제 선적 건을 비용·원산지와 함께 청구하세요."
+      },
+      "PL": {
+        "title": "포장명세서 (PL)",
+        "desc": "선적의 박스·중량·부피를 정리하세요."
+      }
+    },
+    "create": "작성하기",
+    "lastUsedBadge": "마지막 사용",
+    "continueTitle": "이어서 작업하기",
+    "viewAllDeals": "전체 거래 보기",
+    "newDocument": "새 문서",
+    "continueWithDoc": "{{doc}} 새로 작성",
+    "guestCtaTitle": "한 거래 = 여러 문서",
+    "guestCtaBody": "가입하면 작업이 거래 건으로 저장되고, 선적·이력과 함께 PI·CI·PL을 발행할 수 있습니다.",
+    "guestCtaButton": "로그인 / 가입"
+  },
   "history": {
     "dealRepository": "거래 건 목록",
     "noDeals": "저장된 거래 건이 없습니다.",

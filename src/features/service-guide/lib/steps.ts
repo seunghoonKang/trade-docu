@@ -28,15 +28,15 @@ export interface GuideStep {
 }
 
 export const GUEST_GUIDE_STEPS: GuideStep[] = [
-  { id: "guest-template", route: "/", target: '[data-guide="preview"]', placement: "left" },
-  { id: "guest-form", route: "/", target: '[data-guide="invoice-form"]', placement: "right" },
-  { id: "guest-export", route: "/", target: '[data-guide="export-toolbar"]', placement: "left" },
+  { id: "guest-template", route: "/", target: '[data-guide="template-gallery"]', placement: "bottom" },
+  { id: "guest-form", route: "/new", target: '[data-guide="invoice-form"]', placement: "right" },
+  { id: "guest-export", route: "/new", target: '[data-guide="export-toolbar"]', placement: "left" },
 ];
 
 export const MEMBER_GUIDE_STEPS: GuideStep[] = [
   { id: "member-welcome", placement: "center" },
-  { id: "member-new-doc", route: "/", target: '[data-guide="invoice-form"]', placement: "right" },
-  { id: "member-save-deal", route: "/", target: '[data-guide="export-toolbar"]', placement: "left" },
+  { id: "member-new-doc", route: "/new", target: '[data-guide="invoice-form"]', placement: "right" },
+  { id: "member-save-deal", route: "/new", target: '[data-guide="export-toolbar"]', placement: "left" },
   { id: "member-history", route: "/history", target: '[data-guide="history-actions"]', placement: "right" },
   { id: "member-deal-docs", placement: "center" },
 ];
@@ -52,7 +52,7 @@ export function isOnGuideRoute(pathname: string, route: string | undefined): boo
 }
 
 export function getNavigateLabelKey(route: string | undefined): string | null {
-  if (route === "/") return "guide.navigateToInvoices";
+  if (route === "/" || route === "/new") return "guide.navigateToInvoices";
   if (route === "/history") return "guide.navigateToHistory";
   if (route === "/profile") return "guide.navigateToProfile";
   return null;
