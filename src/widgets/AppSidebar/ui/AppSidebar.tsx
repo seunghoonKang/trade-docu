@@ -3,7 +3,6 @@ import {
   HelpCircle,
   LayoutDashboard,
   LogOut,
-  Package,
   type LucideIcon,
 } from "lucide-react";
 import { mainNavItems } from "@/shared/config";
@@ -42,7 +41,6 @@ const activeItems: SidebarItem[] = mainNavItems.map((item) => ({
 
 const comingSoonItems: SidebarItem[] = [
   { id: "dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard", disabled: true },
-  { id: "packingLists", icon: Package, labelKey: "nav.packingLists", disabled: true },
 ];
 
 const bottomItems: SidebarItem[] = [

@@ -1,6 +1,6 @@
 {
   "app": { "title": "形式发票" },
-  "nav": { "login": "登录", "logout": "退出", "signup": "注册", "history": "历史", "settings": "设置", "dashboard": "仪表盘", "invoices": "发票", "packingLists": "装箱单", "userGuide": "用户指南", "comingSoon": "即将推出", "comingSoonSection": "即将推出" },
+  "nav": {"login": "登录", "logout": "退出", "signup": "注册", "history": "历史", "settings": "设置", "dashboard": "仪表盘", "invoices": "创建单据", "userGuide": "用户指南", "comingSoon": "即将推出", "comingSoonSection": "即将推出"},
   "export": { "pdf": "导出为 PDF", "excel": "导出为 Excel", "print": "打印", "export": "导出", "pdfFailed": "PDF 生成失败。" },
   "deal": {"documents": "单据", "issue": "签发", "issued": "已签发", "shipment": "装运", "addShipment": "添加装运", "ordered": "订购", "allocated": "已装运", "remaining": "剩余", "allocation": "分配", "thisShipment": "本次分配", "save": "保存", "overAllocated": "超额分配", "remainingWarning": "仍有未装运的剩余数量。", "complete": "完成交易", "item": "品目", "ctn": "箱数(CTN)", "netWeight": "净重", "grossWeight": "毛重", "cbm": "CBM", "cartonNo": "箱号", "showPrice": "显示价格", "statusOpen": "进行中", "statusClosed": "已完成", "issuedDocuments": "已签发单据"},
   "form": {
