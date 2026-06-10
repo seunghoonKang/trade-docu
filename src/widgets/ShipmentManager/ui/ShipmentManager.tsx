@@ -184,7 +184,7 @@ export function ShipmentManager({
                     {/* per-line 포장(전부 선택, S7) — 채운 항목만 PL에 출력된다. */}
                     <tr>
                       <td colSpan={3} className="pb-2.5">
-                        <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-3">
                           <PackField
                             label={t("deal.ctn")}
                             type="number"
@@ -237,14 +237,14 @@ function PackField({
   type?: "text" | "number";
 }) {
   return (
-    <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-      {label}
+    <label className="flex min-w-0 flex-col gap-1 text-xs text-muted-foreground">
+      <span className="truncate">{label}</span>
       <input
         type={type}
         min={type === "number" ? 0 : undefined}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-20 rounded border border-border px-2 py-1 text-right text-sm tabular-nums text-foreground"
+        className="w-full rounded border border-border px-2 py-1.5 text-right text-sm tabular-nums text-foreground"
       />
     </label>
   );

@@ -420,6 +420,12 @@ export async function updateShipmentCharges(
   if (error) throw error;
 }
 
+/** 발행 취소: 문서 삭제. 문서는 불변(박제)이라 수정 대신 취소 후 재발행한다. */
+export async function deleteDocument(docId: string): Promise<void> {
+  const { error } = await supabase.from("documents").delete().eq("id", docId);
+  if (error) throw error;
+}
+
 /** 원산지 갱신(거래 건 레벨) — CI 발행 플로우에서 입력한다. */
 export async function updateDealOriginCountry(dealId: string, originCountry: string): Promise<void> {
   const { error } = await supabase

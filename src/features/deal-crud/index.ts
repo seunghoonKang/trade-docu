@@ -5,6 +5,7 @@ export {
   listDealSummaries,
   deleteDeal,
   issueDocument,
+  deleteDocument,
   ensureDefaultShipment,
   createShipment,
   updateDealOriginCountry,

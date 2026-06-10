@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { ArrowLeft, FileText, FolderInput, Printer } from "lucide-react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useAuth } from "@/entities/session";
@@ -31,7 +31,7 @@ import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { ShipmentManager } from "@/widgets/ShipmentManager";
 import { ChargesEditor } from "@/widgets/ChargesEditor";
-import { Button, Input, Layout, Skeleton } from "@/shared/ui";
+import { Button, ConfirmDialog, Input, Layout, Skeleton } from "@/shared/ui";
 
 /**
  * 발행 플로우(상세/발행 분리): 선적 선택·배분/포장 편집 → 양식별 옵션(CI 비용, PL 가격 토글)
@@ -43,6 +43,9 @@ export function DealIssuePage() {
   const navigate = useNavigate();
   const { dealId, docType } = useParams<{ dealId: string; docType: string }>();
   const variant: DocType | null = docType === "CI" || docType === "PL" ? docType : null;
+  // 재발행 진입 등에서 ?shipment=:id로 특정 선적을 미리 선택한다.
+  const [searchParams] = useSearchParams();
+  const preferredShipmentId = searchParams.get("shipment");
 
   const [bundle, setBundle] = useState<DealBundle | null>(null);
   const [fetching, setFetching] = useState(true);
@@ -77,13 +80,17 @@ export function DealIssuePage() {
     void loadBundle();
   }, [loadBundle]);
 
-  // 활성 선적: 없거나 사라졌으면 첫 선적으로.
+  // 활성 선적: 유지 → URL 지정(?shipment=) → 첫 선적 순.
   useEffect(() => {
     if (!bundle) return;
-    setActiveShipmentId((cur) =>
-      cur && bundle.shipments.some((s) => s.id === cur) ? cur : (bundle.shipments[0]?.id ?? null),
-    );
-  }, [bundle]);
+    setActiveShipmentId((cur) => {
+      if (cur && bundle.shipments.some((s) => s.id === cur)) return cur;
+      if (preferredShipmentId && bundle.shipments.some((s) => s.id === preferredShipmentId)) {
+        return preferredShipmentId;
+      }
+      return bundle.shipments[0]?.id ?? null;
+    });
+  }, [bundle, preferredShipmentId]);
 
   const pi = useMemo(() => bundle?.documents.find((d) => d.docType === "PI") ?? null, [bundle]);
   const dealForm = useMemo(() => (bundle ? dealToForm(bundle.deal, pi) : null), [bundle, pi]);
@@ -208,9 +215,34 @@ export function DealIssuePage() {
     if (passesValidation()) triggerPrint();
   }
 
-  async function handleIssue() {
+  // 원산지 없이 CI 발행 시 토스트 대신 확인 팝업으로 묻는다(연속 토스트 가독성 문제).
+  const [confirmNoOrigin, setConfirmNoOrigin] = useState(false);
+
+  function handleIssue() {
     if (!user || !bundle || !variantData || !variant || !activeShipmentId || issuedDoc) return;
-    if (!passesValidation()) return;
+    const { blocking, warnings } = validateDocument(variantData, variant);
+    if (blocking.length > 0) {
+      toast.error(
+        `${t("validation.blockedTitle")}: ${blocking.map((k) => t(`validation.${k}`)).join(", ")}`,
+      );
+      return;
+    }
+    const otherWarnings = [
+      ...warnings.filter((k) => k !== "originCountry"),
+      ...quantityWarningKeys(bundle.deal, bundle.shipments),
+    ];
+    if (otherWarnings.length > 0) {
+      toast.warning(otherWarnings.map((k) => t(`validation.${k}`)).join(", "));
+    }
+    if (warnings.includes("originCountry")) {
+      setConfirmNoOrigin(true);
+      return;
+    }
+    void doIssue();
+  }
+
+  async function doIssue() {
+    if (!user || !bundle || !variantData || !variant || !activeShipmentId || issuedDoc) return;
     setIssuing(true);
     try {
       const docId = await issueDocument(user.id, {
@@ -350,7 +382,7 @@ export function DealIssuePage() {
                 size="sm"
                 className="gap-1.5"
                 disabled={issuing}
-                onClick={() => void handleIssue()}
+                onClick={handleIssue}
               >
                 <FolderInput className="size-4" aria-hidden />
                 {t("deal.issueDocAction", { doc: variant })}
@@ -385,6 +417,10 @@ export function DealIssuePage() {
                   onDeleteShipment={(id) => void handleDeleteShipment(id)}
                   onSaveAllocations={(id, allocations) => void handleSaveAllocations(id, allocations)}
                 />
+                {/* CI/PL이 같은 선적 데이터를 공유한다는 안내 — "두 번 입력" 오해 방지. */}
+                <p className="mt-4 border-t border-border/60 pt-3 text-xs text-muted-foreground">
+                  {t("deal.sharedShipmentHint")}
+                </p>
               </div>
 
               {/* ② 양식별 옵션 */}
@@ -454,6 +490,20 @@ export function DealIssuePage() {
           </div>
         </div>
       </div>
+
+      {/* 원산지 없이 발행 확인 — 토스트 연속 노출 대신 명시적으로 묻는다. */}
+      <ConfirmDialog
+        open={confirmNoOrigin}
+        title={t("deal.confirmIssueNoOriginTitle")}
+        description={t("deal.confirmIssueNoOriginDescription", { doc: variant })}
+        confirmLabel={t("deal.issueDocAction", { doc: variant })}
+        cancelLabel={t("history.cancel")}
+        onConfirm={() => {
+          setConfirmNoOrigin(false);
+          void doIssue();
+        }}
+        onCancel={() => setConfirmNoOrigin(false)}
+      />
     </Layout>
   );
 }

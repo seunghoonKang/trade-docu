@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { ArrowLeft, FileText, Info, Printer } from "lucide-react";
+import { ArrowLeft, FileText, Info, Printer, RotateCcw } from "lucide-react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useAuth } from "@/entities/session";
 import { generatePdf } from "@/features/export-pdf";
-import { documentPreviewData, getDealBundle } from "@/features/deal-crud";
+import { deleteDocument, documentPreviewData, getDealBundle } from "@/features/deal-crud";
 import type { DealBundle } from "@/features/deal-crud";
 import { triggerPrint } from "@/features/print";
 import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
-import { Button, Layout, Skeleton } from "@/shared/ui";
+import { Button, ConfirmDialog, Layout, Skeleton } from "@/shared/ui";
 
 /**
  * 발행 문서 보기 — 조회 전용(상세/발행 분리). 발행 시점 박제 snapshot을 그대로 렌더하고
@@ -25,6 +25,7 @@ export function DealDocumentPage() {
   const [bundle, setBundle] = useState<DealBundle | null>(null);
   const [fetching, setFetching] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [confirmReissue, setConfirmReissue] = useState(false);
 
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -65,6 +66,14 @@ export function DealDocumentPage() {
     } catch {
       toast.error(t("export.pdfFailed"));
     }
+  }
+
+  // 발행 취소 후 재발행 — 문서는 불변(박제)이라 수정 대신 삭제하고 발행 화면으로 보낸다.
+  async function handleReissue() {
+    if (!bundle || !doc || doc.docType === "PI") return;
+    await deleteDocument(doc.id);
+    const shipmentQuery = doc.shipmentId ? `?shipment=${doc.shipmentId}` : "";
+    navigate(`/deals/${bundle.deal.id}/issue/${doc.docType}${shipmentQuery}`, { replace: true });
   }
 
   if (!authLoading && !user) return <Navigate to="/login" replace />;
@@ -114,7 +123,18 @@ export function DealDocumentPage() {
                     {doc.docNo || t("history.noNumber")}
                   </h1>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  {doc.docType !== "PI" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={() => setConfirmReissue(true)}
+                    >
+                      <RotateCcw className="size-4" aria-hidden />
+                      {t("deal.reissue")}
+                    </Button>
+                  )}
                   <Button variant="outline" size="sm" className="gap-1.5" onClick={() => void handlePdf()}>
                     <FileText className="size-4" aria-hidden />
                     {t("export.pdf")}
@@ -178,6 +198,24 @@ export function DealDocumentPage() {
           </>
         )}
       </div>
+
+      {/* 발행 취소 확인 — 발행본 삭제 후 발행 화면으로 이동(수정 → 재발행). */}
+      <ConfirmDialog
+        open={confirmReissue}
+        title={t("deal.confirmReissueTitle")}
+        description={t("deal.confirmReissueDescription", {
+          id: doc?.docNo || t("history.noNumber"),
+        })}
+        descriptionNote={t("history.confirmDeleteNote")}
+        confirmLabel={t("deal.reissue")}
+        cancelLabel={t("history.cancel")}
+        destructive
+        onConfirm={() => {
+          setConfirmReissue(false);
+          void handleReissue();
+        }}
+        onCancel={() => setConfirmReissue(false)}
+      />
     </Layout>
   );
 }
