@@ -2,7 +2,7 @@
   "app": { "title": "Proforma Invoice" },
   "nav": { "login": "Login", "logout": "Logout", "signup": "Sign Up", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Invoices", "packingLists": "Packing Lists", "userGuide": "User Guide", "comingSoon": "Coming soon", "comingSoonSection": "Coming soon" },
   "export": { "pdf": "Export to PDF", "excel": "Export to Excel", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF." },
-  "deal": { "documents": "Documents", "issue": "Issue", "issued": "Issued" },
+  "deal": { "documents": "Documents", "issue": "Issue", "issued": "Issued", "shipment": "Shipment", "addShipment": "Add shipment", "ordered": "Ordered", "allocated": "Allocated", "remaining": "Remaining", "allocation": "Allocation", "thisShipment": "This shipment", "save": "Save", "overAllocated": "Over-allocated", "remainingWarning": "Some quantity is not yet shipped.", "complete": "Complete deal", "item": "Item" },
   "form": {
     "documentInfo": "Document Info",
     "invoiceNo": "Invoice No.",
