@@ -356,50 +356,43 @@
     "navigateToInvoices": "Go to Invoices",
     "navigateToHistory": "Go to History",
     "navigateToProfile": "Go to Profile",
+    "coachmarks": {
+      "split-shipment": "Ship in parts: add shipments and allocate item quantities to each one.",
+      "doc-tabs": "One deal, many documents — switch tabs to issue PI, CI, and PL from the same data.",
+      "field-toggle": "Use the price toggle to include or hide prices on the Packing List."
+    },
     "steps": {
-      "welcome": {
-        "title": "TradeDocu Service Guide",
-        "body": "A step-by-step tour from creating proforma invoices to saving and exporting."
+      "guest-template": {
+        "title": "Document templates",
+        "body": "Preview your document in real time. The same data renders as a Proforma Invoice — sign up to issue Commercial Invoices and Packing Lists from one deal."
       },
-      "nav-invoices": {
-        "title": "Invoices menu",
-        "body": "Use this menu to create a new invoice or continue your current work."
+      "guest-form": {
+        "title": "Fill in the form",
+        "body": "Enter seller, buyer, items, and trade terms. Your draft is kept locally while you work."
       },
-      "invoice-form": {
-        "title": "Invoice form",
-        "body": "Enter document info, seller and buyer details, trade terms, line items, and bank info. Seller details from your profile are prefilled automatically."
+      "guest-export": {
+        "title": "Export",
+        "body": "Export to PDF or Excel, or print. Sign up to save your work and manage deals with multiple documents."
       },
-      "export-toolbar": {
-        "title": "Export and save",
-        "body": "Export to PDF or Excel, print, or save to reload later from History."
+      "member-welcome": {
+        "title": "One deal, many documents",
+        "body": "TradeDocu organizes your work around deals: one deal holds shipments, and each shipment issues its own documents (PI, CI, PL)."
       },
-      "preview": {
-        "title": "Live preview",
-        "body": "See your invoice update in real time. Review everything before exporting."
+      "member-new-doc": {
+        "title": "Create a new document",
+        "body": "Fill in seller, buyer, items, and terms. Seller details from your profile are prefilled automatically."
       },
-      "nav-history": {
-        "title": "History menu",
-        "body": "View and manage all saved invoices from this menu."
+      "member-save-deal": {
+        "title": "Save — it becomes a deal",
+        "body": "Saving creates a deal with a default shipment and the issued PI. Everything else builds on this deal."
       },
-      "history-actions": {
-        "title": "Document actions",
-        "body": "View details, load an invoice back into the editor, or delete documents you no longer need."
+      "member-history": {
+        "title": "History is organized by deal",
+        "body": "Each row is a deal: its status, shipments, and issued document badges (PI/CI/PL). Click a row to open the deal."
       },
-      "nav-profile": {
-        "title": "Profile settings",
-        "body": "Register seller details and your signature so they appear automatically on every invoice."
-      },
-      "profile-seller": {
-        "title": "Company and signature",
-        "body": "Add your company name, address, representative, and signature image for use across invoices."
-      },
-      "profile-bank": {
-        "title": "Bank details",
-        "body": "Enter SWIFT code, account number, and other payment information."
-      },
-      "complete": {
-        "title": "Tour complete",
-        "body": "You're ready to use TradeDocu. Reopen this guide anytime from User Guide in the sidebar."
+      "member-deal-docs": {
+        "title": "Issue CI and PL from the deal",
+        "body": "Inside a deal, pick a shipment and switch the document tabs to issue a Commercial Invoice or Packing List. Reopen this guide anytime from the sidebar."
       }
     }
   }

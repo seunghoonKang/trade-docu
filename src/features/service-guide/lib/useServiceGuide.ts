@@ -1,9 +1,11 @@
 import { createContext, useContext } from "react";
+import type { GuideStep } from "./steps";
 
 export interface ServiceGuideContextValue {
   isOpen: boolean;
   stepIndex: number;
   totalSteps: number;
+  currentStep: GuideStep | undefined;
   openGuide: () => void;
   closeGuide: () => void;
   nextStep: () => void;

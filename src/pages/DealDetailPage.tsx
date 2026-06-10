@@ -24,6 +24,7 @@ import {
 } from "@/features/deal-crud";
 import type { DealBundle } from "@/features/deal-crud";
 import { triggerPrint } from "@/features/print";
+import { Coachmark } from "@/features/service-guide";
 import { validateDocument } from "@/entities/invoice";
 import type { InvoiceDraft, AdditionalCharge, ChargeType } from "@/entities/invoice";
 import type { DocType } from "@/entities/document";
@@ -341,6 +342,9 @@ export function DealDetailPage() {
               </div>
             </div>
 
+            {/* 컨텍스트 코치마크(#28): 첫 방문 시 분할선적을 1회 안내. */}
+            <Coachmark id="split-shipment" />
+
             <ShipmentManager
               deal={bundle.deal}
               shipments={bundle.shipments}
@@ -360,6 +364,9 @@ export function DealDetailPage() {
                 setVariant(doc.docType);
               }}
             />
+
+            {/* 컨텍스트 코치마크(#28): '한 거래 = 여러 문서' 각인 — 양식 탭 1회 안내. */}
+            <Coachmark id="doc-tabs" />
 
             {/* 양식 탭 — PI는 거래 건 전체, CI/PL은 활성 선적 배분 수량으로 렌더. */}
             <div className="flex items-center gap-1 border-b border-border">
@@ -416,6 +423,9 @@ export function DealDetailPage() {
                 </label>
               )}
             </div>
+
+            {/* 컨텍스트 코치마크(#28): PL 표시항목(가격) 토글 1회 안내. */}
+            {variant === "PL" && <Coachmark id="field-toggle" />}
 
             {variant === "CI" && (
               <div className="rounded-lg border border-border p-4">

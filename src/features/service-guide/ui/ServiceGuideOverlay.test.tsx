@@ -4,6 +4,7 @@ import { I18nextProvider } from "react-i18next";
 import { MemoryRouter } from "react-router-dom";
 import i18n from "@/shared/i18n";
 import { ServiceGuideOverlay } from "./ServiceGuideOverlay";
+import { MEMBER_GUIDE_STEPS } from "../lib/steps";
 
 function renderOverlay(
   overrides: Partial<React.ComponentProps<typeof ServiceGuideOverlay>> = {},
@@ -11,8 +12,8 @@ function renderOverlay(
 ) {
   const props = {
     isOpen: true,
+    steps: MEMBER_GUIDE_STEPS,
     stepIndex: 0,
-    totalSteps: 11,
     onClose: vi.fn(),
     onNext: vi.fn(),
     onPrev: vi.fn(),
@@ -56,7 +57,7 @@ describe("ServiceGuideOverlay", () => {
   it("환영 단계 제목과 설명을 표시한다", () => {
     renderOverlay();
     expect(screen.getByRole("dialog")).toBeDefined();
-    expect(screen.getByText(/guide\.steps\.welcome\.title|TradeDocu/i)).toBeDefined();
+    expect(screen.getByRole("heading", { name: /One deal|한 거래/i })).toBeDefined();
   });
 
   it("다음 버튼 클릭 시 onNext를 호출한다", () => {
@@ -78,7 +79,7 @@ describe("ServiceGuideOverlay", () => {
   });
 
   it("다른 페이지 스텝에서는 이동 CTA를 표시한다", () => {
-    renderOverlay({ stepIndex: 5 });
+    renderOverlay({ stepIndex: 3 });
     expect(screen.getByRole("button", { name: /History|기록|履歴|历史/i })).toBeDefined();
   });
 
