@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, FileText, FolderInput, Printer } from "lucide-react";
 import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -26,7 +26,8 @@ import { validateDocument } from "@/entities/invoice";
 import type { InvoiceDraft, AdditionalCharge, ChargeType } from "@/entities/invoice";
 import { setLastDocType } from "@/entities/document";
 import type { DocType } from "@/entities/document";
-import type { Allocation, PackingLine } from "@/entities/shipment";
+import { normalizeAllocation } from "@/entities/shipment";
+import type { Allocation, PackingLine, Shipment } from "@/entities/shipment";
 import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { ShipmentManager } from "@/widgets/ShipmentManager";
@@ -80,6 +81,44 @@ export function DealIssuePage() {
     void loadBundle();
   }, [loadBundle]);
 
+  // 선적 초안(자동 반영) — 입력 즉시 미리보기에 반영하고, 디바운스로 조용히 서버 저장한다.
+  const [shipments, setShipments] = useState<Shipment[]>([]);
+  useEffect(() => {
+    setShipments(bundle?.shipments ?? []);
+  }, [bundle]);
+
+  const pendingSaves = useRef<Map<string, { timer: number; allocations: Allocation[] }>>(new Map());
+
+  function handleChangeAllocations(shipmentId: string, allocations: Allocation[]) {
+    setShipments((prev) => prev.map((s) => (s.id === shipmentId ? { ...s, allocations } : s)));
+    const pending = pendingSaves.current.get(shipmentId);
+    if (pending) window.clearTimeout(pending.timer);
+    const timer = window.setTimeout(() => {
+      pendingSaves.current.delete(shipmentId);
+      void updateShipmentAllocations(shipmentId, allocations.map(normalizeAllocation));
+    }, 600);
+    pendingSaves.current.set(shipmentId, { timer, allocations });
+  }
+
+  // 선적 추가/삭제/발행 전엔 대기 중인 저장을 먼저 비운다(서버-초안 불일치 방지).
+  const flushPendingSaves = useCallback(async () => {
+    const entries = [...pendingSaves.current.entries()];
+    pendingSaves.current.clear();
+    await Promise.all(
+      entries.map(([id, pending]) => {
+        window.clearTimeout(pending.timer);
+        return updateShipmentAllocations(id, pending.allocations.map(normalizeAllocation));
+      }),
+    );
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      // 페이지 이탈 시 잔여 저장 flush(베스트 에포트).
+      void flushPendingSaves();
+    };
+  }, [flushPendingSaves]);
+
   // 활성 선적: 유지 → URL 지정(?shipment=) → 첫 선적 순.
   useEffect(() => {
     if (!bundle) return;
@@ -95,8 +134,8 @@ export function DealIssuePage() {
   const pi = useMemo(() => bundle?.documents.find((d) => d.docType === "PI") ?? null, [bundle]);
   const dealForm = useMemo(() => (bundle ? dealToForm(bundle.deal, pi) : null), [bundle, pi]);
   const activeShipment = useMemo(
-    () => bundle?.shipments.find((s) => s.id === activeShipmentId) ?? null,
-    [bundle, activeShipmentId],
+    () => shipments.find((s) => s.id === activeShipmentId) ?? null,
+    [shipments, activeShipmentId],
   );
 
   // CI 원산지 초안(거래 건 레벨) — 미리보기에 즉시 반영, 저장 시 거래 건에 기록.
@@ -193,7 +232,7 @@ export function DealIssuePage() {
       return false;
     }
     const allWarnings = bundle
-      ? [...warnings, ...quantityWarningKeys(bundle.deal, bundle.shipments)]
+      ? [...warnings, ...quantityWarningKeys(bundle.deal, shipments)]
       : warnings;
     if (allWarnings.length > 0) {
       toast.warning(allWarnings.map((k) => t(`validation.${k}`)).join(", "));
@@ -229,7 +268,7 @@ export function DealIssuePage() {
     }
     const otherWarnings = [
       ...warnings.filter((k) => k !== "originCountry"),
-      ...quantityWarningKeys(bundle.deal, bundle.shipments),
+      ...quantityWarningKeys(bundle.deal, shipments),
     ];
     if (otherWarnings.length > 0) {
       toast.warning(otherWarnings.map((k) => t(`validation.${k}`)).join(", "));
@@ -244,6 +283,7 @@ export function DealIssuePage() {
   async function doIssue() {
     if (!user || !bundle || !variantData || !variant || !activeShipmentId || issuedDoc) return;
     setIssuing(true);
+    await flushPendingSaves();
     try {
       const docId = await issueDocument(user.id, {
         dealId: bundle.deal.id,
@@ -266,25 +306,21 @@ export function DealIssuePage() {
 
   async function handleAddShipment() {
     if (!user || !bundle) return;
+    await flushPendingSaves();
     const id = await createShipment(
       user.id,
       bundle.deal.id,
-      nextSeq(bundle.shipments),
-      remainingAllocations(bundle.deal, bundle.shipments),
+      nextSeq(shipments),
+      remainingAllocations(bundle.deal, shipments),
     );
     setActiveShipmentId(id);
     await loadBundle();
   }
 
   async function handleDeleteShipment(id: string) {
-    if (!bundle || bundle.shipments.length <= 1) return;
+    if (!bundle || shipments.length <= 1) return;
+    await flushPendingSaves();
     await deleteShipment(id);
-    await loadBundle();
-  }
-
-  async function handleSaveAllocations(id: string, allocations: Allocation[]) {
-    await updateShipmentAllocations(id, allocations);
-    toast.success(t("deal.save"));
     await loadBundle();
   }
 
@@ -403,19 +439,17 @@ export function DealIssuePage() {
           {/* 좌: 편집(선적/배분 → 양식 옵션) — 서류 작성 폼과 같은 에디터 영역 */}
           <div className="editor-container w-full overflow-y-auto border-b border-border bg-[#cbdbf5] xl:w-1/2 xl:border-b-0 xl:border-r">
             <div className="space-y-6 p-6">
-              {/* ① 선적 선택 + 배분/포장 편집 — 분할이 의미 있을 때(총 주문 수량 > 1)만 1회 안내(#28). */}
-              {bundle.deal.items.reduce((sum, it) => sum + it.orderedQty, 0) > 1 && (
-                <Coachmark id="split-shipment" />
-              )}
+              {/* ① 선적/배분 — 기본 전량, 분할은 옵트인(매트릭스). 입력은 자동 저장. */}
               <div className="rounded-xl border border-border bg-card p-5">
                 <ShipmentManager
                   deal={bundle.deal}
-                  shipments={bundle.shipments}
+                  shipments={shipments}
                   activeShipmentId={activeShipmentId}
+                  showPacking={variant === "PL"}
                   onSelectShipment={setActiveShipmentId}
                   onAddShipment={() => void handleAddShipment()}
                   onDeleteShipment={(id) => void handleDeleteShipment(id)}
-                  onSaveAllocations={(id, allocations) => void handleSaveAllocations(id, allocations)}
+                  onChangeAllocations={handleChangeAllocations}
                 />
                 {/* CI/PL이 같은 선적 데이터를 공유한다는 안내 — "두 번 입력" 오해 방지. */}
                 <p className="mt-4 border-t border-border/60 pt-3 text-xs text-muted-foreground">

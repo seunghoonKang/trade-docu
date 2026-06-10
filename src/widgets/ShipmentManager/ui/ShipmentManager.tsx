@@ -1,10 +1,8 @@
-import { Fragment, useEffect, useState } from "react";
-import { AlertTriangle, Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Split, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Deal } from "@/entities/deal";
 import type { Shipment, Allocation } from "@/entities/shipment";
-import { normalizeAllocation } from "@/entities/shipment";
-import { computeBalance } from "@/features/deal-crud";
 import { Button } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 
@@ -12,215 +10,236 @@ interface Props {
   deal: Deal;
   shipments: Shipment[];
   activeShipmentId: string | null;
+  /** PL 플로우에서만 per-line 포장 편집을 노출한다. */
+  showPacking?: boolean;
   onSelectShipment: (id: string) => void;
   onAddShipment: () => void;
   onDeleteShipment: (id: string) => void;
-  onSaveAllocations: (shipmentId: string, allocations: Allocation[]) => void;
+  /** 배분/포장 초안 변경(즉시) — 부모가 미리보기 반영 + 디바운스 저장을 담당. */
+  onChangeAllocations: (shipmentId: string, allocations: Allocation[]) => void;
 }
 
 /**
- * 분할선적 관리(S4): 거래 건 잔량 표시 + 선적 차수 추가/삭제 + 활성 선적의 품목별 배분 편집.
- * 잔여 = 주문 − Σ배분. 초과 배분은 경고(차단 아님).
+ * 선적 배분(분할선적 UX 개편): 기본은 '전량 1회 출고' 요약 한 줄 — 분할 UI를 숨긴다.
+ * '분할선적으로 보내기'를 켜면 품목×선적 매트릭스 한 표에서 전체 분배를 편집한다.
+ * 잔여는 입력 즉시 자동 계산, 발행 대상 선적은 열 헤더 클릭으로 선택(강조 표시).
  */
 export function ShipmentManager({
   deal,
   shipments,
   activeShipmentId,
+  showPacking = false,
   onSelectShipment,
   onAddShipment,
   onDeleteShipment,
-  onSaveAllocations,
+  onChangeAllocations,
 }: Props) {
   const { t } = useTranslation();
-  const balance = computeBalance(deal, shipments);
-  const active = shipments.find((s) => s.id === activeShipmentId) ?? null;
-  const availableExcl = active ? computeBalance(deal, shipments, { excludeShipmentId: active.id }) : null;
+  const [expanded, setExpanded] = useState(shipments.length > 1);
 
-  // 활성 선적의 배분 초안(품목별 qty + per-line 포장). 활성 선적/데이터가 바뀌면 리셋.
-  const [draft, setDraft] = useState<Record<string, Allocation>>({});
+  // 선적이 여러 개면(이미 분할) 항상 매트릭스를 펼친다.
   useEffect(() => {
-    const map: Record<string, Allocation> = {};
-    if (active) for (const a of active.allocations) map[a.itemId] = a;
-    setDraft(map);
-  }, [activeShipmentId, shipments]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (shipments.length > 1) setExpanded(true);
+  }, [shipments.length]);
 
-  function availableFor(itemId: string): number {
-    const row = availableExcl?.items.find((i) => i.itemId === itemId);
-    return row ? row.remaining : 0;
+  const totalOrdered = deal.items.reduce((sum, it) => sum + it.orderedQty, 0);
+  const active = shipments.find((s) => s.id === activeShipmentId) ?? null;
+
+  function allocationFor(shipment: Shipment, itemId: string): Allocation {
+    return shipment.allocations.find((a) => a.itemId === itemId) ?? { itemId, qty: 0 };
   }
 
-  function patchDraft(itemId: string, patch: Partial<Allocation>) {
-    setDraft((d) => {
-      const cur = d[itemId] ?? { itemId, qty: 0 };
-      return { ...d, [itemId]: { ...cur, ...patch } };
-    });
+  function patchAllocation(shipment: Shipment, itemId: string, patch: Partial<Allocation>) {
+    const rest = shipment.allocations.filter((a) => a.itemId !== itemId);
+    onChangeAllocations(shipment.id, [
+      ...rest,
+      { ...allocationFor(shipment, itemId), ...patch, itemId },
+    ]);
   }
 
-  function handleSave() {
-    if (!active) return;
-    const allocations: Allocation[] = deal.items.map((it) => {
-      const line = draft[it.id];
-      return normalizeAllocation({ ...line, itemId: it.id, qty: line?.qty ?? 0 });
-    });
-    onSaveAllocations(active.id, allocations);
+  function allocatedSum(itemId: string): number {
+    return shipments.reduce((sum, s) => sum + (allocationFor(s, itemId).qty || 0), 0);
+  }
+
+  if (!expanded) {
+    // 기본: 전량 1회 출고 — 분할 개념을 노출하지 않는다.
+    return (
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="text-sm font-semibold">{t("deal.shipment")}</h3>
+          <p className="text-sm text-muted-foreground">
+            {t("deal.fullShipmentSummary", { total: totalOrdered })}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setExpanded(true)}>
+          <Split className="size-4" aria-hidden />
+          {t("deal.splitShipment")}
+        </Button>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-5">
-      {/* 거래 건 잔량 */}
-      <div className="rounded-lg border border-border p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold">{t("deal.remaining")}</h3>
-          {balance.hasOver && (
-            <span className="flex items-center gap-1 text-xs text-red-600">
-              <AlertTriangle className="size-3.5" aria-hidden />
-              {t("deal.overAllocated")}
-            </span>
-          )}
-        </div>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-xs text-muted-foreground">
-              <th className="py-1 font-medium">{t("deal.item")}</th>
-              <th className="py-1 text-right font-medium">{t("deal.ordered")}</th>
-              <th className="py-1 text-right font-medium">{t("deal.allocated")}</th>
-              <th className="py-1 text-right font-medium">{t("deal.remaining")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {balance.items.map((row) => (
-              <tr key={row.itemId} className="border-t border-border/60">
-                <td className="py-1.5">{row.description || "—"}</td>
-                <td className="py-1.5 text-right tabular-nums">{row.ordered}</td>
-                <td className="py-1.5 text-right tabular-nums">{row.allocated}</td>
-                <td
-                  className={cn(
-                    "py-1.5 text-right font-medium tabular-nums",
-                    row.over ? "text-red-600" : row.remaining > 0 ? "text-amber-600" : "text-muted-foreground",
-                  )}
-                >
-                  {row.remaining}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* 선적 차수 */}
-      <div className="flex flex-wrap items-center gap-2">
-        {shipments.map((s) => (
-          <div
-            key={s.id}
-            className={cn(
-              "flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm",
-              s.id === activeShipmentId ? "border-primary bg-accent text-primary" : "border-border text-muted-foreground",
-            )}
-          >
-            <button type="button" onClick={() => onSelectShipment(s.id)} className="font-medium">
-              {t("deal.shipment")} {s.seq}
-            </button>
-            {shipments.length > 1 && (
-              <button
-                type="button"
-                onClick={() => onDeleteShipment(s.id)}
-                className="text-muted-foreground hover:text-red-600"
-                aria-label="delete shipment"
-              >
-                <Trash2 className="size-3.5" aria-hidden />
-              </button>
-            )}
-          </div>
-        ))}
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold">{t("deal.allocation")}</h3>
         <Button variant="outline" size="sm" className="gap-1.5" onClick={onAddShipment}>
           <Plus className="size-4" aria-hidden />
           {t("deal.addShipment")}
         </Button>
       </div>
 
-      {/* 활성 선적 배분 편집 */}
-      {active && (
-        <div className="rounded-lg border border-border p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-sm font-semibold">
-              {t("deal.shipment")} {active.seq} · {t("deal.allocation")}
-            </h3>
-            <Button variant="default" size="sm" onClick={handleSave}>
-              {t("deal.save")}
-            </Button>
-          </div>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-xs text-muted-foreground">
-                <th className="py-1 font-medium">{t("deal.item")}</th>
-                <th className="py-1 text-right font-medium">{t("deal.remaining")}</th>
-                <th className="py-1 text-right font-medium">{t("deal.thisShipment")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {deal.items.map((it) => {
-                const available = availableFor(it.id);
-                const line = draft[it.id];
-                const qty = line?.qty || 0;
-                const over = qty > available;
-                return (
-                  <Fragment key={it.id}>
-                    <tr className="border-t border-border/60">
-                      <td className="py-1.5">{it.description || "—"}</td>
-                      <td className="py-1.5 text-right tabular-nums text-muted-foreground">{available}</td>
-                      <td className="py-1.5 text-right">
+      {/* 품목×선적 매트릭스 — 한 표에서 전체 분배, 잔여 자동 계산. */}
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[420px] text-sm">
+          <thead>
+            <tr className="text-left text-xs text-muted-foreground">
+              <th className="py-1.5 pr-2 font-medium">{t("deal.item")}</th>
+              <th className="py-1.5 pr-2 text-right font-medium">{t("deal.ordered")}</th>
+              {shipments.map((s) => (
+                <th key={s.id} className="px-1 py-1">
+                  <button
+                    type="button"
+                    onClick={() => onSelectShipment(s.id)}
+                    className={cn(
+                      "flex w-full items-center justify-center gap-1 rounded-md border px-2 py-1 font-semibold transition-colors",
+                      s.id === activeShipmentId
+                        ? "border-primary bg-accent text-primary"
+                        : "border-border text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {t("deal.shipment")} {s.seq}
+                    {shipments.length > 1 && (
+                      <X
+                        role="button"
+                        aria-label="delete shipment"
+                        className="size-3.5 text-muted-foreground hover:text-red-600"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDeleteShipment(s.id);
+                        }}
+                      />
+                    )}
+                  </button>
+                </th>
+              ))}
+              <th className="py-1.5 pl-2 text-right font-medium">{t("deal.remaining")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {deal.items.map((it) => {
+              const remaining = it.orderedQty - allocatedSum(it.id);
+              return (
+                <tr key={it.id} className="border-t border-border/60">
+                  <td className="max-w-[160px] truncate py-1.5 pr-2">{it.description || "—"}</td>
+                  <td className="py-1.5 pr-2 text-right tabular-nums text-muted-foreground">
+                    {it.orderedQty}
+                  </td>
+                  {shipments.map((s) => {
+                    const qty = allocationFor(s, it.id).qty || 0;
+                    return (
+                      <td key={s.id} className="px-1 py-1.5">
                         <input
                           type="number"
                           min={0}
                           value={qty === 0 ? "" : qty}
-                          onChange={(e) => patchDraft(it.id, { qty: Number(e.target.value) || 0 })}
+                          onChange={(e) =>
+                            patchAllocation(s, it.id, { qty: Number(e.target.value) || 0 })
+                          }
                           className={cn(
-                            "w-24 rounded border px-2 py-1 text-right tabular-nums",
-                            over ? "border-red-500 bg-red-50 text-red-700" : "border-border",
+                            "w-full min-w-16 rounded border px-2 py-1 text-right tabular-nums",
+                            s.id === activeShipmentId ? "border-primary/40 bg-accent/40" : "border-border",
                           )}
                         />
                       </td>
-                    </tr>
-                    {/* per-line 포장(전부 선택, S7) — 채운 항목만 PL에 출력된다. */}
-                    <tr>
-                      <td colSpan={3} className="pb-2.5">
-                        <div className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-3">
-                          <PackField
-                            label={t("deal.ctn")}
-                            type="number"
-                            value={line?.cartonQty ? String(line.cartonQty) : ""}
-                            onChange={(v) => patchDraft(it.id, { cartonQty: Number(v) || undefined })}
-                          />
-                          <PackField
-                            label={t("deal.netWeight")}
-                            value={line?.netWeight ?? ""}
-                            onChange={(v) => patchDraft(it.id, { netWeight: v })}
-                          />
-                          <PackField
-                            label={t("deal.grossWeight")}
-                            value={line?.grossWeight ?? ""}
-                            onChange={(v) => patchDraft(it.id, { grossWeight: v })}
-                          />
-                          <PackField
-                            label={t("deal.cbm")}
-                            value={line?.cbm ?? ""}
-                            onChange={(v) => patchDraft(it.id, { cbm: v })}
-                          />
-                          <PackField
-                            label={t("deal.cartonNo")}
-                            value={line?.cartonNo ?? ""}
-                            onChange={(v) => patchDraft(it.id, { cartonNo: v })}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  </Fragment>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    );
+                  })}
+                  <td
+                    className={cn(
+                      "py-1.5 pl-2 text-right font-medium tabular-nums",
+                      remaining < 0
+                        ? "text-red-600"
+                        : remaining > 0
+                          ? "text-amber-600"
+                          : "text-muted-foreground",
+                    )}
+                  >
+                    {remaining}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-xs text-muted-foreground">{t("deal.issueTargetHint")}</p>
+
+      {/* 활성 선적의 per-line 포장(전부 선택, S7) — PL 플로우에서만. */}
+      {showPacking && active && (
+        <PackingSection
+          deal={deal}
+          shipment={active}
+          onPatch={(itemId, patch) => patchAllocation(active, itemId, patch)}
+        />
       )}
+    </div>
+  );
+}
+
+function PackingSection({
+  deal,
+  shipment,
+  onPatch,
+}: {
+  deal: Deal;
+  shipment: Shipment;
+  onPatch: (itemId: string, patch: Partial<Allocation>) => void;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="space-y-3 border-t border-border/60 pt-3">
+      <h4 className="text-sm font-semibold">
+        {t("deal.shipment")} {shipment.seq} · {t("deal.packingDetails")}
+      </h4>
+      {deal.items.map((it) => {
+        const line = shipment.allocations.find((a) => a.itemId === it.id);
+        return (
+          <div key={it.id}>
+            <p className="mb-1.5 text-xs font-medium text-secondary-foreground">
+              {it.description || "—"}
+            </p>
+            <div className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-3">
+              <PackField
+                label={t("deal.ctn")}
+                type="number"
+                value={line?.cartonQty ? String(line.cartonQty) : ""}
+                onChange={(v) => onPatch(it.id, { cartonQty: Number(v) || undefined })}
+              />
+              <PackField
+                label={t("deal.netWeight")}
+                value={line?.netWeight ?? ""}
+                onChange={(v) => onPatch(it.id, { netWeight: v })}
+              />
+              <PackField
+                label={t("deal.grossWeight")}
+                value={line?.grossWeight ?? ""}
+                onChange={(v) => onPatch(it.id, { grossWeight: v })}
+              />
+              <PackField
+                label={t("deal.cbm")}
+                value={line?.cbm ?? ""}
+                onChange={(v) => onPatch(it.id, { cbm: v })}
+              />
+              <PackField
+                label={t("deal.cartonNo")}
+                value={line?.cartonNo ?? ""}
+                onChange={(v) => onPatch(it.id, { cartonNo: v })}
+              />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
