@@ -1,6 +1,6 @@
 import { Landmark } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Input, Textarea, FormSection, editorInputClassName } from "@/shared/ui";
+import { Input, Select, Textarea, FormSection } from "@/shared/ui";
 import type { BuyerSnapshot, LcInfoForm } from "@/entities/invoice";
 
 const PAYMENT_METHODS = ["T/T", "L/C", "ADVANCE", "OTHER"] as const;
@@ -35,21 +35,19 @@ export function PartiesPaymentSection({
         <PartyBlock kind="notify" label={t("form.notifyParty")} party={notify} onToggle={onToggleParty} onUpdate={onUpdateParty} />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="font-medium text-secondary-foreground">{t("form.paymentMethod")}</span>
-            <select
-              className={editorInputClassName}
-              value={paymentMethod || ""}
-              onChange={(e) => onUpdatePaymentMethod(e.target.value)}
-            >
-              <option value="">{t("form.paymentSelect")}</option>
-              {PAYMENT_METHODS.map((m) => (
-                <option key={m} value={m}>
-                  {m === "OTHER" ? t("form.paymentOther") : m}
-                </option>
-              ))}
-            </select>
-          </label>
+          <Select
+            variant="editor"
+            label={t("form.paymentMethod")}
+            value={paymentMethod || ""}
+            onChange={(e) => onUpdatePaymentMethod(e.target.value)}
+            options={[
+              { value: "", label: t("form.paymentSelect") },
+              ...PAYMENT_METHODS.map((m) => ({
+                value: m,
+                label: m === "OTHER" ? t("form.paymentOther") : m,
+              })),
+            ]}
+          />
         </div>
 
         {paymentMethod === "L/C" && (
