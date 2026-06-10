@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Invoice } from "@/entities/invoice";
 import type { DocType } from "@/entities/document";
+import type { PackingLine } from "@/entities/shipment";
 import { InvoicePreview } from "./InvoicePreview";
 import { PackingListPreview } from "./PackingListPreview";
 
@@ -13,9 +14,13 @@ type PreviewData = Omit<Invoice, "id" | "userId" | "createdAt">;
 export function InvoicePreviewPanel({
   data,
   variant = "PI",
+  packingLines,
+  showPrice,
 }: {
   data: PreviewData;
   variant?: DocType;
+  packingLines?: PackingLine[]; // PL 전용: items와 같은 순서의 per-line 포장
+  showPrice?: boolean; // PL 전용: 가격 표시 토글
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
@@ -71,7 +76,7 @@ export function InvoicePreviewPanel({
           }}
         >
           {variant === "PL" ? (
-            <PackingListPreview data={data} />
+            <PackingListPreview data={data} packingLines={packingLines} showPrice={showPrice} />
           ) : (
             <InvoicePreview data={data} variant={variant} />
           )}

@@ -26,7 +26,7 @@ import { triggerPrint } from "@/features/print";
 import { validateInvoice } from "@/entities/invoice";
 import type { InvoiceDraft, AdditionalCharge, ChargeType } from "@/entities/invoice";
 import type { DocType } from "@/entities/document";
-import type { Allocation } from "@/entities/shipment";
+import type { Allocation, PackingLine } from "@/entities/shipment";
 import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { ShipmentManager } from "@/widgets/ShipmentManager";
@@ -48,6 +48,8 @@ export function DealDetailPage() {
   const [activeShipmentId, setActiveShipmentId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [issuing, setIssuing] = useState(false);
+  // PL 가격 표시 토글(기본 숨김). 발행 시 fieldOptions로 박제된다(#25).
+  const [plShowPrice, setPlShowPrice] = useState(false);
 
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -126,6 +128,24 @@ export function DealDetailPage() {
     };
   }, [bundle, dealForm, variant, activeShipment]);
 
+  // PL per-line 포장: 활성 선적 배분에서 items와 같은 순서로 추출(채운 항목만 PL에 출력).
+  const plPackingLines = useMemo<PackingLine[]>(() => {
+    if (!bundle || !activeShipment) return [];
+    const allocByItem = new Map(activeShipment.allocations.map((a) => [a.itemId, a]));
+    return bundle.deal.items.map((it) => {
+      const a = allocByItem.get(it.id);
+      return a
+        ? {
+            cartonQty: a.cartonQty,
+            netWeight: a.netWeight,
+            grossWeight: a.grossWeight,
+            cbm: a.cbm,
+            cartonNo: a.cartonNo,
+          }
+        : {};
+    });
+  }, [bundle, activeShipment]);
+
   // CI 선적 비용 편집 초안(활성 선적/데이터 변경 시 동기화).
   const [ciCharges, setCiCharges] = useState<AdditionalCharge[]>([]);
   useEffect(() => {
@@ -188,7 +208,10 @@ export function DealDetailPage() {
         docType: variant,
         docNo: variantData.invoiceNo,
         docDate: variantData.date,
-        snapshot: variantData as unknown as Record<string, unknown>,
+        fieldOptions: variant === "PL" ? { showPrice: plShowPrice } : {},
+        snapshot: (variant === "PL"
+          ? { ...variantData, packingLines: plPackingLines, showPrice: plShowPrice }
+          : variantData) as unknown as Record<string, unknown>,
       });
       toast.success(t("history.saved"));
       await loadBundle();
@@ -364,6 +387,17 @@ export function DealDetailPage() {
               {variant !== "PI" && issuedForTab(variant) && (
                 <span className="text-sm text-green-600">{t("deal.issued")}</span>
               )}
+              {variant === "PL" && (
+                <label className="ml-2 flex items-center gap-2 text-sm text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={plShowPrice}
+                    onChange={(e) => setPlShowPrice(e.target.checked)}
+                    className="size-4 accent-primary"
+                  />
+                  {t("deal.showPrice")}
+                </label>
+              )}
             </div>
 
             {variant === "CI" && (
@@ -379,7 +413,12 @@ export function DealDetailPage() {
             )}
 
             <div className="min-h-[500px] rounded-xl border border-border bg-accent overflow-hidden">
-              <InvoicePreviewPanel data={variantData} variant={variant} />
+              <InvoicePreviewPanel
+                data={variantData}
+                variant={variant}
+                packingLines={plPackingLines}
+                showPrice={plShowPrice}
+              />
             </div>
           </>
         )}

@@ -20,6 +20,7 @@ export const INVOICE_DOCUMENT_LABELS = {
   commercialInvoice: "COMMERCIAL INVOICE",
   packingList: "PACKING LIST",
   ctn: "CTN",
+  cartonNo: "CARTON NO",
   netWeight: "NET WEIGHT",
   grossWeight: "GROSS WEIGHT",
   cbm: "CBM",

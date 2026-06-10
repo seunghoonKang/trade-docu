@@ -1,15 +1,33 @@
 import type { Invoice } from "@/entities/invoice";
 import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice";
 import { buildBuyerDetailLines, buildSellerDetailLines } from "@/entities/invoice";
+import type { PackingLine } from "@/entities/shipment";
+import { visiblePackingColumns } from "@/entities/shipment";
 
 type PreviewData = Omit<Invoice, "id" | "userId" | "createdAt">;
 
 /**
  * 포장명세서(PL) 양식 — 같은 거래 데이터를 포장 중심으로 렌더(가격 숨김 기본).
- * S3: 품목·수량은 거래 데이터에서, 박스수·중량·CBM 등 per-line 포장 값은 S7에서 채운다(지금은 "—").
+ * packingLines는 items와 같은 순서의 per-line 포장 값(전부 선택) — 채운 컬럼만 출력한다.
+ * showPrice 토글 시 단가/금액 컬럼과 합계를 함께 출력한다(#25).
  * PDF 캡처 대상이므로 루트 id는 invoice-preview-content를 유지한다(InvoicePreview와 동일).
  */
-export function PackingListPreview({ data }: { data: PreviewData }) {
+export function PackingListPreview({
+  data,
+  packingLines = [],
+  showPrice = false,
+}: {
+  data: PreviewData;
+  packingLines?: PackingLine[];
+  showPrice?: boolean;
+}) {
+  const cols = visiblePackingColumns(packingLines);
+  const colCount =
+    4 +
+    [cols.cartonQty, cols.netWeight, cols.grossWeight, cols.cbm, cols.cartonNo].filter(Boolean)
+      .length +
+    (showPrice ? 2 : 0);
+  const goodsTotal = data.items.reduce((sum, item) => sum + item.amount, 0);
   const buyerLines = buildBuyerDetailLines(data.buyerSnapshot);
   const sellerLines = buildSellerDetailLines({
     companyName: data.sellerCompanyName,
@@ -54,33 +72,54 @@ export function PackingListPreview({ data }: { data: PreviewData }) {
         <table className="mb-10 w-full min-w-[500px] border-collapse">
           <thead>
             <tr className="border-y-2 border-black text-center text-[10px] font-bold">
-              <th className="w-[34%] py-2 text-left">{L.descriptionOfGoods}</th>
+              <th className="w-[30%] py-2 text-left">{L.descriptionOfGoods}</th>
               <th className="py-2">{L.hsCode}</th>
               <th className="py-2">{L.qty}</th>
               <th className="py-2">{L.unit}</th>
-              <th className="py-2">{L.ctn}</th>
-              <th className="py-2">{L.netWeight}</th>
-              <th className="py-2">{L.grossWeight}</th>
-              <th className="py-2 text-right">{L.cbm}</th>
+              {cols.cartonQty && <th className="py-2">{L.ctn}</th>}
+              {cols.netWeight && <th className="py-2">{L.netWeight}</th>}
+              {cols.grossWeight && <th className="py-2">{L.grossWeight}</th>}
+              {cols.cbm && <th className="py-2">{L.cbm}</th>}
+              {cols.cartonNo && <th className="py-2">{L.cartonNo}</th>}
+              {showPrice && <th className="py-2">{L.unitPrice}</th>}
+              {showPrice && <th className="py-2 text-right">{L.amount}</th>}
             </tr>
           </thead>
           <tbody className="text-center">
-            {data.items.map((item, i) => (
-              <tr key={i} className="border-b border-gray-200">
-                <td className="py-4 text-left">
-                  <div className="font-bold">{item.description || "—"}</div>
-                  {item.remarks && <div className="text-[10px] text-gray-500">{item.remarks}</div>}
-                </td>
-                <td className="py-4">{item.hsCode || "—"}</td>
-                <td className="py-4">{item.qty ? item.qty.toFixed(2) : "—"}</td>
-                <td className="py-4">{item.unit || "—"}</td>
-                <td className="py-4">—</td>
-                <td className="py-4">—</td>
-                <td className="py-4">—</td>
-                <td className="py-4 text-right">—</td>
-              </tr>
-            ))}
+            {data.items.map((item, i) => {
+              const pack = packingLines[i] ?? {};
+              return (
+                <tr key={i} className="border-b border-gray-200">
+                  <td className="py-4 text-left">
+                    <div className="font-bold">{item.description || "—"}</div>
+                    {item.remarks && <div className="text-[10px] text-gray-500">{item.remarks}</div>}
+                  </td>
+                  <td className="py-4">{item.hsCode || "—"}</td>
+                  <td className="py-4">{item.qty ? item.qty.toFixed(2) : "—"}</td>
+                  <td className="py-4">{item.unit || "—"}</td>
+                  {cols.cartonQty && <td className="py-4">{pack.cartonQty || "—"}</td>}
+                  {cols.netWeight && <td className="py-4">{pack.netWeight || "—"}</td>}
+                  {cols.grossWeight && <td className="py-4">{pack.grossWeight || "—"}</td>}
+                  {cols.cbm && <td className="py-4">{pack.cbm || "—"}</td>}
+                  {cols.cartonNo && <td className="py-4">{pack.cartonNo || "—"}</td>}
+                  {showPrice && <td className="py-4">{item.unitPrice ? item.unitPrice.toFixed(2) : "—"}</td>}
+                  {showPrice && (
+                    <td className="py-4 text-right">{item.amount ? item.amount.toFixed(2) : "—"}</td>
+                  )}
+                </tr>
+              );
+            })}
           </tbody>
+          {showPrice && (
+            <tfoot>
+              <tr>
+                <td className="py-4 text-right text-sm font-black" colSpan={colCount - 1}>
+                  {L.grandTotal}: {data.currency}
+                </td>
+                <td className="py-4 text-right text-sm font-black">{goodsTotal.toFixed(2)}</td>
+              </tr>
+            </tfoot>
+          )}
         </table>
       </div>
 
