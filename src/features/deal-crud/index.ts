@@ -7,6 +7,7 @@ export {
   ensureDefaultShipment,
   createShipment,
   updateShipmentAllocations,
+  updateShipmentCharges,
   deleteShipment,
   setDealStatus,
 } from "./api";

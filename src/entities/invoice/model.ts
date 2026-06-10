@@ -10,9 +10,17 @@ export interface InvoiceItem {
   remarks: string;
 }
 
+/** 비용 유형. 비우면 단가 포함(CIF inclusive), 채우면 내역 표기(CONTEXT.md). */
+export type ChargeType = "freight" | "insurance" | "fee" | "tax" | "other";
+
 export interface AdditionalCharge {
+  type?: ChargeType; // 미지정 = other (기존 데이터 호환)
   description: string;
   amount: number;
+}
+
+export function createEmptyCharge(): AdditionalCharge {
+  return { type: "other", description: "", amount: 0 };
 }
 
 export interface BuyerSnapshot {

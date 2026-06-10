@@ -1,3 +1,19 @@
+import type { AdditionalCharge, ChargeType } from "./model";
+
+/** Fixed English charge-type labels for document output. */
+export const CHARGE_TYPE_LABELS: Record<ChargeType, string> = {
+  freight: "Freight",
+  insurance: "Insurance",
+  fee: "Fee",
+  tax: "Tax",
+  other: "Other",
+};
+
+/** 문서 출력용 비용 라인 표기: 사용자 입력 설명 우선, 없으면 유형 라벨. */
+export function chargeDisplayLabel(charge: AdditionalCharge): string {
+  return charge.description || CHARGE_TYPE_LABELS[charge.type ?? "other"];
+}
+
 /** Fixed English labels for invoice document output (preview, PDF, Excel, print). */
 export const INVOICE_DOCUMENT_LABELS = {
   proformaInvoice: "PROFORMA INVOICE",

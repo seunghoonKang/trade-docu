@@ -39,6 +39,7 @@
     "addItemCta": "Add Item",
     "removeItem": "Remove",
     "additionalCharges": "Additional Charges",
+    "chargeTypes": { "freight": "Freight", "insurance": "Insurance", "fee": "Fee", "tax": "Tax", "other": "Other" },
     "chargeDescription": "Charge description",
     "addCharge": "Add Charge",
     "removeCharge": "Remove",

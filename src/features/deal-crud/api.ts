@@ -389,6 +389,15 @@ export async function deleteShipment(shipmentId: string): Promise<void> {
   if (error) throw error;
 }
 
+/** CI용 선적 비용 라인 갱신(운임/보험/세금 등). */
+export async function updateShipmentCharges(
+  shipmentId: string,
+  charges: Shipment["charges"],
+): Promise<void> {
+  const { error } = await supabase.from("shipments").update({ charges }).eq("id", shipmentId);
+  if (error) throw error;
+}
+
 /** 거래 건 상태(open/closed). '완료' 시 잔여 경고는 호출부에서 처리. */
 export async function setDealStatus(dealId: string, status: "open" | "closed"): Promise<void> {
   const { error } = await supabase.from("deals").update({ status }).eq("id", dealId);

@@ -1,5 +1,6 @@
-export type { Invoice, InvoiceItem, AdditionalCharge } from "./model";
-export { createEmptyInvoice, createEmptyItem } from "./model";
+export type { Invoice, InvoiceItem, AdditionalCharge, ChargeType } from "./model";
+export { createEmptyInvoice, createEmptyItem, createEmptyCharge } from "./model";
+export { chargeDisplayLabel } from "./documentLabels";
 export { calcItemAmount, calcSubtotal, calcTotalAmount } from "./lib";
 export { validateInvoice } from "./validate";
 export { buildBuyerDetailLines, buildSellerDetailLines } from "./partyDetails";

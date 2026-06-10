@@ -39,6 +39,7 @@
     "addItemCta": "품목 추가하기",
     "removeItem": "삭제",
     "additionalCharges": "추가 비용",
+    "chargeTypes": { "freight": "운임", "insurance": "보험", "fee": "수수료", "tax": "세금", "other": "기타" },
     "chargeDescription": "비용 항목",
     "addCharge": "비용 추가",
     "removeCharge": "삭제",

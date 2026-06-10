@@ -19,16 +19,18 @@ import {
   setDealStatus,
   suggestDocNo,
   updateShipmentAllocations,
+  updateShipmentCharges,
 } from "@/features/deal-crud";
 import type { DealBundle } from "@/features/deal-crud";
 import { triggerPrint } from "@/features/print";
 import { validateInvoice } from "@/entities/invoice";
-import type { InvoiceDraft } from "@/entities/invoice";
+import type { InvoiceDraft, AdditionalCharge, ChargeType } from "@/entities/invoice";
 import type { DocType } from "@/entities/document";
 import type { Allocation } from "@/entities/shipment";
 import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { ShipmentManager } from "@/widgets/ShipmentManager";
+import { ChargesEditor } from "@/widgets/ChargesEditor";
 import { Button, ConfirmDialog, Layout } from "@/shared/ui";
 
 const TEMPLATES: DocType[] = ["PI", "CI", "PL"];
@@ -105,14 +107,38 @@ export function DealDetailPage() {
       };
     });
     const goods = items.reduce((sum, i) => sum + i.amount, 0);
-    const charges = dealForm.additionalCharges.reduce((sum, c) => sum + c.amount, 0);
+    // CI는 선적 레벨 비용, PL은 가격 숨김(비용 없음).
+    const additionalCharges: AdditionalCharge[] =
+      variant === "CI"
+        ? activeShipment.charges.map((c) => ({
+            type: (c.type as ChargeType) || "other",
+            description: c.label,
+            amount: c.amount,
+          }))
+        : [];
+    const chargesTotal = additionalCharges.reduce((sum, c) => sum + c.amount, 0);
     return {
       ...dealForm,
       items,
-      totalAmount: goods + charges,
+      additionalCharges,
+      totalAmount: goods + chargesTotal,
       invoiceNo: suggestDocNo(dealForm.invoiceNo, activeShipment.seq),
     };
   }, [bundle, dealForm, variant, activeShipment]);
+
+  // CI 선적 비용 편집 초안(활성 선적/데이터 변경 시 동기화).
+  const [ciCharges, setCiCharges] = useState<AdditionalCharge[]>([]);
+  useEffect(() => {
+    setCiCharges(
+      activeShipment
+        ? activeShipment.charges.map((c) => ({
+            type: (c.type as ChargeType) || "other",
+            description: c.label,
+            amount: c.amount,
+          }))
+        : [],
+    );
+  }, [activeShipmentId, bundle]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 탭 발행 배지: PI는 거래 건 레벨, CI/PL은 활성 선적 레벨.
   const issuedForTab = useCallback(
@@ -191,6 +217,16 @@ export function DealDetailPage() {
 
   async function handleSaveAllocations(id: string, allocations: Allocation[]) {
     await updateShipmentAllocations(id, allocations);
+    toast.success(t("deal.save"));
+    await loadBundle();
+  }
+
+  async function handleSaveCharges() {
+    if (!activeShipmentId) return;
+    await updateShipmentCharges(
+      activeShipmentId,
+      ciCharges.map((c) => ({ type: c.type ?? "other", label: c.description, amount: c.amount })),
+    );
     toast.success(t("deal.save"));
     await loadBundle();
   }
@@ -329,6 +365,18 @@ export function DealDetailPage() {
                 <span className="text-sm text-green-600">{t("deal.issued")}</span>
               )}
             </div>
+
+            {variant === "CI" && (
+              <div className="rounded-lg border border-border p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="text-sm font-semibold">{t("form.additionalCharges")}</h3>
+                  <Button variant="default" size="sm" onClick={() => void handleSaveCharges()}>
+                    {t("deal.save")}
+                  </Button>
+                </div>
+                <ChargesEditor charges={ciCharges} currency={bundle.deal.currency} onChange={setCiCharges} />
+              </div>
+            )}
 
             <div className="min-h-[500px] rounded-xl border border-border bg-accent overflow-hidden">
               <InvoicePreviewPanel data={variantData} variant={variant} />

@@ -36,7 +36,7 @@ export function formToDeal(form: InvoiceDraft): DealInput {
     bankInfo: { ...form.bankInfo },
     remarks: form.remarks,
     charges: form.additionalCharges.map<ChargeLine>((c) => ({
-      type: "other",
+      type: c.type ?? "other",
       label: c.description,
       amount: c.amount,
     })),
@@ -88,6 +88,7 @@ export function dealToForm(deal: Deal, doc: TradeDocument | null): InvoiceDraft 
       remarks: it.remarks,
     })),
     additionalCharges: deal.charges.map((c) => ({
+      type: (c.type as InvoiceDraft["additionalCharges"][number]["type"]) ?? "other",
       description: c.label,
       amount: c.amount,
     })),

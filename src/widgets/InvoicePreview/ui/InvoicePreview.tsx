@@ -1,6 +1,6 @@
 import type { Invoice } from "@/entities/invoice";
 import { INVOICE_DOCUMENT_LABELS as L } from "@/entities/invoice";
-import { buildBuyerDetailLines, buildSellerDetailLines } from "@/entities/invoice";
+import { buildBuyerDetailLines, buildSellerDetailLines, chargeDisplayLabel } from "@/entities/invoice";
 import { cn } from "@/shared/lib/utils";
 
 type PreviewData = Omit<Invoice, "id" | "userId" | "createdAt">;
@@ -95,7 +95,7 @@ export function InvoicePreview({
             <tbody>
               {data.additionalCharges.map((charge, i) => (
                 <tr key={`charge-${i}`} className="border-b border-gray-200">
-                  <td className="py-2 text-left text-gray-600" colSpan={5}>{charge.description}</td>
+                  <td className="py-2 text-left text-gray-600" colSpan={5}>{chargeDisplayLabel(charge)}</td>
                   <td className="py-2 text-right">{charge.amount.toFixed(2)}</td>
                 </tr>
               ))}
