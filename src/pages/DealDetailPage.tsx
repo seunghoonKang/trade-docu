@@ -15,6 +15,7 @@ import {
   getDealBundle,
   issueDocument,
   nextSeq,
+  quantityWarningKeys,
   remainingAllocations,
   setDealStatus,
   suggestDocNo,
@@ -23,7 +24,7 @@ import {
 } from "@/features/deal-crud";
 import type { DealBundle } from "@/features/deal-crud";
 import { triggerPrint } from "@/features/print";
-import { validateInvoice } from "@/entities/invoice";
+import { validateDocument } from "@/entities/invoice";
 import type { InvoiceDraft, AdditionalCharge, ChargeType } from "@/entities/invoice";
 import type { DocType } from "@/entities/document";
 import type { Allocation, PackingLine } from "@/entities/shipment";
@@ -173,15 +174,19 @@ export function DealDetailPage() {
 
   function passesValidation(): boolean {
     if (!variantData) return false;
-    const { blocking, warnings } = validateInvoice(variantData);
+    // 양식별 차단/경고 + 거래 차원 수량 위반 경고(초과배분/잔여완료)(#27).
+    const { blocking, warnings } = validateDocument(variantData, variant);
     if (blocking.length > 0) {
       toast.error(
         `${t("validation.blockedTitle")}: ${blocking.map((k) => t(`validation.${k}`)).join(", ")}`,
       );
       return false;
     }
-    if (warnings.length > 0) {
-      toast.warning(warnings.map((k) => t(`validation.${k}`)).join(", "));
+    const allWarnings = bundle
+      ? [...warnings, ...quantityWarningKeys(bundle.deal, bundle.shipments)]
+      : warnings;
+    if (allWarnings.length > 0) {
+      toast.warning(allWarnings.map((k) => t(`validation.${k}`)).join(", "));
     }
     return true;
   }
@@ -201,6 +206,7 @@ export function DealDetailPage() {
 
   async function handleIssue() {
     if (!user || !bundle || !variantData || variant === "PI" || !activeShipmentId) return;
+    if (!passesValidation()) return;
     setIssuing(true);
     try {
       await issueDocument(user.id, {

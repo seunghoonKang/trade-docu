@@ -4,6 +4,7 @@
   "export": { "pdf": "Export to PDF", "excel": "Export to Excel", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF." },
   "deal": {"documents": "Documents", "issue": "Issue", "issued": "Issued", "shipment": "Shipment", "addShipment": "Add shipment", "ordered": "Ordered", "allocated": "Allocated", "remaining": "Remaining", "allocation": "Allocation", "thisShipment": "This shipment", "save": "Save", "overAllocated": "Over-allocated", "remainingWarning": "Some quantity is not yet shipped.", "complete": "Complete deal", "item": "Item", "ctn": "CTN", "netWeight": "N.W.", "grossWeight": "G.W.", "cbm": "CBM", "cartonNo": "Carton No.", "showPrice": "Show prices", "statusOpen": "Open", "statusClosed": "Closed", "issuedDocuments": "Issued documents"},
   "form": {
+    "originCountry": "Country of Origin",
     "documentInfo": "Document Info",
     "invoiceNo": "Invoice No.",
     "refNo": "Our Ref No.",
@@ -153,6 +154,9 @@
     "discard": "Start new"
   },
   "validation": {
+    "originCountry": "Country of origin (CI)",
+    "overAllocated": "Allocated quantity exceeds the order",
+    "unshippedRemaining": "Deal is completed but some quantity is unshipped",
     "blockedTitle": "Required fields are missing",
     "invoiceNo": "Invoice No.",
     "buyerCompanyName": "Buyer company name",

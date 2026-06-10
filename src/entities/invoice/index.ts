@@ -2,7 +2,8 @@ export type { Invoice, InvoiceItem, AdditionalCharge, ChargeType, BuyerSnapshot,
 export { createEmptyInvoice, createEmptyItem, createEmptyCharge, createEmptyParty } from "./model";
 export { chargeDisplayLabel } from "./documentLabels";
 export { calcItemAmount, calcSubtotal, calcTotalAmount } from "./lib";
-export { validateInvoice } from "./validate";
+export { validateInvoice, validateDocument } from "./validate";
+export type { DocValidationKind, ValidationResult } from "./validate";
 export { buildBuyerDetailLines, buildSellerDetailLines } from "./partyDetails";
 export { INVOICE_DOCUMENT_LABELS } from "./documentLabels";
 export type { InvoiceDraft } from "./draftStorage";

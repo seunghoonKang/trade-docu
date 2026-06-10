@@ -31,7 +31,7 @@ export function InvoiceForm({
         onUpdatePaymentMethod={(value) => updateField("paymentMethod", value)}
         onUpdateLcInfo={updateLcInfo}
       />
-      <TradeTermsSection commodity={form.commodity} currency={form.currency} paymentTerms={form.paymentTerms} incoterms={form.incoterms} delivery={form.delivery} packing={form.packing} remarks={form.remarks} onUpdate={(key, value) => updateField(key as any, value)} />
+      <TradeTermsSection commodity={form.commodity} currency={form.currency} paymentTerms={form.paymentTerms} incoterms={form.incoterms} delivery={form.delivery} packing={form.packing} remarks={form.remarks} originCountry={form.originCountry ?? ""} onUpdate={(key, value) => updateField(key as any, value)} />
       <ItemsTableSection items={form.items} currency={form.currency} totalAmount={form.totalAmount} onUpdateItem={updateItem} onAddItem={addItem} onRemoveItem={removeItem} />
       <AdditionalChargesSection charges={form.additionalCharges} currency={form.currency} onUpdateCharge={updateCharge} onAddCharge={addCharge} onRemoveCharge={removeCharge} />
       <BankInfoSection bankInfo={form.bankInfo} onUpdate={updateBankInfo} />

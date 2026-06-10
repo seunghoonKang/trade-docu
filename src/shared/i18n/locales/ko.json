@@ -4,6 +4,7 @@
   "export": { "pdf": "PDF로 내보내기", "excel": "엑셀로 내보내기", "print": "인쇄", "export": "내보내기", "pdfFailed": "PDF 생성에 실패했습니다." },
   "deal": {"documents": "문서", "issue": "발행", "issued": "발행됨", "shipment": "선적", "addShipment": "선적 만들기", "ordered": "주문", "allocated": "기선적", "remaining": "잔여", "allocation": "배분", "thisShipment": "이번 배분", "save": "저장", "overAllocated": "초과 배분", "remainingWarning": "아직 선적되지 않은 잔여 수량이 있습니다.", "complete": "거래 완료", "item": "품목", "ctn": "박스수(CTN)", "netWeight": "순중량", "grossWeight": "총중량", "cbm": "CBM", "cartonNo": "카톤번호", "showPrice": "가격 표시", "statusOpen": "진행중", "statusClosed": "완료", "issuedDocuments": "발행된 문서"},
   "form": {
+    "originCountry": "원산지",
     "documentInfo": "문서 정보",
     "invoiceNo": "인보이스 번호",
     "refNo": "판매자 참조번호",
@@ -153,6 +154,9 @@
     "discard": "새로 시작"
   },
   "validation": {
+    "originCountry": "원산지(CI)",
+    "overAllocated": "배분 수량이 주문 수량을 초과합니다",
+    "unshippedRemaining": "거래가 완료됐지만 미선적 잔여 수량이 있습니다",
     "blockedTitle": "필수 항목이 비어 있습니다.",
     "invoiceNo": "인보이스 번호",
     "buyerCompanyName": "구매자 회사명",
