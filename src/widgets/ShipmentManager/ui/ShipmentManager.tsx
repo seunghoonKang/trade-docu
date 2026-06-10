@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { AlertTriangle, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Deal } from "@/entities/deal";
 import type { Shipment, Allocation } from "@/entities/shipment";
+import { normalizeAllocation } from "@/entities/shipment";
 import { computeBalance } from "@/features/deal-crud";
 import { Button } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
@@ -35,11 +36,11 @@ export function ShipmentManager({
   const active = shipments.find((s) => s.id === activeShipmentId) ?? null;
   const availableExcl = active ? computeBalance(deal, shipments, { excludeShipmentId: active.id }) : null;
 
-  // 활성 선적의 배분 초안(품목별 qty). 활성 선적/데이터가 바뀌면 리셋.
-  const [draft, setDraft] = useState<Record<string, number>>({});
+  // 활성 선적의 배분 초안(품목별 qty + per-line 포장). 활성 선적/데이터가 바뀌면 리셋.
+  const [draft, setDraft] = useState<Record<string, Allocation>>({});
   useEffect(() => {
-    const map: Record<string, number> = {};
-    if (active) for (const a of active.allocations) map[a.itemId] = a.qty;
+    const map: Record<string, Allocation> = {};
+    if (active) for (const a of active.allocations) map[a.itemId] = a;
     setDraft(map);
   }, [activeShipmentId, shipments]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -48,9 +49,19 @@ export function ShipmentManager({
     return row ? row.remaining : 0;
   }
 
+  function patchDraft(itemId: string, patch: Partial<Allocation>) {
+    setDraft((d) => {
+      const cur = d[itemId] ?? { itemId, qty: 0 };
+      return { ...d, [itemId]: { ...cur, ...patch } };
+    });
+  }
+
   function handleSave() {
     if (!active) return;
-    const allocations: Allocation[] = deal.items.map((it) => ({ itemId: it.id, qty: draft[it.id] || 0 }));
+    const allocations: Allocation[] = deal.items.map((it) => {
+      const line = draft[it.id];
+      return normalizeAllocation({ ...line, itemId: it.id, qty: line?.qty ?? 0 });
+    });
     onSaveAllocations(active.id, allocations);
   }
 
@@ -149,27 +160,61 @@ export function ShipmentManager({
             <tbody>
               {deal.items.map((it) => {
                 const available = availableFor(it.id);
-                const qty = draft[it.id] || 0;
+                const line = draft[it.id];
+                const qty = line?.qty || 0;
                 const over = qty > available;
                 return (
-                  <tr key={it.id} className="border-t border-border/60">
-                    <td className="py-1.5">{it.description || "—"}</td>
-                    <td className="py-1.5 text-right tabular-nums text-muted-foreground">{available}</td>
-                    <td className="py-1.5 text-right">
-                      <input
-                        type="number"
-                        min={0}
-                        value={qty === 0 ? "" : qty}
-                        onChange={(e) =>
-                          setDraft((d) => ({ ...d, [it.id]: Number(e.target.value) || 0 }))
-                        }
-                        className={cn(
-                          "w-24 rounded border px-2 py-1 text-right tabular-nums",
-                          over ? "border-red-500 bg-red-50 text-red-700" : "border-border",
-                        )}
-                      />
-                    </td>
-                  </tr>
+                  <Fragment key={it.id}>
+                    <tr className="border-t border-border/60">
+                      <td className="py-1.5">{it.description || "—"}</td>
+                      <td className="py-1.5 text-right tabular-nums text-muted-foreground">{available}</td>
+                      <td className="py-1.5 text-right">
+                        <input
+                          type="number"
+                          min={0}
+                          value={qty === 0 ? "" : qty}
+                          onChange={(e) => patchDraft(it.id, { qty: Number(e.target.value) || 0 })}
+                          className={cn(
+                            "w-24 rounded border px-2 py-1 text-right tabular-nums",
+                            over ? "border-red-500 bg-red-50 text-red-700" : "border-border",
+                          )}
+                        />
+                      </td>
+                    </tr>
+                    {/* per-line 포장(전부 선택, S7) — 채운 항목만 PL에 출력된다. */}
+                    <tr>
+                      <td colSpan={3} className="pb-2.5">
+                        <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                          <PackField
+                            label={t("deal.ctn")}
+                            type="number"
+                            value={line?.cartonQty ? String(line.cartonQty) : ""}
+                            onChange={(v) => patchDraft(it.id, { cartonQty: Number(v) || undefined })}
+                          />
+                          <PackField
+                            label={t("deal.netWeight")}
+                            value={line?.netWeight ?? ""}
+                            onChange={(v) => patchDraft(it.id, { netWeight: v })}
+                          />
+                          <PackField
+                            label={t("deal.grossWeight")}
+                            value={line?.grossWeight ?? ""}
+                            onChange={(v) => patchDraft(it.id, { grossWeight: v })}
+                          />
+                          <PackField
+                            label={t("deal.cbm")}
+                            value={line?.cbm ?? ""}
+                            onChange={(v) => patchDraft(it.id, { cbm: v })}
+                          />
+                          <PackField
+                            label={t("deal.cartonNo")}
+                            value={line?.cartonNo ?? ""}
+                            onChange={(v) => patchDraft(it.id, { cartonNo: v })}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  </Fragment>
                 );
               })}
             </tbody>
@@ -177,5 +222,30 @@ export function ShipmentManager({
         </div>
       )}
     </div>
+  );
+}
+
+function PackField({
+  label,
+  value,
+  onChange,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: "text" | "number";
+}) {
+  return (
+    <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      {label}
+      <input
+        type={type}
+        min={type === "number" ? 0 : undefined}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-20 rounded border border-border px-2 py-1 text-right text-sm tabular-nums text-foreground"
+      />
+    </label>
   );
 }

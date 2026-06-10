@@ -317,6 +317,7 @@ export type IssueDocumentParams = {
   docType: DocType;
   docNo: string;
   docDate: string;
+  fieldOptions?: Record<string, unknown>; // 양식 표시항목 오버라이드 (예: PL {showPrice})
   snapshot: Record<string, unknown>;
 };
 
@@ -332,7 +333,7 @@ export async function issueDocument(userId: string, params: IssueDocumentParams)
       doc_no: params.docNo,
       doc_date: params.docDate || null,
       status: "issued",
-      field_options: {},
+      field_options: params.fieldOptions ?? {},
       snapshot: params.snapshot,
     })
     .select("id")
