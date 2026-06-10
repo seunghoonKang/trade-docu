@@ -21,7 +21,15 @@ export function InvoicePreview({
   variant?: PricedVariant;
 }) {
   const title = variant === "CI" ? L.commercialInvoice : L.proformaInvoice;
-  const hasExtraTerms = data.paymentTerms || data.packing || data.validity || data.remarks;
+  const paymentMethodText =
+    data.paymentMethod && data.paymentMethod === "L/C" && data.lcInfo?.no
+      ? `${data.paymentMethod} · ${data.lcInfo.no}${data.lcInfo.issuingBank ? ` / ${data.lcInfo.issuingBank}` : ""}`
+      : data.paymentMethod || "";
+  const consigneeName = data.consignee?.companyName ?? "";
+  const notifyName = data.notify?.companyName ?? "";
+  const hasExtraTerms =
+    data.paymentTerms || data.packing || data.validity || data.remarks ||
+    paymentMethodText || consigneeName || notifyName;
   const hasBankInfo = Boolean(data.bankInfo.bankName);
   const hasCharges = data.additionalCharges.length > 0;
   const buyerLines = buildBuyerDetailLines(data.buyerSnapshot);
@@ -112,6 +120,9 @@ export function InvoicePreview({
 
       {hasExtraTerms && (
         <div className="mb-8 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 font-sans text-[11px] text-gray-600">
+          {paymentMethodText && <><span className="font-bold uppercase">{L.paymentMethod}</span><span>{paymentMethodText}</span></>}
+          {consigneeName && <><span className="font-bold uppercase">{L.consignee}</span><span>{consigneeName}</span></>}
+          {notifyName && <><span className="font-bold uppercase">{L.notifyParty}</span><span>{notifyName}</span></>}
           {data.paymentTerms && <><span className="font-bold uppercase">{L.paymentTerms}</span><span>{data.paymentTerms}</span></>}
           {data.packing && <><span className="font-bold uppercase">{L.packing}</span><span>{data.packing}</span></>}
           {data.validity && <><span className="font-bold uppercase">{L.validity}</span><span>{data.validity}</span></>}
