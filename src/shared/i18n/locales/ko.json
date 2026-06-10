@@ -2,7 +2,7 @@
   "app": { "title": "프로포마 인보이스" },
   "nav": {"login": "로그인", "logout": "로그아웃", "signup": "회원가입", "history": "기록", "settings": "설정", "dashboard": "대시보드", "invoices": "서류 작성", "userGuide": "사용자 가이드", "comingSoon": "준비 중", "comingSoonSection": "준비 중"},
   "export": { "pdf": "PDF로 내보내기", "excel": "엑셀로 내보내기", "print": "인쇄", "export": "내보내기", "pdfFailed": "PDF 생성에 실패했습니다." },
-  "deal": {"documents": "문서", "issue": "발행", "issued": "발행됨", "shipment": "선적", "addShipment": "선적 만들기", "ordered": "주문", "allocated": "기선적", "remaining": "잔여", "allocation": "배분", "thisShipment": "이번 배분", "save": "저장", "overAllocated": "초과 배분", "remainingWarning": "아직 선적되지 않은 잔여 수량이 있습니다.", "complete": "거래 완료", "item": "품목", "ctn": "박스수(CTN)", "netWeight": "순중량", "grossWeight": "총중량", "cbm": "CBM", "cartonNo": "카톤번호", "showPrice": "가격 표시", "statusOpen": "진행중", "statusClosed": "완료", "issuedDocuments": "발행된 문서"},
+  "deal": {"documents": "문서", "issue": "발행", "issued": "발행됨", "shipment": "선적", "addShipment": "선적 만들기", "ordered": "주문", "allocated": "기선적", "remaining": "잔여", "allocation": "배분", "thisShipment": "이번 배분", "save": "저장", "overAllocated": "초과 배분", "remainingWarning": "아직 선적되지 않은 잔여 수량이 있습니다.", "complete": "거래 완료", "item": "품목", "ctn": "박스수(CTN)", "netWeight": "순중량", "grossWeight": "총중량", "cbm": "CBM", "cartonNo": "카톤번호", "showPrice": "가격 표시", "statusOpen": "진행중", "statusClosed": "완료", "issuedDocuments": "발행된 문서", "backToDeal": "거래로 돌아가기", "issueTitle": "{{doc}} 발행", "alreadyIssued": "이 선적에는 이미 발행되었습니다."},
   "form": {
     "originCountry": "원산지",
     "documentInfo": "문서 정보",
@@ -385,7 +385,7 @@
     "navigateToProfile": "프로필 페이지로 이동",
     "coachmarks": {
       "split-shipment": "분할선적이 가능합니다 — 선적을 추가하고 품목 수량을 선적별로 배분하세요.",
-      "doc-tabs": "한 거래 = 여러 문서 — 탭을 전환해 같은 데이터로 PI·CI·PL을 발행하세요.",
+      "doc-tabs": "한 거래 = 여러 문서 — 발행 버튼으로 이 거래의 데이터에서 CI·PL을 만들 수 있어요.",
       "field-toggle": "가격 표시 토글로 포장명세서(PL)에 가격을 포함하거나 숨길 수 있습니다."
     },
     "steps": {
@@ -419,7 +419,7 @@
       },
       "member-deal-docs": {
         "title": "거래 건에서 CI·PL 발행",
-        "body": "거래 건 안에서 선적을 고르고 양식 탭을 전환해 상업송장(CI)·포장명세서(PL)를 발행하세요. 가이드는 사이드바에서 언제든 다시 열 수 있습니다."
+        "body": "거래 건 안에서 'CI 발행/PL 발행'을 누르세요 — 선적을 고르고 배분·옵션을 조정한 뒤 미리보고 발행합니다. 가이드는 사이드바에서 언제든 다시 열 수 있습니다."
       }
     }
   }

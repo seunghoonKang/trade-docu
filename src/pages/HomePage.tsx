@@ -7,10 +7,9 @@ import { getLastDocType } from "@/entities/document";
 import type { DocType } from "@/entities/document";
 import { listDealSummaries } from "@/features/deal-crud";
 import type { DealSummary } from "@/features/deal-crud";
-import { HistoryPageSkeleton } from "@/features/history";
 import { TemplateGallery } from "@/widgets/TemplateGallery";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
-import { Button, Layout } from "@/shared/ui";
+import { Button, Layout, Skeleton } from "@/shared/ui";
 
 const CONTINUE_LIMIT = 3;
 const DOC_BADGES: DocType[] = ["PI", "CI", "PL"];
@@ -51,7 +50,7 @@ export function HomePage() {
     <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="home" />}>
       <div className="max-w-6xl mx-auto px-4 py-8 md:p-10 space-y-10 pb-12">
         {isLoading ? (
-          <HistoryPageSkeleton />
+          <HomeSkeleton />
         ) : user && openDeals.length > 0 ? (
           <>
             {/* 이어서 — 진행 중 거래 건 우선 */}
@@ -143,5 +142,22 @@ export function HomePage() {
         )}
       </div>
     </Layout>
+  );
+}
+
+/** 갤러리/이어서 카드 그리드에 맞춘 홈 스켈레톤. */
+function HomeSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-4 w-80" />
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Skeleton className="h-44 rounded-xl" />
+        <Skeleton className="h-44 rounded-xl" />
+        <Skeleton className="h-44 rounded-xl" />
+      </div>
+    </div>
   );
 }

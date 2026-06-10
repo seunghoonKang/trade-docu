@@ -24,3 +24,5 @@ export {
 export type { ItemBalance, DealBalance } from "./lib/balance";
 export { buildDealSummaries, matchesDealSummary } from "./lib/summary";
 export type { DealSummary, DealDocRef } from "./lib/summary";
+export { documentPreviewData } from "./lib/snapshot";
+export type { DocumentPreviewData } from "./lib/snapshot";

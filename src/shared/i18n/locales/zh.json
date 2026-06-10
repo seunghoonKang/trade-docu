@@ -2,7 +2,7 @@
   "app": { "title": "形式发票" },
   "nav": {"login": "登录", "logout": "退出", "signup": "注册", "history": "历史", "settings": "设置", "dashboard": "仪表盘", "invoices": "创建单据", "userGuide": "用户指南", "comingSoon": "即将推出", "comingSoonSection": "即将推出"},
   "export": { "pdf": "导出为 PDF", "excel": "导出为 Excel", "print": "打印", "export": "导出", "pdfFailed": "PDF 生成失败。" },
-  "deal": {"documents": "单据", "issue": "签发", "issued": "已签发", "shipment": "装运", "addShipment": "添加装运", "ordered": "订购", "allocated": "已装运", "remaining": "剩余", "allocation": "分配", "thisShipment": "本次分配", "save": "保存", "overAllocated": "超额分配", "remainingWarning": "仍有未装运的剩余数量。", "complete": "完成交易", "item": "品目", "ctn": "箱数(CTN)", "netWeight": "净重", "grossWeight": "毛重", "cbm": "CBM", "cartonNo": "箱号", "showPrice": "显示价格", "statusOpen": "进行中", "statusClosed": "已完成", "issuedDocuments": "已签发单据"},
+  "deal": {"documents": "单据", "issue": "签发", "issued": "已签发", "shipment": "装运", "addShipment": "添加装运", "ordered": "订购", "allocated": "已装运", "remaining": "剩余", "allocation": "分配", "thisShipment": "本次分配", "save": "保存", "overAllocated": "超额分配", "remainingWarning": "仍有未装运的剩余数量。", "complete": "完成交易", "item": "品目", "ctn": "箱数(CTN)", "netWeight": "净重", "grossWeight": "毛重", "cbm": "CBM", "cartonNo": "箱号", "showPrice": "显示价格", "statusOpen": "进行中", "statusClosed": "已完成", "issuedDocuments": "已签发单据", "backToDeal": "返回交易", "issueTitle": "签发{{doc}}", "alreadyIssued": "该装运已签发。"},
   "form": {
     "originCountry": "原产国",
     "documentInfo": "文件信息",
@@ -385,7 +385,7 @@
     "navigateToProfile": "前往资料页面",
     "coachmarks": {
       "split-shipment": "支持分批装运 — 添加装运并按装运分配商品数量。",
-      "doc-tabs": "一笔交易 = 多份单据 — 切换标签即可用同一数据签发PI、CI和PL。",
+      "doc-tabs": "一笔交易 = 多份单据 — 使用签发按钮即可从这笔交易的数据创建CI和PL。",
       "field-toggle": "使用价格开关可在装箱单(PL)中显示或隐藏价格。"
     },
     "steps": {
@@ -419,7 +419,7 @@
       },
       "member-deal-docs": {
         "title": "在交易中签发CI·PL",
-        "body": "在交易中选择装运并切换单据标签即可签发商业发票(CI)和装箱单(PL)。可随时从侧边栏重新打开本指南。"
+        "body": "在交易中点击“签发CI/签发PL”——选择装运、调整分配和选项，预览后签发。可随时从侧边栏重新打开本指南。"
       }
     }
   }
