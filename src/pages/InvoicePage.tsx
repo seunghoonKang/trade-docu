@@ -1,5 +1,5 @@
 import { useEffect, useEffectEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Layout } from "@/shared/ui";
 import { InvoiceForm } from "@/widgets/InvoiceForm";
 import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
@@ -12,9 +12,14 @@ import { ProfileNudgeBanner, dismissProfileNudge, isProfileNudgeDismissed } from
 import { getSeller } from "@/entities/seller";
 import type { BankInfo } from "@/shared/lib/bankInfo";
 import type { Seller } from "@/entities/seller";
+import type { DocType } from "@/entities/document";
 
 export function InvoicePage() {
   const invoiceForm = useInvoiceForm();
+  // 단건 작성 양식(#31): /new?doc=CI|PL 이면 그 양식으로 미리보기·내보내기(기본 PI).
+  const [searchParams] = useSearchParams();
+  const docParam = searchParams.get("doc");
+  const docType: DocType = docParam === "CI" || docParam === "PL" ? docParam : "PI";
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [needsProfile, setNeedsProfile] = useState(false);
@@ -72,7 +77,7 @@ export function InvoicePage() {
   }, [user]);
 
   return (
-    <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar formData={invoiceForm.form} page="documents" />}>
+    <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar formData={invoiceForm.form} page="documents" docType={docType} />}>
       <div className="flex h-[calc(100vh-4rem)] flex-col">
         {needsProfile && !profileNudgeDismissed && (
           <ProfileNudgeBanner
@@ -95,7 +100,7 @@ export function InvoicePage() {
             data-guide="preview"
             className="hidden min-w-0 xl:flex xl:w-1/2 bg-accent"
           >
-            <InvoicePreviewPanel data={invoiceForm.form} />
+            <InvoicePreviewPanel data={invoiceForm.form} variant={docType} />
           </div>
         </div>
       </div>

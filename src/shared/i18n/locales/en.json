@@ -231,6 +231,33 @@
     "nudgeMessage": "Set up your profile once and it auto-fills every invoice.",
     "completeCta": "Complete profile"
   },
+  "home": {
+    "galleryTitle": "What do you want to create?",
+    "gallerySubtitle": "Pick a document template to start right away — no setup needed.",
+    "template": {
+      "PI": {
+        "title": "Proforma Invoice",
+        "desc": "Quote your buyer with items, prices, and trade terms."
+      },
+      "CI": {
+        "title": "Commercial Invoice",
+        "desc": "Invoice an actual shipment with charges and origin."
+      },
+      "PL": {
+        "title": "Packing List",
+        "desc": "List cartons, weights, and measurements for a shipment."
+      }
+    },
+    "create": "Create",
+    "lastUsedBadge": "Last used",
+    "continueTitle": "Continue where you left off",
+    "viewAllDeals": "View all deals",
+    "newDocument": "New document",
+    "continueWithDoc": "New {{doc}}",
+    "guestCtaTitle": "One deal, many documents",
+    "guestCtaBody": "Sign up to save your work as deals and issue PI, CI, and PL together with shipments and history.",
+    "guestCtaButton": "Log in / Sign up"
+  },
   "history": {
     "dealRepository": "Deals",
     "noDeals": "No saved deals.",

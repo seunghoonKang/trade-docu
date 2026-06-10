@@ -27,6 +27,7 @@ import { triggerPrint } from "@/features/print";
 import { Coachmark } from "@/features/service-guide";
 import { validateDocument } from "@/entities/invoice";
 import type { InvoiceDraft, AdditionalCharge, ChargeType } from "@/entities/invoice";
+import { setLastDocType } from "@/entities/document";
 import type { DocType } from "@/entities/document";
 import type { Allocation, PackingLine } from "@/entities/shipment";
 import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
@@ -196,6 +197,7 @@ export function DealDetailPage() {
     if (!variantData || !passesValidation()) return;
     try {
       await generatePdf(variantData, variant);
+      setLastDocType(variant);
     } catch {
       toast.error(t("export.pdfFailed"));
     }
@@ -221,6 +223,7 @@ export function DealDetailPage() {
           ? { ...variantData, packingLines: plPackingLines, showPrice: plShowPrice }
           : variantData) as unknown as Record<string, unknown>,
       });
+      setLastDocType(variant);
       toast.success(t("history.saved"));
       await loadBundle();
     } finally {

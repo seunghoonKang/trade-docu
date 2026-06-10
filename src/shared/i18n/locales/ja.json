@@ -231,6 +231,33 @@
     "nudgeMessage": "プロフィールを設定すると、毎回自動で入力されます。",
     "completeCta": "プロフィールを完成"
   },
+  "home": {
+    "galleryTitle": "どの書類を作成しますか？",
+    "gallerySubtitle": "テンプレートを選ぶとすぐに作成できます — 事前準備は不要です。",
+    "template": {
+      "PI": {
+        "title": "見積送り状 (PI)",
+        "desc": "品目・価格・取引条件で購入者に見積もりを送りましょう。"
+      },
+      "CI": {
+        "title": "商業送り状 (CI)",
+        "desc": "実際の船積みを費用・原産国とともに請求しましょう。"
+      },
+      "PL": {
+        "title": "梱包明細書 (PL)",
+        "desc": "船積みの箱数・重量・容積を整理しましょう。"
+      }
+    },
+    "create": "作成する",
+    "lastUsedBadge": "最後に使用",
+    "continueTitle": "続きから作業",
+    "viewAllDeals": "すべての取引を見る",
+    "newDocument": "新しい書類",
+    "continueWithDoc": "{{doc}}を新規作成",
+    "guestCtaTitle": "1つの取引 = 複数の書類",
+    "guestCtaBody": "登録すると作業が取引として保存され、船積み・履歴とともにPI・CI・PLを発行できます。",
+    "guestCtaButton": "ログイン / 登録"
+  },
   "history": {
     "dealRepository": "取引一覧",
     "noDeals": "保存された取引はありません。",
