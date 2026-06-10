@@ -5,6 +5,8 @@ import type { TradeDocument, DocType, DocStatus } from "@/entities/document";
 import type { Shipment, ShipmentInput, Allocation } from "@/entities/shipment";
 import { createDefaultShipment } from "@/entities/shipment";
 import { formToDeal } from "./lib/mapping";
+import { buildDealSummaries } from "./lib/summary";
+import type { DealDocRef, DealSummary } from "./lib/summary";
 
 // ── Row 타입 (Supabase snake_case) ──────────────────────────────────────────
 type DealRow = {
@@ -350,6 +352,25 @@ export async function listDeals(userId: string): Promise<Deal[]> {
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []).map((row) => mapDealRow(row as DealRow));
+}
+
+/** 거래 건 단위 History: 거래 건 + 선적 수 + 양식별 발행 수(#26). 최신 저장 순. */
+export async function listDealSummaries(userId: string): Promise<DealSummary[]> {
+  const [dealsRes, shipsRes, docsRes] = await Promise.all([
+    supabase.from("deals").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+    supabase.from("shipments").select("deal_id").eq("user_id", userId),
+    supabase.from("documents").select("deal_id, doc_type, doc_no").eq("user_id", userId),
+  ]);
+  if (dealsRes.error) throw dealsRes.error;
+  if (shipsRes.error) throw shipsRes.error;
+  if (docsRes.error) throw docsRes.error;
+
+  const deals = (dealsRes.data ?? []).map((row) => mapDealRow(row as DealRow));
+  const shipmentDealIds = ((shipsRes.data ?? []) as { deal_id: string }[]).map((r) => r.deal_id);
+  const docs: DealDocRef[] = (
+    (docsRes.data ?? []) as { deal_id: string; doc_type: DocType; doc_no: string }[]
+  ).map((r) => ({ dealId: r.deal_id, docType: r.doc_type, docNo: r.doc_no }));
+  return buildDealSummaries(deals, shipmentDealIds, docs);
 }
 
 /** 거래 건 삭제. documents/shipments는 FK on delete cascade로 함께 삭제된다. */

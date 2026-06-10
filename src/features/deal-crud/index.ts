@@ -2,6 +2,7 @@ export {
   saveDeal,
   getDealBundle,
   listDeals,
+  listDealSummaries,
   deleteDeal,
   issueDocument,
   ensureDefaultShipment,
@@ -20,3 +21,5 @@ export {
   suggestDocNo,
 } from "./lib/balance";
 export type { ItemBalance, DealBalance } from "./lib/balance";
+export { buildDealSummaries, matchesDealSummary } from "./lib/summary";
+export type { DealSummary, DealDocRef } from "./lib/summary";

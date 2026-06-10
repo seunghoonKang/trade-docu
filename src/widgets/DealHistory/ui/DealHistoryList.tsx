@@ -5,63 +5,46 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
-  FolderInput,
   Search,
   Trash2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { historyRowId } from "@/features/history";
-import {
-  patchHistoryListParams,
-  readHistoryListParams,
-} from "@/features/history";
+import { patchHistoryListParams, readHistoryListParams } from "@/features/history";
+import { matchesDealSummary } from "@/features/deal-crud";
+import type { DealSummary } from "@/features/deal-crud";
+import type { DocType } from "@/entities/document";
 import { useDebouncedValue } from "@/shared/lib/useDebouncedValue";
 import { cn } from "@/shared/lib/utils";
-import type { Invoice } from "@/entities/invoice";
 
 const PAGE_SIZE = 20;
+const DOC_TYPES: DocType[] = ["PI", "CI", "PL"];
 
 interface Props {
-  invoices: Invoice[];
-  focusInvoiceId?: string | null;
+  summaries: DealSummary[];
+  focusDealId?: string | null;
   onFocusHandled?: () => void;
-  onViewRequest: (invoice: Invoice) => void;
-  onLoadRequest: (invoice: Invoice) => void;
-  onDeleteRequest: (invoice: Invoice) => void;
+  onViewRequest: (summary: DealSummary) => void;
+  onDeleteRequest: (summary: DealSummary) => void;
 }
 
-function formatDocumentDate(invoice: Invoice): string | null {
-  return invoice.date.trim() !== "" ? invoice.date : null;
-}
-
-function formatSavedDate(invoice: Invoice): string {
-  return new Date(invoice.createdAt).toLocaleDateString();
-}
-
-function getSavedTimestamp(invoice: Invoice): number {
-  return new Date(invoice.createdAt).getTime();
-}
-
-function matchesSearch(invoice: Invoice, query: string): boolean {
-  const q = query.trim().toLowerCase();
-  if (!q) return true;
-  return (
-    invoice.invoiceNo.toLowerCase().includes(q) ||
-    invoice.refNo.toLowerCase().includes(q) ||
-    invoice.buyerSnapshot.companyName.toLowerCase().includes(q)
-  );
+function getSavedTimestamp(summary: DealSummary): number {
+  return new Date(summary.deal.createdAt).getTime();
 }
 
 const iconActionClass =
   "flex items-center justify-center size-8 rounded-md text-primary hover:bg-accent transition-colors active:opacity-80";
 
-export function InvoiceHistoryList({
-  invoices,
-  focusInvoiceId,
+/**
+ * 거래 건 단위 History(#26): 검색(PI/PO 번호·구매자)·저장일 정렬·페이지네이션을
+ * URL 쿼리(q/page/sort)로 유지한다. 행 = 거래 건 + 선적 수 + 양식별 발행 배지.
+ */
+export function DealHistoryList({
+  summaries,
+  focusDealId,
   onFocusHandled,
   onViewRequest,
-  onLoadRequest,
   onDeleteRequest,
 }: Props) {
   const { t } = useTranslation();
@@ -81,21 +64,16 @@ export function InvoiceHistoryList({
     }
   }, [debouncedQuery, urlQuery, setSearchParams]);
 
-  const filteredInvoices = useMemo(
-    () => invoices.filter((inv) => matchesSearch(inv, debouncedQuery)),
-    [invoices, debouncedQuery],
-  );
-
-  const sortedInvoices = useMemo(() => {
-    const sorted = [...filteredInvoices];
-    sorted.sort((a, b) => {
+  const sortedSummaries = useMemo(() => {
+    const filtered = summaries.filter((s) => matchesDealSummary(s, debouncedQuery));
+    filtered.sort((a, b) => {
       const diff = getSavedTimestamp(a) - getSavedTimestamp(b);
       return savedDateSort === "desc" ? -diff : diff;
     });
-    return sorted;
-  }, [filteredInvoices, savedDateSort]);
+    return filtered;
+  }, [summaries, debouncedQuery, savedDateSort]);
 
-  const totalPages = Math.max(1, Math.ceil(sortedInvoices.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(sortedSummaries.length / PAGE_SIZE));
 
   useEffect(() => {
     if (page > totalPages) {
@@ -105,14 +83,14 @@ export function InvoiceHistoryList({
 
   const pageItems = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
-    return sortedInvoices.slice(start, start + PAGE_SIZE);
-  }, [sortedInvoices, page]);
+    return sortedSummaries.slice(start, start + PAGE_SIZE);
+  }, [sortedSummaries, page]);
 
   useEffect(() => {
-    if (!focusInvoiceId) return;
-    if (!pageItems.some((inv) => inv.id === focusInvoiceId)) return;
+    if (!focusDealId) return;
+    if (!pageItems.some((s) => s.deal.id === focusDealId)) return;
 
-    const row = document.getElementById(historyRowId(focusInvoiceId));
+    const row = document.getElementById(historyRowId(focusDealId));
     if (!row) return;
 
     const frame = requestAnimationFrame(() => {
@@ -120,10 +98,10 @@ export function InvoiceHistoryList({
       onFocusHandled?.();
     });
     return () => cancelAnimationFrame(frame);
-  }, [focusInvoiceId, onFocusHandled, pageItems]);
+  }, [focusDealId, onFocusHandled, pageItems]);
 
-  const rangeStart = sortedInvoices.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const rangeEnd = Math.min(page * PAGE_SIZE, sortedInvoices.length);
+  const rangeStart = sortedSummaries.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(page * PAGE_SIZE, sortedSummaries.length);
 
   return (
     <section className="bg-card/80 backdrop-blur border border-border rounded-xl overflow-hidden flex flex-col">
@@ -131,7 +109,7 @@ export function InvoiceHistoryList({
         className="px-6 py-4 bg-muted/30 border-b border-border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
         data-guide="history-actions"
       >
-        <h4 className="text-lg font-semibold text-primary shrink-0">{t("history.documentRepository")}</h4>
+        <h4 className="text-lg font-semibold text-primary shrink-0">{t("history.dealRepository")}</h4>
         <div className="flex items-center bg-card border border-border rounded-lg px-3 h-10 w-full sm:w-80 md:w-96 shrink-0">
           <Search className="size-4 text-muted-foreground shrink-0" aria-hidden />
           <input
@@ -145,9 +123,9 @@ export function InvoiceHistoryList({
         </div>
       </div>
 
-      {sortedInvoices.length === 0 ? (
+      {sortedSummaries.length === 0 ? (
         <p className="px-6 py-12 text-center text-muted-foreground">
-          {debouncedQuery.trim() ? t("history.noSearchResults") : t("history.noInvoices")}
+          {debouncedQuery.trim() ? t("history.noSearchResults") : t("history.noDeals")}
         </p>
       ) : (
         <>
@@ -156,13 +134,19 @@ export function InvoiceHistoryList({
               <thead>
                 <tr className="bg-muted/50 text-muted-foreground border-b border-border">
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
-                    {t("history.documentId")}
+                    {t("history.dealNo")}
                   </th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
-                    {t("history.type")}
+                    {t("history.buyer")}
                   </th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
-                    {t("history.documentDate")}
+                    {t("history.status")}
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                    {t("history.shipments")}
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                    {t("deal.documents")}
                   </th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
                     <button
@@ -188,62 +172,86 @@ export function InvoiceHistoryList({
                       )}
                     </button>
                   </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
-                    {t("history.buyer")}
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider w-[120px]">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider w-[100px]">
                     {t("history.actions")}
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border bg-card">
-                {pageItems.map((inv) => (
+                {pageItems.map((summary) => (
                   <tr
-                    key={inv.id}
-                    id={historyRowId(inv.id)}
-                    className="hover:bg-muted/20 transition-colors group"
+                    key={summary.deal.id}
+                    id={historyRowId(summary.deal.id)}
+                    className="hover:bg-muted/20 transition-colors group cursor-pointer"
+                    onClick={() => onViewRequest(summary)}
                   >
                     <td className="px-4 py-4 text-sm font-semibold text-primary">
-                      {inv.invoiceNo || t("history.noNumber")}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-muted-foreground whitespace-nowrap">
-                      {t("history.proformaInvoice")}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-muted-foreground whitespace-nowrap">
-                      {formatDocumentDate(inv) ?? t("history.noDocumentDate")}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-muted-foreground whitespace-nowrap">
-                      {formatSavedDate(inv)}
+                      {summary.piNo || t("history.noNumber")}
                     </td>
                     <td className="px-4 py-4 text-sm text-foreground">
-                      {inv.buyerSnapshot.companyName || t("history.noBuyer")}
+                      {summary.deal.buyerSnapshot.companyName || t("history.noBuyer")}
+                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <span
+                        className={cn(
+                          "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
+                          summary.deal.status === "closed"
+                            ? "bg-muted text-muted-foreground"
+                            : "bg-green-100 text-green-700",
+                        )}
+                      >
+                        {summary.deal.status === "closed"
+                          ? t("deal.statusClosed")
+                          : t("deal.statusOpen")}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-muted-foreground tabular-nums">
+                      {summary.shipmentCount}
+                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <div className="flex gap-1.5">
+                        {DOC_TYPES.map((docType) => {
+                          const count = summary.issuedCount[docType];
+                          return (
+                            <span
+                              key={docType}
+                              className={cn(
+                                "inline-flex items-center rounded border px-1.5 py-0.5 text-[11px] font-semibold",
+                                count > 0
+                                  ? "border-primary/30 bg-accent text-primary"
+                                  : "border-border text-muted-foreground/50",
+                              )}
+                            >
+                              {docType}
+                              {count > 1 && <span className="ml-0.5">×{count}</span>}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-muted-foreground whitespace-nowrap">
+                      {new Date(summary.deal.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                      <div
+                        className="flex gap-1 opacity-80 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <button
                           type="button"
                           className={iconActionClass}
                           title={t("history.view")}
                           aria-label={t("history.view")}
-                          onClick={() => onViewRequest(inv)}
+                          onClick={() => onViewRequest(summary)}
                         >
                           <Eye className="size-4" aria-hidden />
-                        </button>
-                        <button
-                          type="button"
-                          className={iconActionClass}
-                          title={t("history.load")}
-                          aria-label={t("history.load")}
-                          onClick={() => onLoadRequest(inv)}
-                        >
-                          <FolderInput className="size-4" aria-hidden />
                         </button>
                         <button
                           type="button"
                           className={cn(iconActionClass, "hover:text-destructive hover:bg-destructive/10")}
                           title={t("history.delete")}
                           aria-label={t("history.delete")}
-                          onClick={() => onDeleteRequest(inv)}
+                          onClick={() => onDeleteRequest(summary)}
                         >
                           <Trash2 className="size-4" aria-hidden />
                         </button>
@@ -255,13 +263,13 @@ export function InvoiceHistoryList({
             </table>
           </div>
 
-          {sortedInvoices.length > PAGE_SIZE && (
+          {sortedSummaries.length > PAGE_SIZE && (
             <div className="px-6 py-4 bg-muted/20 border-t border-border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-muted-foreground">
                 {t("history.paginationRange", {
                   from: rangeStart,
                   to: rangeEnd,
-                  total: sortedInvoices.length,
+                  total: sortedSummaries.length,
                 })}
               </p>
               <div className="flex items-center gap-1">
