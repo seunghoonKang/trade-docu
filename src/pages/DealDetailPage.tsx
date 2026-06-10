@@ -31,6 +31,7 @@ import { InvoicePreviewPanel } from "@/widgets/InvoicePreview";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
 import { ShipmentManager } from "@/widgets/ShipmentManager";
 import { ChargesEditor } from "@/widgets/ChargesEditor";
+import { DealDocumentList } from "@/widgets/DealDocumentList";
 import { Button, ConfirmDialog, Layout } from "@/shared/ui";
 
 const TEMPLATES: DocType[] = ["PI", "CI", "PL"];
@@ -268,7 +269,7 @@ export function DealDetailPage() {
     if (!bundle) return;
     await deleteDeal(bundle.deal.id);
     toast.success(t("history.deleted"));
-    navigate("/");
+    navigate("/history");
   }
 
   if (!authLoading && !user) return <Navigate to="/login" replace />;
@@ -284,7 +285,7 @@ export function DealDetailPage() {
         ) : notFound || !bundle || !variantData || !dealForm ? (
           <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
             <p className="text-muted-foreground">{t("history.detailNotFound")}</p>
-            <Button variant="outline" className="gap-1.5" onClick={() => navigate("/")}>
+            <Button variant="outline" className="gap-1.5" onClick={() => navigate("/history")}>
               <ArrowLeft className="size-4" aria-hidden />
               {t("history.backToList")}
             </Button>
@@ -296,7 +297,7 @@ export function DealDetailPage() {
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/history")}
                 className="-ml-2.5 gap-1.5 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="size-4" aria-hidden />
@@ -342,6 +343,16 @@ export function DealDetailPage() {
               onAddShipment={() => void handleAddShipment()}
               onDeleteShipment={(id) => void handleDeleteShipment(id)}
               onSaveAllocations={(id, allocations) => void handleSaveAllocations(id, allocations)}
+            />
+
+            {/* 발행 문서 리스트 — 클릭하면 해당 선적 + 양식 탭을 연다(혼합 UI, #26). */}
+            <DealDocumentList
+              documents={bundle.documents}
+              shipments={bundle.shipments}
+              onOpen={(doc) => {
+                if (doc.shipmentId) setActiveShipmentId(doc.shipmentId);
+                setVariant(doc.docType);
+              }}
             />
 
             {/* 양식 탭 — PI는 거래 건 전체, CI/PL은 활성 선적 배분 수량으로 렌더. */}

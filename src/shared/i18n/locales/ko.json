@@ -2,7 +2,7 @@
   "app": { "title": "프로포마 인보이스" },
   "nav": { "login": "로그인", "logout": "로그아웃", "signup": "회원가입", "history": "기록", "settings": "설정", "dashboard": "대시보드", "invoices": "인보이스", "packingLists": "패킹 리스트", "userGuide": "사용자 가이드", "comingSoon": "준비 중", "comingSoonSection": "준비 중" },
   "export": { "pdf": "PDF로 내보내기", "excel": "엑셀로 내보내기", "print": "인쇄", "export": "내보내기", "pdfFailed": "PDF 생성에 실패했습니다." },
-  "deal": {"documents": "문서", "issue": "발행", "issued": "발행됨", "shipment": "선적", "addShipment": "선적 만들기", "ordered": "주문", "allocated": "기선적", "remaining": "잔여", "allocation": "배분", "thisShipment": "이번 배분", "save": "저장", "overAllocated": "초과 배분", "remainingWarning": "아직 선적되지 않은 잔여 수량이 있습니다.", "complete": "거래 완료", "item": "품목", "ctn": "박스수(CTN)", "netWeight": "순중량", "grossWeight": "총중량", "cbm": "CBM", "cartonNo": "카톤번호", "showPrice": "가격 표시"},
+  "deal": {"documents": "문서", "issue": "발행", "issued": "발행됨", "shipment": "선적", "addShipment": "선적 만들기", "ordered": "주문", "allocated": "기선적", "remaining": "잔여", "allocation": "배분", "thisShipment": "이번 배분", "save": "저장", "overAllocated": "초과 배분", "remainingWarning": "아직 선적되지 않은 잔여 수량이 있습니다.", "complete": "거래 완료", "item": "품목", "ctn": "박스수(CTN)", "netWeight": "순중량", "grossWeight": "총중량", "cbm": "CBM", "cartonNo": "카톤번호", "showPrice": "가격 표시", "statusOpen": "진행중", "statusClosed": "완료", "issuedDocuments": "발행된 문서"},
   "form": {
     "documentInfo": "문서 정보",
     "invoiceNo": "인보이스 번호",
@@ -228,6 +228,12 @@
     "completeCta": "프로필 완성"
   },
   "history": {
+    "dealRepository": "거래 건 목록",
+    "noDeals": "저장된 거래 건이 없습니다.",
+    "dealNo": "거래 번호",
+    "status": "상태",
+    "shipments": "선적",
+    "confirmDeleteDealTitle": "거래 건 삭제",
     "title": "인보이스 이력",
     "pageTitle": "기록",
     "close": "닫기",
