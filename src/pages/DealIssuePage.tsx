@@ -257,6 +257,15 @@ export function DealIssuePage() {
     );
   }, [activeShipmentId, bundle]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 이 양식이 이미 발행된 선적들(탭 ✓ 표시 + 다음 미발행 선적 탐색).
+  const issuedShipmentIds = useMemo(
+    () =>
+      (bundle?.documents ?? [])
+        .filter((d) => d.docType === variant && d.shipmentId)
+        .map((d) => d.shipmentId as string),
+    [bundle, variant],
+  );
+
   // 활성 선적에 이미 발행된 문서(있으면 재발행 대신 보기로 유도).
   const issuedDoc = useMemo(
     () =>
@@ -329,7 +338,7 @@ export function DealIssuePage() {
     setIssuing(true);
     await flushPendingSaves();
     try {
-      const docId = await issueDocument(user.id, {
+      await issueDocument(user.id, {
         dealId: bundle.deal.id,
         shipmentId: activeShipmentId,
         docType: variant,
@@ -341,8 +350,18 @@ export function DealIssuePage() {
           : variantData) as unknown as Record<string, unknown>,
       });
       setLastDocType(variant);
-      toast.success(t("history.saved"));
-      navigate(`/deals/${bundle.deal.id}/docs/${docId}`, { replace: true });
+      // 분할선적 왕복 제거: 미발행 선적이 남았으면 플로우에 머물며 다음 선적으로 전환,
+      // 전부 발행됐을 때만 거래 상세로 복귀한다.
+      const issued = new Set([...issuedShipmentIds, activeShipmentId]);
+      const next = shipments.find((s) => !issued.has(s.id));
+      if (next) {
+        setActiveShipmentId(next.id);
+        toast.success(t("deal.issuedNext", { seq: next.seq }));
+        await loadBundle({ background: true });
+      } else {
+        toast.success(t("deal.allIssued", { doc: variant }));
+        navigate(`/deals/${bundle.deal.id}`);
+      }
     } finally {
       setIssuing(false);
     }
@@ -491,6 +510,7 @@ export function DealIssuePage() {
                   activeShipmentId={activeShipmentId}
                   showPacking={variant === "PL"}
                   splitMode={splitMode}
+                  issuedShipmentIds={issuedShipmentIds}
                   onEnterSplit={() => setSplitMode(true)}
                   onCancelSplit={handleCancelSplitRequest}
                   onSelectShipment={setActiveShipmentId}

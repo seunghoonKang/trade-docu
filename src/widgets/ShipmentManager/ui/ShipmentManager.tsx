@@ -13,6 +13,8 @@ interface Props {
   showPacking?: boolean;
   /** 분할 모드(매트릭스 노출) — 부모가 제어한다(선적 수와 동기화). */
   splitMode: boolean;
+  /** 현재 양식이 이미 발행된 선적들 — 탭에 ✓ 표시(발행 진행 상황). */
+  issuedShipmentIds?: string[];
   onEnterSplit: () => void;
   /** 전량 출고로 되돌리기 — 선적이 여러 개면 부모가 확인 팝업을 거친다. */
   onCancelSplit: () => void;
@@ -34,6 +36,7 @@ export function ShipmentManager({
   activeShipmentId,
   showPacking = false,
   splitMode,
+  issuedShipmentIds = [],
   onEnterSplit,
   onCancelSplit,
   onSelectShipment,
@@ -112,6 +115,9 @@ export function ShipmentManager({
             >
               {t("deal.shipment")} {s.seq}
               <span className="ml-1 text-xs font-normal tabular-nums">({allocated})</span>
+              {issuedShipmentIds.includes(s.id) && (
+                <span className="ml-1 text-green-600" aria-label="issued">✓</span>
+              )}
             </button>
           );
         })}
