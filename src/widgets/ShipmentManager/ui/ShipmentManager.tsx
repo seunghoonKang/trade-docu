@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Plus, Split, X } from "lucide-react";
+import { Plus, Split, Undo2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Deal } from "@/entities/deal";
 import type { Shipment, Allocation } from "@/entities/shipment";
@@ -12,6 +11,11 @@ interface Props {
   activeShipmentId: string | null;
   /** PL 플로우에서만 per-line 포장 편집을 노출한다. */
   showPacking?: boolean;
+  /** 분할 모드(매트릭스 노출) — 부모가 제어한다(선적 수와 동기화). */
+  splitMode: boolean;
+  onEnterSplit: () => void;
+  /** 전량 출고로 되돌리기 — 선적이 여러 개면 부모가 확인 팝업을 거친다. */
+  onCancelSplit: () => void;
   onSelectShipment: (id: string) => void;
   onAddShipment: () => void;
   onDeleteShipment: (id: string) => void;
@@ -29,19 +33,15 @@ export function ShipmentManager({
   shipments,
   activeShipmentId,
   showPacking = false,
+  splitMode,
+  onEnterSplit,
+  onCancelSplit,
   onSelectShipment,
   onAddShipment,
   onDeleteShipment,
   onChangeAllocations,
 }: Props) {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState(shipments.length > 1);
-
-  // 선적이 여러 개면(이미 분할) 항상 매트릭스를 펼친다.
-  useEffect(() => {
-    if (shipments.length > 1) setExpanded(true);
-  }, [shipments.length]);
-
   const totalOrdered = deal.items.reduce((sum, it) => sum + it.orderedQty, 0);
   const active = shipments.find((s) => s.id === activeShipmentId) ?? null;
 
@@ -61,7 +61,7 @@ export function ShipmentManager({
     return shipments.reduce((sum, s) => sum + (allocationFor(s, itemId).qty || 0), 0);
   }
 
-  if (!expanded) {
+  if (!splitMode) {
     // 기본: 전량 1회 출고 — 분할 개념을 노출하지 않는다.
     return (
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -71,7 +71,7 @@ export function ShipmentManager({
             {t("deal.fullShipmentSummary", { total: totalOrdered })}
           </p>
         </div>
-        <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setExpanded(true)}>
+        <Button variant="outline" size="sm" className="gap-1.5" onClick={onEnterSplit}>
           <Split className="size-4" aria-hidden />
           {t("deal.splitShipment")}
         </Button>
@@ -83,10 +83,21 @@ export function ShipmentManager({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-semibold">{t("deal.allocation")}</h3>
-        <Button variant="outline" size="sm" className="gap-1.5" onClick={onAddShipment}>
-          <Plus className="size-4" aria-hidden />
-          {t("deal.addShipment")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-muted-foreground hover:text-foreground"
+            onClick={onCancelSplit}
+          >
+            <Undo2 className="size-4" aria-hidden />
+            {t("deal.cancelSplit")}
+          </Button>
+          <Button variant="outline" size="sm" className="gap-1.5" onClick={onAddShipment}>
+            <Plus className="size-4" aria-hidden />
+            {t("deal.addShipment")}
+          </Button>
+        </div>
       </div>
 
       {/* 품목×선적 매트릭스 — 한 표에서 전체 분배, 잔여 자동 계산. */}

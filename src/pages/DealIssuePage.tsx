@@ -119,6 +119,44 @@ export function DealIssuePage() {
     };
   }, [flushPendingSaves]);
 
+  // 분할 모드(매트릭스): 선적이 여러 개면 항상 켜짐, 1개일 땐 사용자가 토글.
+  const [splitMode, setSplitMode] = useState(false);
+  useEffect(() => {
+    if (shipments.length > 1) setSplitMode(true);
+  }, [shipments.length]);
+  const [confirmCancelSplit, setConfirmCancelSplit] = useState(false);
+
+  /** 전량 배분으로 되돌린 배분 목록(포장 입력은 보존). */
+  function fullAllocationsOf(shipment: Shipment): Allocation[] {
+    return (bundle?.deal.items ?? []).map((it) => ({
+      ...shipment.allocations.find((a) => a.itemId === it.id),
+      itemId: it.id,
+      qty: it.orderedQty,
+    }));
+  }
+
+  // 분할 취소 요청: 선적 1개면 그냥 전량 복원+접기, 여러 개면 확인 팝업(선적/문서 삭제 동반).
+  function handleCancelSplitRequest() {
+    if (shipments.length <= 1) {
+      const first = shipments[0];
+      if (first) handleChangeAllocations(first.id, fullAllocationsOf(first));
+      setSplitMode(false);
+      return;
+    }
+    setConfirmCancelSplit(true);
+  }
+
+  async function handleCancelSplit() {
+    if (!bundle || shipments.length === 0) return;
+    await flushPendingSaves();
+    const [first, ...rest] = shipments;
+    await Promise.all(rest.map((s) => deleteShipment(s.id)));
+    await updateShipmentAllocations(first.id, fullAllocationsOf(first).map(normalizeAllocation));
+    setActiveShipmentId(first.id);
+    setSplitMode(false);
+    await loadBundle();
+  }
+
   // 활성 선적: 유지 → URL 지정(?shipment=) → 첫 선적 순.
   useEffect(() => {
     if (!bundle) return;
@@ -446,6 +484,9 @@ export function DealIssuePage() {
                   shipments={shipments}
                   activeShipmentId={activeShipmentId}
                   showPacking={variant === "PL"}
+                  splitMode={splitMode}
+                  onEnterSplit={() => setSplitMode(true)}
+                  onCancelSplit={handleCancelSplitRequest}
                   onSelectShipment={setActiveShipmentId}
                   onAddShipment={() => void handleAddShipment()}
                   onDeleteShipment={(id) => void handleDeleteShipment(id)}
@@ -524,6 +565,22 @@ export function DealIssuePage() {
           </div>
         </div>
       </div>
+
+      {/* 분할 취소 확인 — 선적 2 이후와 그 발행 문서가 삭제된다. */}
+      <ConfirmDialog
+        open={confirmCancelSplit}
+        title={t("deal.confirmCancelSplitTitle")}
+        description={t("deal.confirmCancelSplitDescription")}
+        descriptionNote={t("history.confirmDeleteNote")}
+        confirmLabel={t("deal.cancelSplit")}
+        cancelLabel={t("history.cancel")}
+        destructive
+        onConfirm={() => {
+          setConfirmCancelSplit(false);
+          void handleCancelSplit();
+        }}
+        onCancel={() => setConfirmCancelSplit(false)}
+      />
 
       {/* 원산지 없이 발행 확인 — 토스트 연속 노출 대신 명시적으로 묻는다. */}
       <ConfirmDialog
