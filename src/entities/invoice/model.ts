@@ -30,6 +30,17 @@ export interface BuyerSnapshot {
   contactPerson: string;
 }
 
+export function createEmptyParty(): BuyerSnapshot {
+  return { companyName: "", address: "", tel: "", contactPerson: "" };
+}
+
+/** 신용장 상세(결제수단 L/C일 때). */
+export interface LcInfoForm {
+  no: string;
+  issuingBank: string;
+  date: string;
+}
+
 export interface Invoice {
   id: string;
   userId: string;
@@ -57,6 +68,12 @@ export interface Invoice {
   totalAmount: number;
   bankInfo: BankInfo;
   createdAt: string;
+  // 당사자: 수하인/착하통지처는 비면(null) 구매자와 동일.
+  consignee?: BuyerSnapshot | null;
+  notify?: BuyerSnapshot | null;
+  // 결제: 방식 + L/C 상세.
+  paymentMethod?: string; // T/T | L/C | ADVANCE | OTHER
+  lcInfo?: LcInfoForm;
 }
 
 export function createEmptyInvoice(): Omit<Invoice, "id" | "userId" | "createdAt"> {
@@ -88,6 +105,10 @@ export function createEmptyInvoice(): Omit<Invoice, "id" | "userId" | "createdAt
     items: [createEmptyItem()],
     additionalCharges: [],
     totalAmount: 0,
+    consignee: null,
+    notify: null,
+    paymentMethod: "",
+    lcInfo: { no: "", issuingBank: "", date: "" },
     bankInfo: {
       bankName: "",
       bankSwift: "",

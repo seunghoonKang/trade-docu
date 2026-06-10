@@ -1,7 +1,9 @@
 import { useState, useCallback } from "react";
-import type { Invoice, InvoiceItem, AdditionalCharge } from "@/entities/invoice";
-import { createEmptyInvoice, createEmptyItem } from "@/entities/invoice";
+import type { Invoice, InvoiceItem, AdditionalCharge, BuyerSnapshot, LcInfoForm } from "@/entities/invoice";
+import { createEmptyInvoice, createEmptyItem, createEmptyParty } from "@/entities/invoice";
 import { calcItemAmount, calcTotalAmount } from "@/entities/invoice";
+
+type PartyKind = "consignee" | "notify";
 
 type InvoiceForm = Omit<Invoice, "id" | "userId" | "createdAt">;
 
@@ -18,6 +20,22 @@ export function useInvoiceForm() {
 
   const updateBankInfo = useCallback(<K extends keyof InvoiceForm["bankInfo"]>(key: K, value: InvoiceForm["bankInfo"][K]) => {
     setForm((prev) => ({ ...prev, bankInfo: { ...prev.bankInfo, [key]: value } }));
+  }, []);
+
+  // 당사자(수하인/착하통지처): null = 구매자와 동일.
+  const toggleParty = useCallback((party: PartyKind, separate: boolean) => {
+    setForm((prev) => ({ ...prev, [party]: separate ? createEmptyParty() : null }));
+  }, []);
+
+  const updateParty = useCallback((party: PartyKind, key: keyof BuyerSnapshot, value: string) => {
+    setForm((prev) => ({ ...prev, [party]: { ...(prev[party] ?? createEmptyParty()), [key]: value } }));
+  }, []);
+
+  const updateLcInfo = useCallback((key: keyof LcInfoForm, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      lcInfo: { ...(prev.lcInfo ?? { no: "", issuingBank: "", date: "" }), [key]: value },
+    }));
   }, []);
 
   const updateItem = useCallback((index: number, field: keyof InvoiceItem, value: string | number) => {
@@ -77,5 +95,5 @@ export function useInvoiceForm() {
     });
   }, []);
 
-  return { form, updateField, updateBuyer, updateBankInfo, updateItem, addItem, removeItem, updateCharge, addCharge, removeCharge, loadForm };
+  return { form, updateField, updateBuyer, updateBankInfo, toggleParty, updateParty, updateLcInfo, updateItem, addItem, removeItem, updateCharge, addCharge, removeCharge, loadForm };
 }

@@ -49,6 +49,20 @@ describe("formToDeal", () => {
     expect(deal.paymentMethod).toBe("");
     expect(deal.status).toBe("open");
   });
+
+  it("당사자(수하인/통지처)와 결제/L/C를 매핑한다", () => {
+    const deal = formToDeal({
+      ...sampleForm(),
+      consignee: { companyName: "Cons Co.", address: "Busan", tel: "051", contactPerson: "Kim" },
+      notify: null,
+      paymentMethod: "L/C",
+      lcInfo: { no: "LC-1", issuingBank: "KEB", date: "2026-01-01" },
+    });
+    expect(deal.consigneeSnapshot).toMatchObject({ companyName: "Cons Co." });
+    expect(deal.notifySnapshot).toBeNull();
+    expect(deal.paymentMethod).toBe("L/C");
+    expect(deal.lcInfo).toEqual({ no: "LC-1", issuingBank: "KEB", date: "2026-01-01" });
+  });
 });
 
 describe("dealToForm", () => {
