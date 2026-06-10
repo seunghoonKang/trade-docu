@@ -356,3 +356,41 @@ export async function deleteDeal(dealId: string): Promise<void> {
   const { error } = await supabase.from("deals").delete().eq("id", dealId);
   if (error) throw error;
 }
+
+/** 분할선적: 새 선적 생성(차수 seq, 품목별 배분). shipment id 반환. */
+export async function createShipment(
+  userId: string,
+  dealId: string,
+  seq: number,
+  allocations: Allocation[],
+): Promise<string> {
+  const ship: ShipmentInput = { ...createDefaultShipment(dealId, allocations), seq };
+  const { data, error } = await supabase
+    .from("shipments")
+    .insert(shipmentInsertPayload(userId, ship))
+    .select("id")
+    .single();
+  if (error) throw error;
+  return (data as { id: string }).id;
+}
+
+/** 선적의 품목별 배분 수량 갱신. */
+export async function updateShipmentAllocations(
+  shipmentId: string,
+  allocations: Allocation[],
+): Promise<void> {
+  const { error } = await supabase.from("shipments").update({ allocations }).eq("id", shipmentId);
+  if (error) throw error;
+}
+
+/** 선적 삭제. 그 선적의 CI/PL 문서는 FK on delete cascade로 함께 삭제된다. */
+export async function deleteShipment(shipmentId: string): Promise<void> {
+  const { error } = await supabase.from("shipments").delete().eq("id", shipmentId);
+  if (error) throw error;
+}
+
+/** 거래 건 상태(open/closed). '완료' 시 잔여 경고는 호출부에서 처리. */
+export async function setDealStatus(dealId: string, status: "open" | "closed"): Promise<void> {
+  const { error } = await supabase.from("deals").update({ status }).eq("id", dealId);
+  if (error) throw error;
+}

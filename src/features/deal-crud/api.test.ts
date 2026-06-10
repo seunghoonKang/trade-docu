@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getDealBundle, issueDocument, saveDeal } from "./api";
+import { createShipment, deleteShipment, getDealBundle, issueDocument, saveDeal } from "./api";
 import { createEmptyInvoice } from "@/entities/invoice";
 
 // 체이너블 Supabase 쿼리 빌더 목. 종단(single/maybeSingle/await)에서 queue를 순서대로 소비한다.
@@ -154,5 +154,20 @@ describe("issueDocument", () => {
 
     expect(id).toBe("doc-9");
     expect(from).toHaveBeenCalledWith("documents");
+  });
+});
+
+describe("선적 CRUD", () => {
+  it("createShipment는 차수 seq와 배분으로 선적을 만들고 id를 반환한다", async () => {
+    setQueue([{ data: { id: "ship-2" }, error: null }]);
+    const id = await createShipment("user-1", "deal-1", 2, [{ itemId: "i1", qty: 300 }]);
+    expect(id).toBe("ship-2");
+    expect(from).toHaveBeenCalledWith("shipments");
+  });
+
+  it("deleteShipment는 예외 없이 선적을 삭제한다", async () => {
+    setQueue([{ data: null, error: null }]);
+    await expect(deleteShipment("ship-2")).resolves.toBeUndefined();
+    expect(from).toHaveBeenCalledWith("shipments");
   });
 });
