@@ -33,9 +33,9 @@ export function TemplateGallery({ onSelect, lastDocType = null }: Props) {
             key={docType}
             type="button"
             onClick={() => onSelect(docType)}
-            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
+            className="group flex w-full flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
           >
-            <div className="relative flex items-center justify-center bg-accent/60 py-7 transition-colors group-hover:bg-accent">
+            <div className="relative flex w-full items-center justify-center bg-accent/60 py-7 transition-colors group-hover:bg-accent">
               {docType === lastDocType && (
                 <span className="absolute left-3 top-3 rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
                   {t("home.lastUsedBadge")}
