@@ -1,1 +1,1 @@
-export { TemplateGallery } from "./ui/TemplateGallery";
+export { TemplateGallery, TemplateGallerySkeleton } from "./ui/TemplateGallery";

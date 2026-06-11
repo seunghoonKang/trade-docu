@@ -249,6 +249,14 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* 그레인은 화면 전용 — 인쇄 프레임에도 스타일이 복제되므로(print-color-adjust: exact),
+   가드 없이는 발행 서류 전 페이지에 얼룩이 인쇄된다. */
+@media print {
+  body::after {
+    content: none;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

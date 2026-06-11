@@ -1,7 +1,7 @@
 import { FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { DocType } from "@/entities/document";
-import { KineticTitle } from "@/shared/ui";
+import { KineticTitle, Skeleton } from "@/shared/ui";
 
 interface Props {
   onSelect: (docType: DocType) => void;
@@ -57,6 +57,36 @@ export function TemplateGallery({ onSelect, lastDocType = null }: Props) {
               </p>
             </div>
           </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * 갤러리 미러 스켈레톤 — 헤더와 카드(썸네일 존/텍스트 블록)를 실제 마크업 구조
+ * 그대로 따른다. 카드와 한 파일에 두는 이유: 카드 구조가 바뀔 때 같이 고치도록(#56의
+ * 드리프트 재발 방지). h-[13.5rem] = 썸네일 존 py-7(2×1.75rem) + 종이 h-40(10rem).
+ */
+export function TemplateGallerySkeleton() {
+  return (
+    <section>
+      <div className="mb-6 space-y-2">
+        <Skeleton className="h-7 w-56 md:h-8" />
+        <Skeleton className="h-4 w-72" />
+      </div>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        {TEMPLATES.map((docType) => (
+          <div key={docType} className="overflow-hidden rounded-xl border border-border bg-card">
+            <Skeleton className="h-[13.5rem] w-full rounded-none" />
+            <div className="space-y-2 border-t border-border p-5">
+              <div className="flex items-center justify-between gap-2">
+                <Skeleton className="h-5 w-2/3" />
+                <Skeleton className="h-5 w-8" />
+              </div>
+              <Skeleton className="h-4 w-full" />
+            </div>
+          </div>
         ))}
       </div>
     </section>

@@ -18,7 +18,7 @@ export function cloneInvoiceForCapture(): HTMLElement {
   clone.style.width = `${CAPTURE_WIDTH_PX}px`;
   clone.style.maxWidth = `${CAPTURE_WIDTH_PX}px`;
   clone.style.boxShadow = "none";
-  clone.classList.remove("paper-shadow");
+  clone.classList.remove("paper-shadow", "paper-settle");
   return clone;
 }
 
@@ -39,6 +39,7 @@ export function createCaptureFrame(): CaptureFrame {
   doc.write("<!DOCTYPE html><html><head></head><body></body></html>");
   doc.close();
   cloneDocumentStyles(doc);
+  freezeMotion(doc);
 
   return {
     doc,
@@ -81,4 +82,16 @@ export function cloneDocumentStyles(target: Document) {
   document.querySelectorAll('link[rel="stylesheet"], style').forEach((node) => {
     target.head.appendChild(node.cloneNode(true));
   });
+}
+
+/**
+ * 캡처/인쇄 프레임의 애니메이션·전환을 전부 정지시킨다. 노드를 새 문서에 넣으면
+ * CSS 애니메이션이 처음부터 재시작되므로, 끄지 않으면 등장 안무(paper-settle 등)의
+ * 중간 상태(반투명·오프셋)가 그대로 래스터화/인쇄된다.
+ */
+export function freezeMotion(target: Document) {
+  const style = target.createElement("style");
+  style.textContent =
+    "*, *::before, *::after { animation: none !important; transition: none !important; }";
+  target.head.appendChild(style);
 }

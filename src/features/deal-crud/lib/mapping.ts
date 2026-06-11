@@ -76,6 +76,20 @@ export function dealToForm(deal: Deal, doc: TradeDocument | null): InvoiceDraft 
   }
 
   // 폴백: 구조화된 거래 건 + 문서 필드로 재구성(snapshot이 없는 경우).
+  const items = deal.items.map((it) => ({
+    description: it.description,
+    hsCode: it.hsCode,
+    qty: it.orderedQty,
+    unit: it.unit,
+    unitPrice: it.unitPrice,
+    amount: it.orderedQty * it.unitPrice,
+    remarks: it.remarks,
+  }));
+  const additionalCharges = deal.charges.map((c) => ({
+    type: (c.type as InvoiceDraft["additionalCharges"][number]["type"]) ?? "other",
+    description: c.label,
+    amount: c.amount,
+  }));
   return {
     ...createEmptyInvoice(),
     invoiceNo: doc?.docNo ?? "",
@@ -104,19 +118,10 @@ export function dealToForm(deal: Deal, doc: TradeDocument | null): InvoiceDraft 
     incoterms: deal.incoterms,
     remarks: deal.remarks,
     bankInfo: { ...deal.bankInfo },
-    items: deal.items.map((it) => ({
-      description: it.description,
-      hsCode: it.hsCode,
-      qty: it.orderedQty,
-      unit: it.unit,
-      unitPrice: it.unitPrice,
-      amount: it.orderedQty * it.unitPrice,
-      remarks: it.remarks,
-    })),
-    additionalCharges: deal.charges.map((c) => ({
-      type: (c.type as InvoiceDraft["additionalCharges"][number]["type"]) ?? "other",
-      description: c.label,
-      amount: c.amount,
-    })),
+    items,
+    additionalCharges,
+    totalAmount:
+      items.reduce((sum, it) => sum + it.amount, 0) +
+      additionalCharges.reduce((sum, c) => sum + c.amount, 0),
   };
 }

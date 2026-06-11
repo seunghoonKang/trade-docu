@@ -176,15 +176,21 @@ export function DealIssuePage() {
     });
   }, [bundle, preferredShipmentId]);
 
-  const pi = useMemo(() => bundle?.documents.find((d) => d.docType === "PI") ?? null, [bundle]);
-  // 폼 데이터 원본: PI(발행본/draft) 스냅샷, 없으면 현재 양식의 draft 스냅샷(CI/PL 단건 저장 거래, #51).
-  const variantDraft = useMemo(
-    () => bundle?.documents.find((d) => d.docType === variant && d.status === "draft") ?? null,
-    [bundle, variant],
-  );
+  // 폼 데이터 원본: PI(발행본/draft) 스냅샷 → 현재 양식의 draft → 아무 draft 순(#51).
+  // CI/PL 단건 저장 거래는 PI 문서가 없으므로, PI 발행 시에도 저장 양식의 draft
+  // 스냅샷에서 복원해야 합계·비용이 보존된다(구조화 폴백은 선적 레벨 비용을 모른다).
+  const sourceDoc = useMemo(() => {
+    if (!bundle) return null;
+    return (
+      bundle.documents.find((d) => d.docType === "PI") ??
+      bundle.documents.find((d) => d.docType === variant && d.status === "draft") ??
+      bundle.documents.find((d) => d.status === "draft") ??
+      null
+    );
+  }, [bundle, variant]);
   const dealForm = useMemo(
-    () => (bundle ? dealToForm(bundle.deal, pi ?? variantDraft) : null),
-    [bundle, pi, variantDraft],
+    () => (bundle ? dealToForm(bundle.deal, sourceDoc) : null),
+    [bundle, sourceDoc],
   );
   const activeShipment = useMemo(
     () => shipments.find((s) => s.id === activeShipmentId) ?? null,
@@ -210,7 +216,8 @@ export function DealIssuePage() {
   const variantData = useMemo<InvoiceDraft | null>(() => {
     if (!bundle || !dealForm || !variant) return null;
     if (variant === "PI") {
-      return { ...dealForm, invoiceNo: piDocNo, date: piDocDate || dealForm.date };
+      // 입력칸을 비우면 비운 대로 보여주고, 발행은 date 차단 검증이 막는다(WYSIWYG).
+      return { ...dealForm, invoiceNo: piDocNo, date: piDocDate };
     }
     if (!activeShipment) return null;
     const allocByItem = new Map(activeShipment.allocations.map((a) => [a.itemId, a.qty]));
@@ -310,9 +317,11 @@ export function DealIssuePage() {
       );
       return false;
     }
-    const allWarnings = bundle
-      ? [...warnings, ...quantityWarningKeys(bundle.deal, shipments)]
-      : warnings;
+    // 수량(배분) 경고는 선적 레벨 양식에만 — PI는 주문 전체 기준이라 무관(handleIssue와 동일).
+    const allWarnings =
+      bundle && variant !== "PI"
+        ? [...warnings, ...quantityWarningKeys(bundle.deal, shipments)]
+        : warnings;
     if (allWarnings.length > 0) {
       toast.warning(allWarnings.map((k) => t(`validation.${k}`)).join(", "));
     }
@@ -501,7 +510,10 @@ export function DealIssuePage() {
           <div className="ml-auto flex flex-wrap items-center gap-2">
             {issuedDoc ? (
               <>
-                <span className="text-sm text-green-600">{t("deal.alreadyIssued")}</span>
+                {/* PI는 거래 건 레벨 — 선적 단위 문구를 쓰지 않는다. */}
+                <span className="text-sm text-green-600">
+                  {t(variant === "PI" ? "deal.alreadyIssuedDeal" : "deal.alreadyIssued")}
+                </span>
                 <Button
                   variant="outline"
                   size="sm"

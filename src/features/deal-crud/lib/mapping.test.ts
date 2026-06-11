@@ -115,6 +115,11 @@ describe("dealToForm", () => {
     expect(form.orderNo).toBe("PO-42");
     expect(form.items).toHaveLength(1);
   });
+
+  it("폴백은 합계를 재계산한다 — 품목 + 비용(0으로 발행되는 PI 방지)", () => {
+    const form = dealToForm(sampleDeal(), null);
+    expect(form.totalAmount).toBe(550); // 100×5 + Freight 50
+  });
 });
 
 describe("splitChargesForDocType", () => {

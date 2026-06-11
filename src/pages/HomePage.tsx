@@ -7,9 +7,9 @@ import { getLastDocType } from "@/entities/document";
 import type { DocType } from "@/entities/document";
 import { listDealSummaries } from "@/features/deal-crud";
 import type { DealSummary } from "@/features/deal-crud";
-import { TemplateGallery } from "@/widgets/TemplateGallery";
+import { TemplateGallery, TemplateGallerySkeleton } from "@/widgets/TemplateGallery";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
-import { Button, KineticTitle, Layout, Skeleton } from "@/shared/ui";
+import { Button, KineticTitle, Layout } from "@/shared/ui";
 
 const CONTINUE_LIMIT = 3;
 const DOC_BADGES: DocType[] = ["PI", "CI", "PL"];
@@ -50,7 +50,7 @@ export function HomePage() {
     <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="home" />}>
       <div className="max-w-6xl mx-auto px-4 py-8 md:p-10 space-y-10 pb-12">
         {isLoading ? (
-          <HomeSkeleton />
+          <TemplateGallerySkeleton />
         ) : (
           <>
             {/* 이어서 — 진행 중 거래 건 우선(로그인 + 진행 중 거래가 있을 때만) */}
@@ -130,31 +130,5 @@ export function HomePage() {
         )}
       </div>
     </Layout>
-  );
-}
-
-/** 템플릿 갤러리 미러 스켈레톤 — 헤더(mb-6) + 썸네일 존/텍스트 블록을 실제 카드 구조 그대로. */
-function HomeSkeleton() {
-  return (
-    <div>
-      <div className="mb-6 space-y-2">
-        <Skeleton className="h-7 w-56 md:h-8" />
-        <Skeleton className="h-4 w-72" />
-      </div>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="overflow-hidden rounded-xl border border-border bg-card">
-            <Skeleton className="h-[13.5rem] w-full rounded-none" />
-            <div className="space-y-2 border-t border-border p-5">
-              <div className="flex items-center justify-between gap-2">
-                <Skeleton className="h-5 w-2/3" />
-                <Skeleton className="h-5 w-8" />
-              </div>
-              <Skeleton className="h-4 w-full" />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }
