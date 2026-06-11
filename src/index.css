@@ -1,22 +1,25 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@fontsource/ibm-plex-sans-kr/400.css";
+@import "@fontsource/ibm-plex-sans-kr/500.css";
+@import "@fontsource/ibm-plex-sans-kr/600.css";
+@import "@fontsource/ibm-plex-sans-kr/700.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+@import "@fontsource-variable/hahmlet";
 @custom-variant dark (&:is(.dark *));
 
-@font-face {
-  font-family: "Noto Sans KR";
-  src: url("./assets/fonts/NotoSansKR-Regular.ttf") format("truetype");
-  font-weight: 100 900;
-  font-display: swap;
-}
-
 body {
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: var(--font-sans);
 }
 
 @theme inline {
-  --font-heading: "Noto Sans KR", sans-serif;
-  --font-sans: "Noto Sans KR", sans-serif;
+  --font-sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-heading: "Hahmlet Variable", "Hahmlet", "IBM Plex Sans KR", serif;
+  --font-serif: "Hahmlet Variable", "Hahmlet", "Apple SD Gothic Neo", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -58,82 +61,84 @@ body {
 }
 
 :root {
-  /* Sovereign Trade — Stitch Design System */
-  --background: #f8f9ff;
-  --foreground: #0b1c30;
-  --card: #ffffff;
-  --card-foreground: #0b1c30;
-  --popover: #ffffff;
-  --popover-foreground: #0b1c30;
-  --primary: #1a2b3c;
-  --primary-foreground: #ffffff;
-  --secondary: #eff4ff;
-  --secondary-foreground: #496179;
-  --muted: #e5eeff;
-  --muted-foreground: #44474c;
-  --accent: #dce9ff;
-  --accent-foreground: #0b1c30;
-  --destructive: #ba1a1a;
-  --border: #c4c6cd;
-  --input: #c4c6cd;
-  --ring: #496179;
-  --chart-1: #1a2b3c;
-  --chart-2: #496179;
-  --chart-3: #3b82f6;
-  --chart-4: #4e8eff;
-  --chart-5: #64748b;
-  --radius: 0.5rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #0b1c30;
-  --sidebar-primary: #1a2b3c;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e5eeff;
-  --sidebar-accent-foreground: #0b1c30;
-  --sidebar-border: #c4c6cd;
-  --sidebar-ring: #4f6073;
+  /* Ink & Manifest — 종이 위 잉크와 통관 도장.
+     warm paper ground / ink-navy primary / vermillion(stamp) accent */
+  --background: #f6f4ee;
+  --foreground: #1d2734;
+  --card: #fdfcf9;
+  --card-foreground: #1d2734;
+  --popover: #fdfcf9;
+  --popover-foreground: #1d2734;
+  --primary: #1e3048;
+  --primary-foreground: #f8f6f0;
+  --secondary: #edeae1;
+  --secondary-foreground: #564f42;
+  --muted: #e9e5da;
+  --muted-foreground: #68614f;
+  --accent: #f4e5d8;
+  --accent-foreground: #8e3b1b;
+  --destructive: #b3261e;
+  --border: #d9d2c3;
+  --input: #cfc7b6;
+  --ring: #c25e35;
+  --chart-1: #1e3048;
+  --chart-2: #bf4f26;
+  --chart-3: #58748c;
+  --chart-4: #9c8d72;
+  --chart-5: #68614f;
+  --radius: 0.375rem;
+  --sidebar: #edeae1;
+  --sidebar-foreground: #1d2734;
+  --sidebar-primary: #1e3048;
+  --sidebar-primary-foreground: #f8f6f0;
+  --sidebar-accent: #e3ddcf;
+  --sidebar-accent-foreground: #1d2734;
+  --sidebar-border: #d9d2c3;
+  --sidebar-ring: #c25e35;
 }
 
 .dark {
-  --background: #213145;
-  --foreground: #eaf1ff;
-  --card: #1a2b3c;
-  --card-foreground: #eaf1ff;
-  --popover: #1a2b3c;
-  --popover-foreground: #eaf1ff;
-  --primary: #b7c8de;
-  --primary-foreground: #0b1d2d;
-  --secondary: #314960;
-  --secondary-foreground: #cee5ff;
-  --muted: #38485a;
-  --muted-foreground: #8192a7;
-  --accent: #38485a;
-  --accent-foreground: #eaf1ff;
-  --destructive: #ff6b6b;
-  --border: #44474c;
-  --input: #44474c;
-  --ring: #b7c8de;
-  --chart-1: #b7c8de;
-  --chart-2: #adc6ff;
-  --chart-3: #4e8eff;
-  --chart-4: #496179;
-  --chart-5: #8192a7;
-  --sidebar: #1a2b3c;
-  --sidebar-foreground: #eaf1ff;
-  --sidebar-primary: #b7c8de;
-  --sidebar-primary-foreground: #0b1d2d;
-  --sidebar-accent: #38485a;
-  --sidebar-accent-foreground: #eaf1ff;
-  --sidebar-border: #44474c;
-  --sidebar-ring: #b7c8de;
+  --background: #151c26;
+  --foreground: #e9e4d8;
+  --card: #1c2530;
+  --card-foreground: #e9e4d8;
+  --popover: #1c2530;
+  --popover-foreground: #e9e4d8;
+  --primary: #dfd8c8;
+  --primary-foreground: #18202b;
+  --secondary: #232e3c;
+  --secondary-foreground: #cdc6b6;
+  --muted: #28323f;
+  --muted-foreground: #9d9787;
+  --accent: #3a2a20;
+  --accent-foreground: #eda47e;
+  --destructive: #ff7a6b;
+  --border: #344050;
+  --input: #3a4756;
+  --ring: #d57d4e;
+  --chart-1: #dfd8c8;
+  --chart-2: #d57d4e;
+  --chart-3: #8fa9bd;
+  --chart-4: #b3a787;
+  --chart-5: #9d9787;
+  --sidebar: #1c2530;
+  --sidebar-foreground: #e9e4d8;
+  --sidebar-primary: #dfd8c8;
+  --sidebar-primary-foreground: #18202b;
+  --sidebar-accent: #28323f;
+  --sidebar-accent-foreground: #e9e4d8;
+  --sidebar-border: #344050;
+  --sidebar-ring: #d57d4e;
 }
 
+/* 선적서류 보관함의 모눈 — 따뜻한 잉크 점 그리드 */
 .pattern-bg {
-  background-image: radial-gradient(circle at 2px 2px, #d3e4fe 1px, transparent 0);
+  background-image: radial-gradient(circle at 2px 2px, #ddd5c4 1px, transparent 0);
   background-size: 32px 32px;
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(253, 252, 249, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -147,12 +152,109 @@ body {
 }
 
 .editor-container::-webkit-scrollbar-thumb {
-  background: var(--accent);
+  background: var(--border);
   border-radius: 10px;
 }
 
+/* 책상 위 서류 한 장 — 가까운 접촉 그림자 + 멀리 퍼지는 부드러운 그림자 */
 .paper-shadow {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 1px 2px rgba(29, 39, 52, 0.07),
+    0 12px 32px -8px rgba(29, 39, 52, 0.14);
+}
+
+/* ===== Motion layer =====
+   기준 이징: cubic-bezier(0.22, 1, 0.36, 1) — 빠르게 출발해 부드럽게 정착.
+   compositor 친화(transform/opacity만 애니메이션). */
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+input,
+textarea {
+  caret-color: var(--ring);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 로드 안무 — 섹션/카드가 아래에서 떠올라 정착 */
+  .reveal,
+  .reveal-group > * {
+    animation: rise-settle 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .reveal-group > :nth-child(1) { animation-delay: 70ms; }
+  .reveal-group > :nth-child(2) { animation-delay: 140ms; }
+  .reveal-group > :nth-child(3) { animation-delay: 210ms; }
+  .reveal-group > :nth-child(4) { animation-delay: 280ms; }
+  .reveal-group > :nth-child(5) { animation-delay: 350ms; }
+  .reveal-group > :nth-child(n + 6) { animation-delay: 420ms; }
+
+  /* 키네틱 타이틀 — 단어 단위 스태거(.kinetic-title > span) */
+  .kinetic-title > span {
+    display: inline-block;
+    animation: rise-settle 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--word-index, 0) * 55ms);
+  }
+
+  /* 서류 정착 — A4 한 장이 책상 위로 내려앉는다 */
+  .paper-settle {
+    animation: paper-settle 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* 도장 — 갤러리 카드 호버 시 인장이 눌리며 찍힌다 */
+  .seal-stamp {
+    opacity: 0.45;
+    transform: rotate(12deg) scale(1.18);
+    transition:
+      opacity 0.3s ease-out,
+      transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .group:hover .seal-stamp {
+    opacity: 1;
+    transform: rotate(8deg) scale(1);
+  }
+}
+
+@keyframes rise-settle {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes paper-settle {
+  from {
+    opacity: 0;
+    transform: translateY(22px) rotate(0.5deg) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 종이 결 — 화면 전체에 아주 옅은 그레인(인쇄물의 질감) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* 그레인은 화면 전용 — 인쇄 프레임에도 스타일이 복제되므로(print-color-adjust: exact),
+   가드 없이는 발행 서류 전 페이지에 얼룩이 인쇄된다. */
+@media print {
+  body::after {
+    content: none;
+  }
 }
 
 @layer base {

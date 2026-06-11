@@ -91,7 +91,7 @@ function SidebarNavButton({
       </span>
       <span
         className={cn(
-          "min-w-0 overflow-hidden transition-[width] duration-300 ease-in-out",
+          "min-w-0 overflow-hidden transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
           expanded ? "flex-1" : "w-0",
         )}
       >
@@ -172,7 +172,7 @@ export function AppSidebar() {
     <TooltipProvider delay={200}>
       <aside
         className={cn(
-          "fixed left-0 top-16 z-40 hidden h-[calc(100vh-4rem)] flex-col overflow-hidden border-r border-border bg-secondary transition-[width] duration-300 ease-in-out md:flex",
+          "fixed left-0 top-16 z-40 hidden h-[calc(100vh-4rem)] flex-col overflow-hidden border-r border-border bg-secondary transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:flex",
           expanded ? "w-[260px]" : "w-[72px]",
         )}
         onMouseEnter={() => setExpanded(true)}
@@ -196,7 +196,7 @@ export function AppSidebar() {
           <div className="space-y-1 border-t border-border/60 px-2 pb-3 pt-3">
             <div
               className={cn(
-                "space-y-1 rounded-lg border transition-[background-color,border-color,padding] duration-300 ease-in-out",
+                "space-y-1 rounded-lg border transition-[background-color,border-color,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
                 expanded
                   ? "border-dashed border-border/70 bg-muted/25 px-1 py-2"
                   : "border-transparent px-0 py-1",
@@ -204,7 +204,7 @@ export function AppSidebar() {
             >
               <div
                 className={cn(
-                  "overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out",
+                  "overflow-hidden transition-[max-height,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
                   expanded ? "max-h-6 opacity-100" : "max-h-0 opacity-0",
                 )}
               >

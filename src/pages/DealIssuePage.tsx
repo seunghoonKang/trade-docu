@@ -43,7 +43,8 @@ export function DealIssuePage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { dealId, docType } = useParams<{ dealId: string; docType: string }>();
-  const variant: DocType | null = docType === "CI" || docType === "PL" ? docType : null;
+  const variant: DocType | null =
+    docType === "CI" || docType === "PL" || docType === "PI" ? docType : null;
   // 재발행 진입 등에서 ?shipment=:id로 특정 선적을 미리 선택한다.
   const [searchParams] = useSearchParams();
   const preferredShipmentId = searchParams.get("shipment");
@@ -175,12 +176,35 @@ export function DealIssuePage() {
     });
   }, [bundle, preferredShipmentId]);
 
-  const pi = useMemo(() => bundle?.documents.find((d) => d.docType === "PI") ?? null, [bundle]);
-  const dealForm = useMemo(() => (bundle ? dealToForm(bundle.deal, pi) : null), [bundle, pi]);
+  // 폼 데이터 원본: PI(발행본/draft) 스냅샷 → 현재 양식의 draft → 아무 draft 순(#51).
+  // CI/PL 단건 저장 거래는 PI 문서가 없으므로, PI 발행 시에도 저장 양식의 draft
+  // 스냅샷에서 복원해야 합계·비용이 보존된다(구조화 폴백은 선적 레벨 비용을 모른다).
+  const sourceDoc = useMemo(() => {
+    if (!bundle) return null;
+    return (
+      bundle.documents.find((d) => d.docType === "PI") ??
+      bundle.documents.find((d) => d.docType === variant && d.status === "draft") ??
+      bundle.documents.find((d) => d.status === "draft") ??
+      null
+    );
+  }, [bundle, variant]);
+  const dealForm = useMemo(
+    () => (bundle ? dealToForm(bundle.deal, sourceDoc) : null),
+    [bundle, sourceDoc],
+  );
   const activeShipment = useMemo(
     () => shipments.find((s) => s.id === activeShipmentId) ?? null,
     [shipments, activeShipmentId],
   );
+
+  // PI 발행 입력(문서번호·발행일) — draft에 박제된 값으로 시작한다(#51).
+  const [piDocNo, setPiDocNo] = useState("");
+  const [piDocDate, setPiDocDate] = useState("");
+  useEffect(() => {
+    if (variant !== "PI" || !dealForm) return;
+    setPiDocNo(dealForm.invoiceNo);
+    setPiDocDate(dealForm.date);
+  }, [variant, dealForm]);
 
   // CI 원산지 초안(거래 건 레벨) — 미리보기에 즉시 반영, 저장 시 거래 건에 기록.
   const [ciOrigin, setCiOrigin] = useState("");
@@ -188,9 +212,14 @@ export function DealIssuePage() {
     setCiOrigin(bundle?.deal.originCountry ?? "");
   }, [bundle]);
 
-  // CI/PL은 활성 선적의 배분 수량으로 렌더(거래 데이터 × 양식).
+  // PI는 거래 전체(주문 수량) 기준, CI/PL은 활성 선적의 배분 수량으로 렌더(거래 데이터 × 양식).
   const variantData = useMemo<InvoiceDraft | null>(() => {
-    if (!bundle || !dealForm || !variant || !activeShipment) return null;
+    if (!bundle || !dealForm || !variant) return null;
+    if (variant === "PI") {
+      // 입력칸을 비우면 비운 대로 보여주고, 발행은 date 차단 검증이 막는다(WYSIWYG).
+      return { ...dealForm, invoiceNo: piDocNo, date: piDocDate };
+    }
+    if (!activeShipment) return null;
     const allocByItem = new Map(activeShipment.allocations.map((a) => [a.itemId, a.qty]));
     const items = bundle.deal.items.map((it) => {
       const qty = allocByItem.get(it.id) ?? 0;
@@ -223,7 +252,7 @@ export function DealIssuePage() {
       invoiceNo: suggestDocNo(dealForm.invoiceNo, activeShipment.seq),
       ...(variant === "CI" ? { originCountry: ciOrigin } : {}),
     };
-  }, [bundle, dealForm, variant, activeShipment, ciOrigin]);
+  }, [bundle, dealForm, variant, activeShipment, ciOrigin, piDocNo, piDocDate]);
 
   // PL per-line 포장: 활성 선적 배분에서 items와 같은 순서로 추출(채운 항목만 PL에 출력).
   const plPackingLines = useMemo<PackingLine[]>(() => {
@@ -257,22 +286,26 @@ export function DealIssuePage() {
     );
   }, [activeShipmentId, bundle]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 이 양식이 이미 발행된 선적들(탭 ✓ 표시 + 다음 미발행 선적 탐색).
+  // 이 양식이 이미 발행된 선적들(탭 ✓ 표시 + 다음 미발행 선적 탐색). draft는 미발행(#51).
   const issuedShipmentIds = useMemo(
     () =>
       (bundle?.documents ?? [])
-        .filter((d) => d.docType === variant && d.shipmentId)
+        .filter((d) => d.docType === variant && d.status === "issued" && d.shipmentId)
         .map((d) => d.shipmentId as string),
     [bundle, variant],
   );
 
-  // 활성 선적에 이미 발행된 문서(있으면 재발행 대신 보기로 유도).
-  const issuedDoc = useMemo(
-    () =>
-      bundle?.documents.find((d) => d.docType === variant && d.shipmentId === activeShipmentId) ??
-      null,
-    [bundle, variant, activeShipmentId],
-  );
+  // 이미 발행된 문서(있으면 재발행 대신 보기로 유도). PI는 거래 건 레벨 1장.
+  const issuedDoc = useMemo(() => {
+    if (variant === "PI") {
+      return bundle?.documents.find((d) => d.docType === "PI" && d.status === "issued") ?? null;
+    }
+    return (
+      bundle?.documents.find(
+        (d) => d.docType === variant && d.status === "issued" && d.shipmentId === activeShipmentId,
+      ) ?? null
+    );
+  }, [bundle, variant, activeShipmentId]);
 
   function passesValidation(): boolean {
     if (!variantData || !variant) return false;
@@ -284,9 +317,11 @@ export function DealIssuePage() {
       );
       return false;
     }
-    const allWarnings = bundle
-      ? [...warnings, ...quantityWarningKeys(bundle.deal, shipments)]
-      : warnings;
+    // 수량(배분) 경고는 선적 레벨 양식에만 — PI는 주문 전체 기준이라 무관(handleIssue와 동일).
+    const allWarnings =
+      bundle && variant !== "PI"
+        ? [...warnings, ...quantityWarningKeys(bundle.deal, shipments)]
+        : warnings;
     if (allWarnings.length > 0) {
       toast.warning(allWarnings.map((k) => t(`validation.${k}`)).join(", "));
     }
@@ -311,7 +346,8 @@ export function DealIssuePage() {
   const [confirmNoOrigin, setConfirmNoOrigin] = useState(false);
 
   function handleIssue() {
-    if (!user || !bundle || !variantData || !variant || !activeShipmentId || issuedDoc) return;
+    if (!user || !bundle || !variantData || !variant || issuedDoc) return;
+    if (variant !== "PI" && !activeShipmentId) return;
     const { blocking, warnings } = validateDocument(variantData, variant);
     if (blocking.length > 0) {
       toast.error(
@@ -319,9 +355,10 @@ export function DealIssuePage() {
       );
       return;
     }
+    // 수량(배분) 경고는 선적 레벨 양식에만 — PI는 주문 전체 기준이라 무관.
     const otherWarnings = [
       ...warnings.filter((k) => k !== "originCountry"),
-      ...quantityWarningKeys(bundle.deal, shipments),
+      ...(variant === "PI" ? [] : quantityWarningKeys(bundle.deal, shipments)),
     ];
     if (otherWarnings.length > 0) {
       toast.warning(otherWarnings.map((k) => t(`validation.${k}`)).join(", "));
@@ -334,13 +371,14 @@ export function DealIssuePage() {
   }
 
   async function doIssue() {
-    if (!user || !bundle || !variantData || !variant || !activeShipmentId || issuedDoc) return;
+    if (!user || !bundle || !variantData || !variant || issuedDoc) return;
+    if (variant !== "PI" && !activeShipmentId) return;
     setIssuing(true);
     await flushPendingSaves();
     try {
       await issueDocument(user.id, {
         dealId: bundle.deal.id,
-        shipmentId: activeShipmentId,
+        shipmentId: variant === "PI" ? null : activeShipmentId,
         docType: variant,
         docNo: variantData.invoiceNo,
         docDate: variantData.date,
@@ -350,6 +388,12 @@ export function DealIssuePage() {
           : variantData) as unknown as Record<string, unknown>,
       });
       setLastDocType(variant);
+      // PI는 거래 건 레벨 1장 — 발행 즉시 거래 상세로 복귀한다(#51).
+      if (variant === "PI") {
+        toast.success(t("deal.issuedDone", { doc: variant }));
+        navigate(`/deals/${bundle.deal.id}`);
+        return;
+      }
       // 분할선적 왕복 제거: 미발행 선적이 남았으면 플로우에 머물며 다음 선적으로 전환,
       // 전부 발행됐을 때만 거래 상세로 복귀한다.
       const issued = new Set([...issuedShipmentIds, activeShipmentId]);
@@ -466,7 +510,10 @@ export function DealIssuePage() {
           <div className="ml-auto flex flex-wrap items-center gap-2">
             {issuedDoc ? (
               <>
-                <span className="text-sm text-green-600">{t("deal.alreadyIssued")}</span>
+                {/* PI는 거래 건 레벨 — 선적 단위 문구를 쓰지 않는다. */}
+                <span className="text-sm text-green-600">
+                  {t(variant === "PI" ? "deal.alreadyIssuedDeal" : "deal.alreadyIssued")}
+                </span>
                 <Button
                   variant="outline"
                   size="sm"
@@ -500,9 +547,36 @@ export function DealIssuePage() {
 
         <div className="flex min-h-0 flex-1 flex-col xl:flex-row">
           {/* 좌: 편집(선적/배분 → 양식 옵션) — 서류 작성 폼과 같은 에디터 영역 */}
-          <div className="editor-container w-full overflow-y-auto border-b border-border bg-[#cbdbf5] xl:w-1/2 xl:border-b-0 xl:border-r">
+          <div className="editor-container w-full overflow-y-auto border-b border-border bg-secondary xl:w-1/2 xl:border-b-0 xl:border-r">
             <div className="space-y-6 p-6">
+              {/* PI: 거래 건 레벨 — 선적/배분 없이 문서번호·발행일만 확정하고 발행한다(#51). */}
+              {variant === "PI" && (
+                <div className="rounded-xl border border-border bg-card p-5 space-y-5">
+                  <h3 className="text-sm font-semibold">{t("form.documentInfo")}</h3>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Input
+                      variant="editor"
+                      label={t("form.invoiceNo")}
+                      required
+                      value={piDocNo}
+                      onChange={(e) => setPiDocNo(e.target.value)}
+                    />
+                    <Input
+                      variant="editor"
+                      label={t("form.date")}
+                      type="date"
+                      value={piDocDate}
+                      onChange={(e) => setPiDocDate(e.target.value)}
+                    />
+                  </div>
+                  <p className="border-t border-border/60 pt-3 text-xs text-muted-foreground">
+                    {t("deal.piIssueHint")}
+                  </p>
+                </div>
+              )}
+
               {/* ① 선적/배분 — 기본 전량, 분할은 옵트인(매트릭스). 입력은 자동 저장. */}
+              {variant !== "PI" && (
               <div className="rounded-xl border border-border bg-card p-5">
                 <ShipmentManager
                   deal={bundle.deal}
@@ -523,6 +597,7 @@ export function DealIssuePage() {
                   {t("deal.sharedShipmentHint")}
                 </p>
               </div>
+              )}
 
               {/* ② 양식별 옵션 */}
               {variant === "CI" && (

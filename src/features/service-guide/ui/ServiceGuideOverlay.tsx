@@ -6,6 +6,7 @@ import { cn } from "@/shared/lib/utils";
 import { getCardStyle, shouldSkipScrollIntoView } from "../lib/cardPosition";
 import { getNavigateLabelKey, isOnGuideRoute } from "../lib/steps";
 import type { GuideStep } from "../lib/steps";
+import { DocTimeline } from "./DocTimeline";
 
 const SPOTLIGHT_PADDING = 8;
 const DESKTOP_MEDIA = "(min-width: 768px)";
@@ -160,6 +161,8 @@ export function ServiceGuideOverlay({
           {t(`guide.steps.${step.id}.title`)}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">{t(`guide.steps.${step.id}.body`)}</p>
+
+        {step.visual === "doc-timeline" && !needsNavigation && <DocTimeline />}
 
         {needsNavigation && navigateLabelKey && (
           <div className="mt-4">

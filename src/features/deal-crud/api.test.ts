@@ -8,7 +8,7 @@ const { from, builder, setQueue } = vi.hoisted(() => {
   let queue: Array<{ data: unknown; error: unknown }> = [];
   const shift = () => queue.shift() ?? { data: null, error: null };
   const b: Record<string, unknown> = {};
-  for (const m of ["insert", "select", "eq", "order", "limit", "delete"]) {
+  for (const m of ["insert", "update", "select", "eq", "is", "order", "limit", "delete"]) {
     b[m] = vi.fn(() => b);
   }
   b.single = vi.fn(() => Promise.resolve(shift()));
@@ -29,7 +29,10 @@ beforeEach(() => {
   setQueue([]);
   from.mockClear();
   (builder.insert as ReturnType<typeof vi.fn>).mockClear();
+  (builder.update as ReturnType<typeof vi.fn>).mockClear();
   (builder.delete as ReturnType<typeof vi.fn>).mockClear();
+  (builder.eq as ReturnType<typeof vi.fn>).mockClear();
+  (builder.is as ReturnType<typeof vi.fn>).mockClear();
 });
 
 function dealRow(overrides: Record<string, unknown> = {}) {
@@ -67,11 +70,11 @@ function dealRow(overrides: Record<string, unknown> = {}) {
 }
 
 describe("saveDeal", () => {
-  it("거래 건 + 기본 선적 + PI 문서를 생성하고 dealId를 반환한다", async () => {
+  it("거래 건 + 기본 선적 + draft 문서를 생성하고 dealId를 반환한다 — 발행 없음(#51)", async () => {
     setQueue([
       { data: { id: "deal-1" }, error: null }, // deals insert → single
-      { data: null, error: null }, // shipments insert (기본 선적)
-      { data: null, error: null }, // documents insert (PI)
+      { data: { id: "ship-1" }, error: null }, // shipments insert → single
+      { data: null, error: null }, // documents insert (draft)
     ]);
 
     const dealId = await saveDeal("user-1", { ...createEmptyInvoice(), invoiceNo: "PI-1" });
@@ -80,13 +83,36 @@ describe("saveDeal", () => {
     expect(from).toHaveBeenCalledWith("deals");
     expect(from).toHaveBeenCalledWith("shipments");
     expect(from).toHaveBeenCalledWith("documents");
-    expect(builder.insert).toHaveBeenCalledTimes(3); // deal + 기본 선적 + PI
+    expect(builder.insert).toHaveBeenCalledTimes(3); // deal + 기본 선적 + draft 문서
+
+    const docPayload = (builder.insert as ReturnType<typeof vi.fn>).mock.calls[2][0];
+    expect(docPayload).toMatchObject({ doc_type: "PI", status: "draft", shipment_id: null });
+  });
+
+  it("CI 저장: 비용은 거래 건이 아닌 기본 선적에 심고, draft는 선적 레벨로 남긴다", async () => {
+    setQueue([
+      { data: { id: "deal-1" }, error: null },
+      { data: { id: "ship-1" }, error: null },
+      { data: null, error: null },
+    ]);
+
+    const form = {
+      ...createEmptyInvoice(),
+      invoiceNo: "CI-1",
+      additionalCharges: [{ type: "freight" as const, description: "Ocean freight", amount: 100 }],
+    };
+    await saveDeal("user-1", form, "CI");
+
+    const calls = (builder.insert as ReturnType<typeof vi.fn>).mock.calls;
+    expect(calls[0][0].charges).toEqual([]); // deal 레벨 비용 없음
+    expect(calls[1][0].charges).toEqual([{ type: "freight", label: "Ocean freight", amount: 100 }]);
+    expect(calls[2][0]).toMatchObject({ doc_type: "CI", status: "draft", shipment_id: "ship-1" });
   });
 
   it("문서 생성 실패 시 고아 거래 건을 삭제하고 예외를 던진다", async () => {
     setQueue([
       { data: { id: "deal-1" }, error: null }, // deals insert → single
-      { data: null, error: null }, // shipments insert
+      { data: { id: "ship-1" }, error: null }, // shipments insert → single
       { data: null, error: { message: "doc fail" } }, // documents insert 실패
       { data: null, error: null }, // 보정 delete
     ]);
@@ -140,8 +166,11 @@ describe("getDealBundle", () => {
 });
 
 describe("issueDocument", () => {
-  it("CI 문서를 선적 레벨로 발행하고 doc_id를 반환한다", async () => {
-    setQueue([{ data: { id: "doc-9" }, error: null }]);
+  it("draft가 없으면 CI 문서를 선적 레벨로 새로 발행하고 doc_id를 반환한다", async () => {
+    setQueue([
+      { data: null, error: null }, // draft 조회 → 없음
+      { data: { id: "doc-9" }, error: null }, // insert → single
+    ]);
 
     const id = await issueDocument("user-1", {
       dealId: "deal-1",
@@ -154,6 +183,33 @@ describe("issueDocument", () => {
 
     expect(id).toBe("doc-9");
     expect(from).toHaveBeenCalledWith("documents");
+    expect(builder.insert).toHaveBeenCalledTimes(1);
+    // draft 소비는 같은 선적의 것만 — 다른 선적의 draft 가로채기 방지.
+    expect(builder.eq).toHaveBeenCalledWith("shipment_id", "ship-1");
+  });
+
+  it("같은 양식의 draft가 있으면 그 행을 issued로 전환한다(draft 소비, #51)", async () => {
+    setQueue([
+      { data: { id: "doc-draft" }, error: null }, // draft 조회 → 있음
+      { data: { id: "doc-draft" }, error: null }, // update → single
+    ]);
+
+    const id = await issueDocument("user-1", {
+      dealId: "deal-1",
+      shipmentId: null,
+      docType: "PI",
+      docNo: "PI-2026-001",
+      docDate: "2026-06-11",
+      snapshot: { invoiceNo: "PI-2026-001" },
+    });
+
+    expect(id).toBe("doc-draft");
+    expect(builder.insert).not.toHaveBeenCalled();
+    expect(builder.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "issued", doc_no: "PI-2026-001" }),
+    );
+    // PI draft는 거래 건 레벨(shipment_id null)만 매칭한다.
+    expect(builder.is).toHaveBeenCalledWith("shipment_id", null);
   });
 });
 

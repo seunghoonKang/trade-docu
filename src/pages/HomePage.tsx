@@ -7,9 +7,9 @@ import { getLastDocType } from "@/entities/document";
 import type { DocType } from "@/entities/document";
 import { listDealSummaries } from "@/features/deal-crud";
 import type { DealSummary } from "@/features/deal-crud";
-import { TemplateGallery } from "@/widgets/TemplateGallery";
+import { TemplateGallery, TemplateGallerySkeleton } from "@/widgets/TemplateGallery";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
-import { Button, Layout, Skeleton } from "@/shared/ui";
+import { Button, KineticTitle, Layout } from "@/shared/ui";
 
 const CONTINUE_LIMIT = 3;
 const DOC_BADGES: DocType[] = ["PI", "CI", "PL"];
@@ -50,16 +50,17 @@ export function HomePage() {
     <Layout showSidebar={Boolean(user)} toolbar={<ExportToolbar page="home" />}>
       <div className="max-w-6xl mx-auto px-4 py-8 md:p-10 space-y-10 pb-12">
         {isLoading ? (
-          <HomeSkeleton />
+          <TemplateGallerySkeleton />
         ) : (
           <>
             {/* 이어서 — 진행 중 거래 건 우선(로그인 + 진행 중 거래가 있을 때만) */}
             {user && openDeals.length > 0 && (
             <section>
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl md:text-2xl font-bold text-primary">
-                  {t("home.continueTitle")}
-                </h2>
+                <KineticTitle
+                  text={t("home.continueTitle")}
+                  className="font-serif text-xl md:text-2xl font-semibold text-primary"
+                />
                 <Button
                   variant="ghost"
                   size="sm"
@@ -70,15 +71,15 @@ export function HomePage() {
                   <ArrowRight className="size-4" aria-hidden />
                 </Button>
               </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="reveal-group grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {openDeals.map((summary) => (
                   <button
                     key={summary.deal.id}
                     type="button"
                     onClick={() => navigate(`/deals/${summary.deal.id}`)}
-                    className="flex flex-col gap-2 rounded-xl border border-border bg-card/80 p-5 text-left transition-colors hover:border-primary/40 hover:bg-accent/40"
+                    className="flex flex-col gap-2 rounded-xl border border-border bg-card/80 p-5 text-left transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:bg-accent/40 hover:shadow-md"
                   >
-                    <span className="text-sm font-bold text-primary">
+                    <span className="font-mono text-sm font-semibold tracking-tight text-primary">
                       {summary.piNo || t("history.noNumber")}
                     </span>
                     <span className="text-sm text-foreground truncate">
@@ -90,8 +91,8 @@ export function HomePage() {
                           key={docType}
                           className={
                             summary.issuedCount[docType] > 0
-                              ? "inline-flex items-center rounded border border-primary/30 bg-accent px-1.5 py-0.5 text-[11px] font-semibold text-primary"
-                              : "inline-flex items-center rounded border border-border px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground/50"
+                              ? "inline-flex items-center rounded-sm border border-accent-foreground/30 bg-accent px-1.5 py-0.5 font-mono text-[11px] font-semibold text-accent-foreground"
+                              : "inline-flex items-center rounded-sm border border-border px-1.5 py-0.5 font-mono text-[11px] font-semibold text-muted-foreground/50"
                           }
                         >
                           {docType}
@@ -112,7 +113,7 @@ export function HomePage() {
             <TemplateGallery onSelect={startDoc} lastDocType={lastDocType} />
 
             {!user && (
-              <section className="flex flex-col items-start gap-3 rounded-xl border border-primary/20 bg-accent/50 p-6 sm:flex-row sm:items-center sm:justify-between">
+              <section className="reveal flex flex-col items-start gap-3 rounded-xl border border-primary/20 bg-accent/50 p-6 sm:flex-row sm:items-center sm:justify-between" style={{ animationDelay: "300ms" }}>
                 <div className="space-y-1">
                   <h3 className="text-base font-semibold text-foreground">
                     {t("home.guestCtaTitle")}
@@ -129,22 +130,5 @@ export function HomePage() {
         )}
       </div>
     </Layout>
-  );
-}
-
-/** 갤러리/이어서 카드 그리드에 맞춘 홈 스켈레톤. */
-function HomeSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-4 w-80" />
-      </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Skeleton className="h-44 rounded-xl" />
-        <Skeleton className="h-44 rounded-xl" />
-        <Skeleton className="h-44 rounded-xl" />
-      </div>
-    </div>
   );
 }

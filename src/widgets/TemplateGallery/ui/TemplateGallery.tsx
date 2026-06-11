@@ -1,6 +1,7 @@
 import { FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { DocType } from "@/entities/document";
+import { KineticTitle, Skeleton } from "@/shared/ui";
 
 interface Props {
   onSelect: (docType: DocType) => void;
@@ -20,16 +21,19 @@ export function TemplateGallery({ onSelect, lastDocType = null }: Props) {
   return (
     <section data-guide="template-gallery">
       <div className="mb-6 space-y-1">
-        <h2 className="text-xl md:text-2xl font-bold text-primary">{t("home.galleryTitle")}</h2>
-        <p className="text-sm text-muted-foreground">{t("home.gallerySubtitle")}</p>
+        <KineticTitle
+          text={t("home.galleryTitle")}
+          className="font-serif text-xl md:text-2xl font-semibold text-primary"
+        />
+        <p className="reveal text-sm text-muted-foreground">{t("home.gallerySubtitle")}</p>
       </div>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+      <div className="reveal-group grid grid-cols-1 gap-5 sm:grid-cols-3">
         {TEMPLATES.map((docType) => (
           <button
             key={docType}
             type="button"
             onClick={() => onSelect(docType)}
-            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all hover:border-primary/40 hover:shadow-md"
+            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
           >
             <div className="relative flex items-center justify-center bg-accent/60 py-7 transition-colors group-hover:bg-accent">
               {docType === lastDocType && (
@@ -44,7 +48,7 @@ export function TemplateGallery({ onSelect, lastDocType = null }: Props) {
                 <span className="text-base font-bold text-foreground leading-snug">
                   {t(`home.template.${docType}.title`)}
                 </span>
-                <span className="shrink-0 rounded bg-accent px-2 py-0.5 text-[11px] font-bold tracking-wide text-primary">
+                <span className="shrink-0 rounded-sm border border-accent-foreground/30 bg-accent px-2 py-0.5 font-mono text-[11px] font-semibold tracking-wide text-accent-foreground">
                   {docType}
                 </span>
               </div>
@@ -59,55 +63,91 @@ export function TemplateGallery({ onSelect, lastDocType = null }: Props) {
   );
 }
 
-/** 양식별 미니 문서 목업 — Stitch 시안의 카드 썸네일을 CSS로 재현. */
+/**
+ * 갤러리 미러 스켈레톤 — 헤더와 카드(썸네일 존/텍스트 블록)를 실제 마크업 구조
+ * 그대로 따른다. 카드와 한 파일에 두는 이유: 카드 구조가 바뀔 때 같이 고치도록(#56의
+ * 드리프트 재발 방지). h-[13.5rem] = 썸네일 존 py-7(2×1.75rem) + 종이 h-40(10rem).
+ */
+export function TemplateGallerySkeleton() {
+  return (
+    <section>
+      <div className="mb-6 space-y-2">
+        <Skeleton className="h-7 w-56 md:h-8" />
+        <Skeleton className="h-4 w-72" />
+      </div>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        {TEMPLATES.map((docType) => (
+          <div key={docType} className="overflow-hidden rounded-xl border border-border bg-card">
+            <Skeleton className="h-[13.5rem] w-full rounded-none" />
+            <div className="space-y-2 border-t border-border p-5">
+              <div className="flex items-center justify-between gap-2">
+                <Skeleton className="h-5 w-2/3" />
+                <Skeleton className="h-5 w-8" />
+              </div>
+              <Skeleton className="h-4 w-full" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** 양식별 미니 문서 목업 — 잉크 네이비 블록 + 웜스톤 라인 + 버밀리언 도장. */
 function PaperThumbnail({ docType }: { docType: DocType }) {
   const paper =
-    "flex h-40 w-[7.5rem] flex-col gap-1.5 rounded-sm bg-white p-3 shadow-md ring-1 ring-black/5 transition-transform group-hover:-translate-y-0.5";
+    "relative flex h-40 w-[7.5rem] flex-col gap-1.5 rounded-sm bg-white p-3 shadow-md ring-1 ring-black/5 transition-transform duration-300 ease-out group-hover:-translate-y-1";
 
   if (docType === "PI") {
-    // 다크 타이틀 바 + 텍스트 라인 + 점선 본문 영역(시안의 Proforma Invoice)
+    // 다크 타이틀 바 + 텍스트 라인 + 점선 본문 영역(Proforma Invoice) — 호버 시 종이가 펴진다
     return (
-      <div className={`${paper} -rotate-2`}>
-        <div className="h-2.5 w-3/4 rounded-[2px] bg-slate-800" />
-        <div className="h-1.5 w-1/2 rounded-full bg-gray-300" />
-        <div className="h-1.5 w-2/3 rounded-full bg-gray-200" />
-        <div className="mt-1 flex flex-1 items-center justify-center rounded-sm border border-dashed border-gray-300">
-          <FileText className="size-6 text-gray-300" aria-hidden />
+      <div className={`${paper} -rotate-2 group-hover:rotate-0`}>
+        <div className="h-2.5 w-3/4 rounded-[2px] bg-primary" />
+        <div className="h-1.5 w-1/2 rounded-full bg-stone-300" />
+        <div className="h-1.5 w-2/3 rounded-full bg-stone-200" />
+        <div className="mt-1 flex flex-1 items-center justify-center rounded-sm border border-dashed border-stone-300">
+          <FileText className="size-6 text-stone-300" aria-hidden />
         </div>
       </div>
     );
   }
 
   if (docType === "CI") {
-    // 로고 블록 + 라인 + 본문 블록 + 다크 푸터(시안의 Commercial Invoice)
+    // 로고 블록 + 라인 + 본문 블록 + 다크 푸터, 정본임을 알리는 버밀리언 인장(Commercial Invoice)
     return (
       <div className={paper}>
         <div className="flex items-start justify-between">
-          <div className="size-6 rounded-[2px] bg-slate-800" />
-          <div className="mt-1 h-1.5 w-8 rounded-full bg-gray-300" />
+          <div className="size-6 rounded-[2px] bg-primary" />
+          <div className="mt-1 h-1.5 w-8 rounded-full bg-stone-300" />
         </div>
-        <div className="h-1.5 w-2/3 rounded-full bg-gray-300" />
-        <div className="h-1.5 w-1/2 rounded-full bg-gray-200" />
-        <div className="mt-1 flex-1 rounded-sm bg-blue-100/80" />
-        <div className="h-2 w-3/5 self-center rounded-[2px] bg-slate-800" />
+        <div className="h-1.5 w-2/3 rounded-full bg-stone-300" />
+        <div className="h-1.5 w-1/2 rounded-full bg-stone-200" />
+        <div className="mt-1 flex-1 rounded-sm bg-accent/80" />
+        <div className="h-2 w-3/5 self-center rounded-[2px] bg-primary" />
+        <span
+          aria-hidden
+          className="seal-stamp absolute bottom-6 right-2.5 flex size-7 rotate-12 items-center justify-center rounded-full border-[1.5px] border-accent-foreground/60"
+        >
+          <span className="size-5 rounded-full border border-accent-foreground/50" />
+        </span>
       </div>
     );
   }
 
-  // PL: 라인 + 체크 항목 행(파란 사각형) + 합계 블록(시안의 Packing List)
+  // PL: 라인 + 체크 항목 행 + 합계 블록(Packing List)
   return (
     <div className={paper}>
-      <div className="ml-auto h-1.5 w-2/3 rounded-full bg-gray-300" />
-      <div className="ml-auto h-1.5 w-1/2 rounded-full bg-gray-200" />
+      <div className="ml-auto h-1.5 w-2/3 rounded-full bg-stone-300" />
+      <div className="ml-auto h-1.5 w-1/2 rounded-full bg-stone-200" />
       <div className="mt-1 flex items-center gap-1.5">
-        <div className="size-4 rounded-[2px] bg-blue-200" />
-        <div className="h-1.5 flex-1 rounded-full bg-gray-300" />
+        <div className="size-4 rounded-[2px] bg-accent" />
+        <div className="h-1.5 flex-1 rounded-full bg-stone-300" />
       </div>
       <div className="flex items-center gap-1.5">
-        <div className="size-4 rounded-[2px] bg-blue-200" />
-        <div className="h-1.5 flex-1 rounded-full bg-gray-200" />
+        <div className="size-4 rounded-[2px] bg-accent" />
+        <div className="h-1.5 flex-1 rounded-full bg-stone-200" />
       </div>
-      <div className="mt-auto h-6 rounded-sm bg-gray-200/80" />
+      <div className="mt-auto h-6 rounded-sm bg-stone-200/80" />
     </div>
   );
 }

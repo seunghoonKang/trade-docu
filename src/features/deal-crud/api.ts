@@ -4,7 +4,7 @@ import type { Deal, DealInput, PartySnapshot } from "@/entities/deal";
 import type { TradeDocument, DocType, DocStatus } from "@/entities/document";
 import type { Shipment, ShipmentInput, Allocation } from "@/entities/shipment";
 import { createDefaultShipment } from "@/entities/shipment";
-import { formToDeal } from "./lib/mapping";
+import { formToDeal, splitChargesForDocType } from "./lib/mapping";
 import { buildDealSummaries } from "./lib/summary";
 import type { DealDocRef, DealSummary } from "./lib/summary";
 
@@ -228,14 +228,21 @@ function fullAllocations(deal: Deal | DealInput): Allocation[] {
 }
 
 /**
- * 첫 명시적 저장(ADR-0002): PI 폼 → 거래 건 1 + 기본 선적 1(전량 배분) + PI 문서 1 생성.
+ * 첫 명시적 저장(ADR-0002): 폼 → 거래 건 1 + 기본 선적 1(전량 배분) + 작성 양식의 draft 문서 1 생성.
+ * 저장은 보존, 발행은 별도 액션(#51) — draft에 폼을 박제해 두고 발행 시 issued로 전환한다.
+ * CI는 비용이 선적 레벨이므로 폼의 비용을 기본 선적으로 옮겨 심는다.
  * dealId 반환. 중간 단계 실패 시 고아 거래 건을 남기지 않도록 보정(선적/문서는 FK cascade).
  */
-export async function saveDeal(userId: string, form: InvoiceDraft): Promise<string> {
+export async function saveDeal(
+  userId: string,
+  form: InvoiceDraft,
+  docType: DocType = "PI",
+): Promise<string> {
   const dealInput = formToDeal(form);
+  const { dealCharges, shipmentCharges } = splitChargesForDocType(dealInput.charges, docType);
   const { data: dealData, error: dealError } = await supabase
     .from("deals")
-    .insert(dealInsertPayload(userId, dealInput))
+    .insert(dealInsertPayload(userId, { ...dealInput, charges: dealCharges }))
     .select("id")
     .single();
   if (dealError) throw dealError;
@@ -243,9 +250,15 @@ export async function saveDeal(userId: string, form: InvoiceDraft): Promise<stri
   const dealId = (dealData as { id: string }).id;
 
   // 기본 선적 1개(전량 배분) — CI/PL 발행의 선적 레벨 컨테이너(거래 건은 최소 1선적).
-  const { error: shipError } = await supabase
+  const defaultShipment: ShipmentInput = {
+    ...createDefaultShipment(dealId, fullAllocations(dealInput)),
+    charges: shipmentCharges,
+  };
+  const { data: shipData, error: shipError } = await supabase
     .from("shipments")
-    .insert(shipmentInsertPayload(userId, createDefaultShipment(dealId, fullAllocations(dealInput))));
+    .insert(shipmentInsertPayload(userId, defaultShipment))
+    .select("id")
+    .single();
   if (shipError) {
     await supabase.from("deals").delete().eq("id", dealId);
     throw shipError;
@@ -254,11 +267,11 @@ export async function saveDeal(userId: string, form: InvoiceDraft): Promise<stri
   const { error: docError } = await supabase.from("documents").insert({
     user_id: userId,
     deal_id: dealId,
-    shipment_id: null,
-    doc_type: "PI",
+    shipment_id: docType === "PI" ? null : (shipData as { id: string }).id,
+    doc_type: docType,
     doc_no: form.invoiceNo,
     doc_date: form.date || null,
-    status: "issued",
+    status: "draft",
     field_options: {},
     snapshot: form,
   });
@@ -323,20 +336,55 @@ export type IssueDocumentParams = {
   snapshot: Record<string, unknown>;
 };
 
-/** 문서 발행: 같은 거래 데이터로 양식(PI/CI/PL) 문서 1건을 생성. doc_id 반환. */
+/**
+ * 문서 발행: 같은 거래 데이터로 양식(PI/CI/PL) 문서 1건을 생성. doc_id 반환.
+ * 저장 시 남긴 같은 양식의 draft가 있으면 그 행을 issued로 전환한다(draft 소비, #51)
+ * — 발행 후 미발행 초안이 중복으로 남지 않게. draft는 같은 선적의 것만 소비한다
+ * (PI는 shipment_id null) — 분할선적에서 다른 선적의 draft를 가로채 그 스냅샷을
+ * 덮어쓰지 않도록.
+ */
 export async function issueDocument(userId: string, params: IssueDocumentParams): Promise<string> {
+  const issuedFields = {
+    shipment_id: params.shipmentId,
+    doc_no: params.docNo,
+    doc_date: params.docDate || null,
+    status: "issued" as const,
+    field_options: params.fieldOptions ?? {},
+    snapshot: params.snapshot,
+  };
+
+  const draftQuery = supabase
+    .from("documents")
+    .select("id")
+    .eq("deal_id", params.dealId)
+    .eq("doc_type", params.docType)
+    .eq("status", "draft");
+  const { data: draft, error: draftError } = await (params.shipmentId
+    ? draftQuery.eq("shipment_id", params.shipmentId)
+    : draftQuery.is("shipment_id", null)
+  )
+    .limit(1)
+    .maybeSingle();
+  if (draftError) throw draftError;
+
+  if (draft) {
+    const { data, error } = await supabase
+      .from("documents")
+      .update(issuedFields)
+      .eq("id", (draft as { id: string }).id)
+      .select("id")
+      .single();
+    if (error) throw error;
+    return (data as { id: string }).id;
+  }
+
   const { data, error } = await supabase
     .from("documents")
     .insert({
       user_id: userId,
       deal_id: params.dealId,
-      shipment_id: params.shipmentId,
       doc_type: params.docType,
-      doc_no: params.docNo,
-      doc_date: params.docDate || null,
-      status: "issued",
-      field_options: params.fieldOptions ?? {},
-      snapshot: params.snapshot,
+      ...issuedFields,
     })
     .select("id")
     .single();
@@ -359,7 +407,7 @@ export async function listDealSummaries(userId: string): Promise<DealSummary[]> 
   const [dealsRes, shipsRes, docsRes] = await Promise.all([
     supabase.from("deals").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
     supabase.from("shipments").select("deal_id").eq("user_id", userId),
-    supabase.from("documents").select("deal_id, doc_type, doc_no").eq("user_id", userId),
+    supabase.from("documents").select("deal_id, doc_type, doc_no, status").eq("user_id", userId),
   ]);
   if (dealsRes.error) throw dealsRes.error;
   if (shipsRes.error) throw shipsRes.error;
@@ -368,8 +416,8 @@ export async function listDealSummaries(userId: string): Promise<DealSummary[]> 
   const deals = (dealsRes.data ?? []).map((row) => mapDealRow(row as DealRow));
   const shipmentDealIds = ((shipsRes.data ?? []) as { deal_id: string }[]).map((r) => r.deal_id);
   const docs: DealDocRef[] = (
-    (docsRes.data ?? []) as { deal_id: string; doc_type: DocType; doc_no: string }[]
-  ).map((r) => ({ dealId: r.deal_id, docType: r.doc_type, docNo: r.doc_no }));
+    (docsRes.data ?? []) as { deal_id: string; doc_type: DocType; doc_no: string; status: DocStatus }[]
+  ).map((r) => ({ dealId: r.deal_id, docType: r.doc_type, docNo: r.doc_no, status: r.status }));
   return buildDealSummaries(deals, shipmentDealIds, docs);
 }
 

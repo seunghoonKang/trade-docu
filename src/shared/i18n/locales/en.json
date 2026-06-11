@@ -1,8 +1,9 @@
 {
   "app": { "title": "Proforma Invoice" },
-  "nav": {"login": "Login", "logout": "Logout", "signup": "Sign Up", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Create Document", "userGuide": "User Guide", "comingSoon": "Coming soon", "comingSoonSection": "Coming soon"},
+  "nav": {"login": "Login", "logout": "Logout", "signup": "Sign Up", "history": "History", "settings": "Settings", "dashboard": "Dashboard", "invoices": "Create Document", "userGuide": "User Guide", "comingSoon": "Coming soon", "comingSoonSection": "Coming soon", "buyers": "Buyers"},
+  "buyers": {"addTitle": "Add buyer", "editTitle": "Edit buyer", "add": "Add buyer", "edit": "Edit", "delete": "Delete", "cancel": "Cancel", "save": "Save", "actions": "Actions", "searchPlaceholder": "Search by company or contact", "pickerTitle": "Load buyer", "pickerEmpty": "No saved buyers yet. Add one to get started.", "noResults": "No matching buyers.", "duplicateWarning": "A buyer with the same company name already exists.", "emptyTitle": "No buyers yet", "emptyDescription": "Save buyers to fill in buyer and consignee details instantly when creating documents.", "confirmDeleteTitle": "Delete buyer", "confirmDeleteDescription": "Delete {{name}}?", "confirmDeleteNote": "Existing deals and documents are not affected.", "saved": "Buyer saved.", "deleted": "Buyer deleted.", "loadFailed": "Failed to load buyers.", "saveFailed": "Failed to save buyer.", "deleteFailed": "Failed to delete buyer."},
   "export": { "pdf": "Export to PDF", "excel": "Export to Excel", "print": "Print", "export": "Export", "pdfFailed": "Failed to generate PDF." },
-  "deal": {"documents": "Documents", "issue": "Issue", "issued": "Issued", "shipment": "Shipment", "addShipment": "Add shipment", "ordered": "Ordered", "allocated": "Allocated", "remaining": "Remaining", "allocation": "Allocation", "thisShipment": "This shipment", "save": "Save", "overAllocated": "Over-allocated", "remainingWarning": "Some quantity is not yet shipped.", "complete": "Complete deal", "item": "Item", "ctn": "CTN", "netWeight": "N.W.", "grossWeight": "G.W.", "cbm": "CBM", "cartonNo": "Carton No.", "showPrice": "Show prices", "statusOpen": "Open", "statusClosed": "Closed", "issuedDocuments": "Issued documents", "backToDeal": "Back to deal", "issueTitle": "Issue {{doc}}", "alreadyIssued": "Already issued for this shipment.", "unissuedDocuments": "Not issued yet", "goIssue": "Issue now", "issuedCount": "Issued for {{issued}} of {{total}} shipments", "issueDocAction": "Issue {{doc}}", "ciOptions": "CI options", "reopen": "Reopen deal", "reopened": "Deal reopened.", "closedNotice": "This deal is completed — reopen it to issue documents.", "sharedShipmentHint": "Shipments and allocations are saved on the deal and shared by CI and PL — enter them once and both documents use them.", "confirmIssueNoOriginTitle": "Issue without country of origin?", "confirmIssueNoOriginDescription": "Country of origin is empty. Issue {{doc}} anyway?", "reissue": "Cancel & reissue", "confirmReissueTitle": "Reissue this document?", "confirmReissueDescription": "The issued document {{id}} will be deleted, and you can edit and issue it again.", "fullShipmentSummary": "Ship everything at once · {{total}} in total", "splitShipment": "Split into multiple shipments", "issueTargetHint": "The selected shipment tab is what gets issued. Remaining is computed across all shipments.", "packingDetails": "Packing details", "cancelSplit": "Back to single shipment", "confirmCancelSplitTitle": "Cancel split shipments?", "confirmCancelSplitDescription": "Shipment 2 and later will be deleted (including their issued CI/PL), and the full quantity goes back to shipment 1.", "issuedNext": "Issued. Moved to shipment {{seq}} — continue there.", "allIssued": "{{doc}} issued for all shipments."},
+  "deal": {"documents": "Documents", "issue": "Issue", "issued": "Issued", "shipment": "Shipment", "addShipment": "Add shipment", "ordered": "Ordered", "allocated": "Allocated", "remaining": "Remaining", "allocation": "Allocation", "thisShipment": "This shipment", "save": "Save", "overAllocated": "Over-allocated", "remainingWarning": "Some quantity is not yet shipped.", "complete": "Complete deal", "item": "Item", "ctn": "CTN", "netWeight": "N.W.", "grossWeight": "G.W.", "cbm": "CBM", "cartonNo": "Carton No.", "showPrice": "Show prices", "statusOpen": "Open", "statusClosed": "Closed", "issuedDocuments": "Issued documents", "backToDeal": "Back to deal", "issueTitle": "Issue {{doc}}", "alreadyIssued": "Already issued for this shipment.", "alreadyIssuedDeal": "Already issued for this deal.", "unissuedDocuments": "Not issued yet", "goIssue": "Issue now", "issuedCount": "Issued for {{issued}} of {{total}} shipments", "issueDocAction": "Issue {{doc}}", "ciOptions": "CI options", "reopen": "Reopen deal", "reopened": "Deal reopened.", "closedNotice": "This deal is completed — reopen it to issue documents.", "sharedShipmentHint": "Shipments and allocations are saved on the deal and shared by CI and PL — enter them once and both documents use them.", "confirmIssueNoOriginTitle": "Issue without country of origin?", "confirmIssueNoOriginDescription": "Country of origin is empty. Issue {{doc}} anyway?", "reissue": "Cancel & reissue", "confirmReissueTitle": "Reissue this document?", "confirmReissueDescription": "The issued document {{id}} will be deleted, and you can edit and issue it again.", "fullShipmentSummary": "Ship everything at once · {{total}} in total", "splitShipment": "Split into multiple shipments", "issueTargetHint": "The selected shipment tab is what gets issued. Remaining is computed across all shipments.", "packingDetails": "Packing details", "cancelSplit": "Back to single shipment", "confirmCancelSplitTitle": "Cancel split shipments?", "confirmCancelSplitDescription": "Shipment 2 and later will be deleted (including their issued CI/PL), and the full quantity goes back to shipment 1.", "issuedNext": "Issued. Moved to shipment {{seq}} — continue there.", "allIssued": "{{doc}} issued for all shipments.", "notIssuedYet": "Not issued yet", "issuedDone": "{{doc}} issued.", "piIssueHint": "PI is issued for the whole deal (ordered quantities). Shipments and allocations are handled when issuing CI/PL."},
   "form": {
     "originCountry": "Country of Origin",
     "documentInfo": "Document Info",
@@ -64,7 +65,7 @@
     "bankAddress": "Bank Address",
     "bankTel": "Bank Tel",
     "bankFax": "Bank Fax",
-    "selectBuyer": "Select saved buyer",
+    "loadBuyer": "Load buyer",
     "selectProduct": "Select saved product",
     "noSavedBuyers": "No saved buyers",
     "noSavedProducts": "No saved products"
@@ -159,6 +160,7 @@
     "unshippedRemaining": "Deal is completed but some quantity is unshipped",
     "blockedTitle": "Required fields are missing",
     "invoiceNo": "Invoice No.",
+    "date": "Document date",
     "buyerCompanyName": "Buyer company name",
     "items": "Item (name, qty, unit price)",
     "bankInfo": "Bank info is empty (optional)"
@@ -279,6 +281,11 @@
     "delete": "Delete",
     "save": "Save",
     "saved": "Invoice saved.",
+    "saveNeedsIdentity": "Enter a document number or buyer company name to save.",
+    "saveAsDeal": "Save as deal",
+    "saving": "Saving…",
+    "savedAsDeal": "Saved as a deal.",
+    "saveFailed": "Failed to save. Please try again.",
     "history": "History",
     "loading": "Loading…",
     "totalDocuments": "Total Documents",
@@ -375,6 +382,7 @@
     ]
   },
   "guide": {
+    "docTimeline": {"pi": {"label": "Proforma Invoice", "scope": "whole deal · 1 copy", "desc": "A quotation sent before the deal is confirmed — buyers use it to wire an advance or open an L/C. Many deals skip it."}, "ci": {"label": "Commercial Invoice", "scope": "1 per shipment", "desc": "The official invoice issued at shipment — customs assesses duty on it, so it must show actual shipped quantities and amounts."}, "pl": {"label": "Packing List", "scope": "1 per shipment", "desc": "The 'goods' view that travels with the CI — cartons, weights and volumes, with prices optionally hidden."}},
     "stepOf": "{{current}} / {{total}}",
     "next": "Next",
     "prev": "Previous",
@@ -385,7 +393,7 @@
     "navigateToProfile": "Go to Profile",
     "coachmarks": {
       "split-shipment": "Ship in parts: add shipments and allocate item quantities to each one.",
-      "doc-tabs": "One deal, many documents — use the Issue buttons to create CI and PL from this deal's data.",
+      "doc-tabs": "One deal = many documents — use the issue buttons on the unissued card to issue PI, CI, and PL from this deal's data.",
       "field-toggle": "Use the price toggle to include or hide prices on the Packing List."
     },
     "steps": {
@@ -403,7 +411,11 @@
       },
       "member-welcome": {
         "title": "One deal, many documents",
-        "body": "TradeDocu organizes your work around deals: one deal holds shipments, and each shipment issues its own documents (PI, CI, PL)."
+        "body": "TradeDocu is deal-centric. A deal groups shipments; PI is issued from the deal, and CI/PL from each shipment."
+      },
+      "member-doc-types": {
+        "title": "PI · CI · PL — one deal, three lenses",
+        "body": "The core — buyer, items, terms — is shared by all three forms. Enter it once and each document only needs to be issued at the right moment."
       },
       "member-new-doc": {
         "title": "Create a new document",
@@ -411,15 +423,15 @@
       },
       "member-save-deal": {
         "title": "Save — it becomes a deal",
-        "body": "Saving creates a deal with a default shipment and the issued PI. Everything else builds on this deal."
+        "body": "Saving creates a deal with one default shipment, and the form you wrote is kept as an unissued draft. Issue it separately from the unissued documents card on the deal page."
       },
       "member-history": {
         "title": "History is organized by deal",
         "body": "Each row is a deal: its status, shipments, and issued document badges (PI/CI/PL). Click a row to open the deal."
       },
       "member-deal-docs": {
-        "title": "Issue CI and PL from the deal",
-        "body": "Inside a deal, press Issue CI or Issue PL: pick a shipment, adjust allocations and options, preview, and issue. Reopen this guide anytime from the sidebar."
+        "title": "Issue documents from a deal",
+        "body": "Use the unissued documents card on the deal page to issue PI, CI, or PL — review shipments and options, preview, then issue to freeze an official document. You can reopen this guide from the sidebar anytime."
       }
     }
   }

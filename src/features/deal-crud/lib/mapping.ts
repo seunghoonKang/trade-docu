@@ -2,7 +2,7 @@ import type { InvoiceDraft } from "@/entities/invoice";
 import { createEmptyInvoice } from "@/entities/invoice";
 import type { Deal, DealInput, DealItem, ChargeLine } from "@/entities/deal";
 import { createEmptyDeal } from "@/entities/deal";
-import type { TradeDocument } from "@/entities/document";
+import type { TradeDocument, DocType } from "@/entities/document";
 
 /**
  * 브리지: PI 편집 폼(InvoiceDraft) ↔ 거래 건(Deal) + PI 문서(Document).
@@ -57,6 +57,18 @@ export function formToDeal(form: InvoiceDraft): DealInput {
   };
 }
 
+/**
+ * 폼 비용의 저장 레벨 분리(#51): 비용은 PI→거래 건, CI→선적(CONTEXT.md).
+ * CI 단건 저장 시 폼의 비용을 거래 건이 아닌 기본 선적에 심기 위해 쓴다. PL은 비용이 없다.
+ */
+export function splitChargesForDocType(
+  charges: ChargeLine[],
+  docType: DocType,
+): { dealCharges: ChargeLine[]; shipmentCharges: ChargeLine[] } {
+  if (docType === "CI") return { dealCharges: [], shipmentCharges: charges };
+  return { dealCharges: charges, shipmentCharges: [] };
+}
+
 export function dealToForm(deal: Deal, doc: TradeDocument | null): InvoiceDraft {
   // 발행 문서는 snapshot에 폼 데이터를 박제한다(불변). 있으면 그대로 복원.
   if (doc && doc.snapshot && Object.keys(doc.snapshot).length > 0) {
@@ -64,6 +76,20 @@ export function dealToForm(deal: Deal, doc: TradeDocument | null): InvoiceDraft 
   }
 
   // 폴백: 구조화된 거래 건 + 문서 필드로 재구성(snapshot이 없는 경우).
+  const items = deal.items.map((it) => ({
+    description: it.description,
+    hsCode: it.hsCode,
+    qty: it.orderedQty,
+    unit: it.unit,
+    unitPrice: it.unitPrice,
+    amount: it.orderedQty * it.unitPrice,
+    remarks: it.remarks,
+  }));
+  const additionalCharges = deal.charges.map((c) => ({
+    type: (c.type as InvoiceDraft["additionalCharges"][number]["type"]) ?? "other",
+    description: c.label,
+    amount: c.amount,
+  }));
   return {
     ...createEmptyInvoice(),
     invoiceNo: doc?.docNo ?? "",
@@ -92,19 +118,10 @@ export function dealToForm(deal: Deal, doc: TradeDocument | null): InvoiceDraft 
     incoterms: deal.incoterms,
     remarks: deal.remarks,
     bankInfo: { ...deal.bankInfo },
-    items: deal.items.map((it) => ({
-      description: it.description,
-      hsCode: it.hsCode,
-      qty: it.orderedQty,
-      unit: it.unit,
-      unitPrice: it.unitPrice,
-      amount: it.orderedQty * it.unitPrice,
-      remarks: it.remarks,
-    })),
-    additionalCharges: deal.charges.map((c) => ({
-      type: (c.type as InvoiceDraft["additionalCharges"][number]["type"]) ?? "other",
-      description: c.label,
-      amount: c.amount,
-    })),
+    items,
+    additionalCharges,
+    totalAmount:
+      items.reduce((sum, it) => sum + it.amount, 0) +
+      additionalCharges.reduce((sum, c) => sum + c.amount, 0),
   };
 }

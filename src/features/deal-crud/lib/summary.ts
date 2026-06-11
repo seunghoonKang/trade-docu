@@ -1,11 +1,12 @@
 import type { Deal } from "@/entities/deal";
-import type { DocType } from "@/entities/document";
+import type { DocType, DocStatus } from "@/entities/document";
 
 /** 거래 건 단위 History 행에 필요한 문서 참조(발행 배지·PI 번호용, #26). */
 export interface DealDocRef {
   dealId: string;
   docType: DocType;
   docNo: string;
+  status: DocStatus;
 }
 
 /** 거래 건 단위 History 한 행: 거래 건 + 선적 수 + 양식별 발행 수. */
@@ -27,12 +28,22 @@ export function buildDealSummaries(
 
   return deals.map((deal) => {
     const issuedCount: Record<DocType, number> = { PI: 0, CI: 0, PL: 0 };
-    let piNo = "";
+    // 발행 수는 issued만 센다(#51 — draft는 미발행). 행 제목용 번호는
+    // PI 발행본 → PI draft → 아무 문서 번호 순 — CI/PL 단건 저장 거래는
+    // PI 문서가 없으므로(#51) 저장 양식의 번호가 식별자 역할을 맡는다.
+    let issuedPiNo = "";
+    let draftPiNo = "";
+    let anyDocNo = "";
     for (const doc of docs) {
       if (doc.dealId !== deal.id) continue;
-      issuedCount[doc.docType] += 1;
-      if (doc.docType === "PI" && !piNo) piNo = doc.docNo;
+      if (doc.status === "issued") issuedCount[doc.docType] += 1;
+      if (!anyDocNo && doc.docNo) anyDocNo = doc.docNo;
+      if (doc.docType === "PI" && doc.docNo) {
+        if (doc.status === "issued" && !issuedPiNo) issuedPiNo = doc.docNo;
+        if (doc.status === "draft" && !draftPiNo) draftPiNo = doc.docNo;
+      }
     }
+    const piNo = issuedPiNo || draftPiNo || anyDocNo;
     return { deal, piNo, shipmentCount: shipCount.get(deal.id) ?? 0, issuedCount };
   });
 }
