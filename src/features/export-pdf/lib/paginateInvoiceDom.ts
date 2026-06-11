@@ -16,7 +16,7 @@ function createPageShell(template: HTMLElement): HTMLElement {
   page.style.background = "#ffffff";
   page.style.overflow = "visible";
   page.style.borderRadius = "0";
-  page.style.minHeight = "auto";
+  page.style.minHeight = `${PAGE_HEIGHT_PX}px`;
   page.style.boxShadow = "none";
   return page;
 }

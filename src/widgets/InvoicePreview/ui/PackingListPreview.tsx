@@ -40,7 +40,7 @@ export function PackingListPreview({
   return (
     <div
       id="invoice-preview-content"
-      className="paper-settle flex w-[794px] shrink-0 min-h-[1123px] flex-col bg-white p-10 font-serif text-[12px] leading-[1.4] text-[#1a1a1a] paper-shadow sm:p-[60px] sm:text-[13px] print:border-none print:p-0 print:shadow-none"
+      className="paper-settle flex w-[794px] shrink-0 min-h-[1123px] flex-col bg-white p-10 font-serif text-[12px] leading-[1.4] text-[#1a1a1a] paper-shadow sm:p-[60px] sm:text-[13px]"
     >
       <div className="mb-10 flex items-start justify-between gap-6">
         <PartyBlock label={L.to} companyName={data.buyerSnapshot.companyName} lines={buyerLines} />
