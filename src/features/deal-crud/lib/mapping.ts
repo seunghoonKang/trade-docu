@@ -2,7 +2,7 @@ import type { InvoiceDraft } from "@/entities/invoice";
 import { createEmptyInvoice } from "@/entities/invoice";
 import type { Deal, DealInput, DealItem, ChargeLine } from "@/entities/deal";
 import { createEmptyDeal } from "@/entities/deal";
-import type { TradeDocument } from "@/entities/document";
+import type { TradeDocument, DocType } from "@/entities/document";
 
 /**
  * 브리지: PI 편집 폼(InvoiceDraft) ↔ 거래 건(Deal) + PI 문서(Document).
@@ -55,6 +55,18 @@ export function formToDeal(form: InvoiceDraft): DealInput {
       remarks: it.remarks,
     })),
   };
+}
+
+/**
+ * 폼 비용의 저장 레벨 분리(#51): 비용은 PI→거래 건, CI→선적(CONTEXT.md).
+ * CI 단건 저장 시 폼의 비용을 거래 건이 아닌 기본 선적에 심기 위해 쓴다. PL은 비용이 없다.
+ */
+export function splitChargesForDocType(
+  charges: ChargeLine[],
+  docType: DocType,
+): { dealCharges: ChargeLine[]; shipmentCharges: ChargeLine[] } {
+  if (docType === "CI") return { dealCharges: [], shipmentCharges: charges };
+  return { dealCharges: charges, shipmentCharges: [] };
 }
 
 export function dealToForm(deal: Deal, doc: TradeDocument | null): InvoiceDraft {
