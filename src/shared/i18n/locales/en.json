@@ -281,6 +281,10 @@
     "save": "Save",
     "saved": "Invoice saved.",
     "saveNeedsIdentity": "Enter a document number or buyer company name to save.",
+    "saveAsDeal": "Save as deal",
+    "saving": "Saving…",
+    "savedAsDeal": "Saved as a deal.",
+    "saveFailed": "Failed to save. Please try again.",
     "history": "History",
     "loading": "Loading…",
     "totalDocuments": "Total Documents",
@@ -387,7 +391,7 @@
     "navigateToProfile": "Go to Profile",
     "coachmarks": {
       "split-shipment": "Ship in parts: add shipments and allocate item quantities to each one.",
-      "doc-tabs": "One deal, many documents — use the Issue buttons to create CI and PL from this deal's data.",
+      "doc-tabs": "One deal = many documents — use the issue buttons on the unissued card to issue PI, CI, and PL from this deal's data.",
       "field-toggle": "Use the price toggle to include or hide prices on the Packing List."
     },
     "steps": {
@@ -413,15 +417,15 @@
       },
       "member-save-deal": {
         "title": "Save — it becomes a deal",
-        "body": "Saving creates a deal with a default shipment and the issued PI. Everything else builds on this deal."
+        "body": "Saving creates a deal with one default shipment, and the form you wrote is kept as an unissued draft. Issue it separately from the unissued documents card on the deal page."
       },
       "member-history": {
         "title": "History is organized by deal",
         "body": "Each row is a deal: its status, shipments, and issued document badges (PI/CI/PL). Click a row to open the deal."
       },
       "member-deal-docs": {
-        "title": "Issue CI and PL from the deal",
-        "body": "Inside a deal, press Issue CI or Issue PL: pick a shipment, adjust allocations and options, preview, and issue. Reopen this guide anytime from the sidebar."
+        "title": "Issue documents from a deal",
+        "body": "Use the unissued documents card on the deal page to issue PI, CI, or PL — review shipments and options, preview, then issue to freeze an official document. You can reopen this guide from the sidebar anytime."
       }
     }
   }
