@@ -62,7 +62,7 @@ export function BuyerFormModal({ open, initial, buyers, saving, onSubmit, onClos
           {initial ? t("buyers.editTitle") : t("buyers.addTitle")}
         </h2>
 
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mt-4 grid grid-cols-1 gap-4">
           <Input
             variant="editor"
             label={t("form.companyName")}
@@ -82,7 +82,6 @@ export function BuyerFormModal({ open, initial, buyers, saving, onSubmit, onClos
             value={values.address}
             onChange={(e) => update("address", e.target.value)}
             rows={2}
-            className="sm:col-span-2"
           />
           <Input
             variant="editor"
