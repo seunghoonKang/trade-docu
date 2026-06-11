@@ -339,7 +339,9 @@ export type IssueDocumentParams = {
 /**
  * 문서 발행: 같은 거래 데이터로 양식(PI/CI/PL) 문서 1건을 생성. doc_id 반환.
  * 저장 시 남긴 같은 양식의 draft가 있으면 그 행을 issued로 전환한다(draft 소비, #51)
- * — 발행 후 미발행 초안이 중복으로 남지 않게.
+ * — 발행 후 미발행 초안이 중복으로 남지 않게. draft는 같은 선적의 것만 소비한다
+ * (PI는 shipment_id null) — 분할선적에서 다른 선적의 draft를 가로채 그 스냅샷을
+ * 덮어쓰지 않도록.
  */
 export async function issueDocument(userId: string, params: IssueDocumentParams): Promise<string> {
   const issuedFields = {
@@ -351,12 +353,16 @@ export async function issueDocument(userId: string, params: IssueDocumentParams)
     snapshot: params.snapshot,
   };
 
-  const { data: draft, error: draftError } = await supabase
+  const draftQuery = supabase
     .from("documents")
     .select("id")
     .eq("deal_id", params.dealId)
     .eq("doc_type", params.docType)
-    .eq("status", "draft")
+    .eq("status", "draft");
+  const { data: draft, error: draftError } = await (params.shipmentId
+    ? draftQuery.eq("shipment_id", params.shipmentId)
+    : draftQuery.is("shipment_id", null)
+  )
     .limit(1)
     .maybeSingle();
   if (draftError) throw draftError;

@@ -8,7 +8,7 @@ const { from, builder, setQueue } = vi.hoisted(() => {
   let queue: Array<{ data: unknown; error: unknown }> = [];
   const shift = () => queue.shift() ?? { data: null, error: null };
   const b: Record<string, unknown> = {};
-  for (const m of ["insert", "update", "select", "eq", "order", "limit", "delete"]) {
+  for (const m of ["insert", "update", "select", "eq", "is", "order", "limit", "delete"]) {
     b[m] = vi.fn(() => b);
   }
   b.single = vi.fn(() => Promise.resolve(shift()));
@@ -31,6 +31,8 @@ beforeEach(() => {
   (builder.insert as ReturnType<typeof vi.fn>).mockClear();
   (builder.update as ReturnType<typeof vi.fn>).mockClear();
   (builder.delete as ReturnType<typeof vi.fn>).mockClear();
+  (builder.eq as ReturnType<typeof vi.fn>).mockClear();
+  (builder.is as ReturnType<typeof vi.fn>).mockClear();
 });
 
 function dealRow(overrides: Record<string, unknown> = {}) {
@@ -182,6 +184,8 @@ describe("issueDocument", () => {
     expect(id).toBe("doc-9");
     expect(from).toHaveBeenCalledWith("documents");
     expect(builder.insert).toHaveBeenCalledTimes(1);
+    // draft 소비는 같은 선적의 것만 — 다른 선적의 draft 가로채기 방지.
+    expect(builder.eq).toHaveBeenCalledWith("shipment_id", "ship-1");
   });
 
   it("같은 양식의 draft가 있으면 그 행을 issued로 전환한다(draft 소비, #51)", async () => {
@@ -204,6 +208,8 @@ describe("issueDocument", () => {
     expect(builder.update).toHaveBeenCalledWith(
       expect.objectContaining({ status: "issued", doc_no: "PI-2026-001" }),
     );
+    // PI draft는 거래 건 레벨(shipment_id null)만 매칭한다.
+    expect(builder.is).toHaveBeenCalledWith("shipment_id", null);
   });
 });
 

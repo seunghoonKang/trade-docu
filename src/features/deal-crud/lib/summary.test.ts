@@ -67,6 +67,16 @@ describe("buildDealSummaries", () => {
     );
     expect(issuedWins.piNo).toBe("INV-ISSUED");
   });
+
+  it("PI 문서가 없으면(CI/PL 단건 저장, #51) 다른 문서 번호로 폴백한다 — 행 식별·검색 유지", () => {
+    const [s] = buildDealSummaries(
+      [deal("d1")],
+      ["d1"],
+      [{ dealId: "d1", docType: "CI", docNo: "CI-2026-001", status: "draft" }],
+    );
+    expect(s.piNo).toBe("CI-2026-001");
+    expect(matchesDealSummary(s, "ci-2026")).toBe(true);
+  });
 });
 
 describe("matchesDealSummary", () => {

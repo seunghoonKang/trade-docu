@@ -3,6 +3,7 @@ import {
   CAPTURE_WIDTH_PX,
   cloneDocumentStyles,
   cloneInvoiceForCapture,
+  freezeMotion,
   waitForImages,
   waitForLayout,
 } from "@/shared/lib/invoiceCapture";
@@ -67,6 +68,7 @@ export async function triggerPrint() {
     doc.write(`<!DOCTYPE html><html><head><base href="${window.location.origin}/" /></head><body></body></html>`);
     doc.close();
     cloneDocumentStyles(doc);
+    freezeMotion(doc);
 
     const printStyle = doc.createElement("style");
     printStyle.textContent = PRINT_STYLES;

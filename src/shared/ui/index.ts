@@ -8,6 +8,7 @@ export { FormSection } from "./form-section";
 export { KineticTitle } from "./kinetic-title";
 export { Layout } from "./layout";
 export { ConfirmDialog } from "./confirm-dialog";
+export { ModalShell } from "./modal-shell";
 export { DatePicker } from "./date-picker";
 export { GlobeLanguageSwitcher } from "./GlobeLanguageSwitcher";
 export { LanguageSwitcher } from "./LanguageSwitcher";
