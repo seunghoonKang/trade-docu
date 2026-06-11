@@ -381,6 +381,7 @@
     ]
   },
   "guide": {
+    "docTimeline": {"pi": {"label": "Proforma Invoice", "scope": "whole deal · 1 copy", "desc": "A quotation sent before the deal is confirmed — buyers use it to wire an advance or open an L/C. Many deals skip it."}, "ci": {"label": "Commercial Invoice", "scope": "1 per shipment", "desc": "The official invoice issued at shipment — customs assesses duty on it, so it must show actual shipped quantities and amounts."}, "pl": {"label": "Packing List", "scope": "1 per shipment", "desc": "The 'goods' view that travels with the CI — cartons, weights and volumes, with prices optionally hidden."}},
     "stepOf": "{{current}} / {{total}}",
     "next": "Next",
     "prev": "Previous",
@@ -409,7 +410,11 @@
       },
       "member-welcome": {
         "title": "One deal, many documents",
-        "body": "TradeDocu organizes your work around deals: one deal holds shipments, and each shipment issues its own documents (PI, CI, PL)."
+        "body": "TradeDocu is deal-centric. A deal groups shipments; PI is issued from the deal, and CI/PL from each shipment."
+      },
+      "member-doc-types": {
+        "title": "PI · CI · PL — one deal, three lenses",
+        "body": "The core — buyer, items, terms — is shared by all three forms. Enter it once and each document only needs to be issued at the right moment."
       },
       "member-new-doc": {
         "title": "Create a new document",

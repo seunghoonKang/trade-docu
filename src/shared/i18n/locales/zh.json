@@ -381,6 +381,7 @@
     ]
   },
   "guide": {
+    "docTimeline": {"pi": {"label": "形式发票（Proforma Invoice）", "scope": "整笔交易 · 1 份", "desc": "交易确认前的报价与提案 — 买方据此支付预付款或开立信用证。许多交易会省略。"}, "ci": {"label": "商业发票（Commercial Invoice）", "scope": "每个装运 1 份", "desc": "装运时签发的正式发票 — 海关据此计征关税，必须为实际装运数量与金额。"}, "pl": {"label": "装箱单（Packing List）", "scope": "每个装运 1 份", "desc": "与 CI 配套的“货物”视角明细 — 记录箱数、重量、体积，价格可隐藏。"}},
     "stepOf": "{{current}} / {{total}}",
     "next": "下一步",
     "prev": "上一步",
@@ -409,7 +410,11 @@
       },
       "member-welcome": {
         "title": "一笔交易 = 多份单据",
-        "body": "TradeDocu以交易为中心：一笔交易包含多次装运，每次装运可签发各自的单据(PI·CI·PL)。"
+        "body": "TradeDocu 以交易为中心。一笔交易归集多个装运；PI 从交易签发，CI·PL 从各装运签发。"
+      },
+      "member-doc-types": {
+        "title": "PI·CI·PL — 同一笔交易，三种视角",
+        "body": "买方、品目、条款等主体信息三种单据共用。录入一次后，各单据只需在合适的时点签发。"
       },
       "member-new-doc": {
         "title": "创建新单据",

@@ -381,6 +381,7 @@
     ]
   },
   "guide": {
+    "docTimeline": {"pi": {"label": "견적송장 (Proforma Invoice)", "scope": "거래 전체 · 1장", "desc": "거래 확정 전 견적·제안 — 바이어가 선수금 송금이나 신용장 개설의 근거로 씁니다. 생략하는 거래도 많아요."}, "ci": {"label": "상업송장 (Commercial Invoice)", "scope": "선적마다 1장", "desc": "선적 시 발행하는 정식 청구서 — 세관이 관세를 매기는 기준이라 실제 선적 수량·금액이어야 합니다."}, "pl": {"label": "포장명세서 (Packing List)", "scope": "선적마다 1장", "desc": "CI와 짝으로 나가는 '물건' 관점 명세 — 박스 수·중량·부피를 적고 가격은 숨길 수 있습니다."}},
     "stepOf": "{{current}} / {{total}}",
     "next": "다음",
     "prev": "이전",
@@ -409,7 +410,11 @@
       },
       "member-welcome": {
         "title": "한 거래 = 여러 문서",
-        "body": "TradeDocu는 거래 건 중심으로 동작합니다. 한 거래 건이 선적들을 묶고, 각 선적에서 PI·CI·PL 문서를 발행합니다."
+        "body": "TradeDocu는 거래 건 중심으로 동작합니다. 한 거래 건이 선적들을 묶고, 거래 건에서 PI를, 각 선적에서 CI·PL을 발행합니다."
+      },
+      "member-doc-types": {
+        "title": "PI·CI·PL — 같은 거래, 다른 렌즈",
+        "body": "거래처·품목·거래조건 같은 몸통은 세 양식이 공통입니다. 한 번 입력해두면 각 양식은 시점에 맞춰 발행만 하면 돼요."
       },
       "member-new-doc": {
         "title": "새 문서 작성",

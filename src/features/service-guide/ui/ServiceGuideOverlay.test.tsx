@@ -79,14 +79,25 @@ describe("ServiceGuideOverlay", () => {
   });
 
   it("다른 페이지 스텝에서는 이동 CTA를 표시한다", () => {
-    renderOverlay({ stepIndex: 3 });
+    renderOverlay({ stepIndex: MEMBER_GUIDE_STEPS.findIndex((s) => s.id === "member-history") });
     expect(screen.getByRole("button", { name: /History|기록|履歴|历史/i })).toBeDefined();
   });
 
   it("다른 페이지 스텝에서는 카드를 중앙에 표시한다", () => {
-    renderOverlay({ stepIndex: 1 }, "/history");
+    renderOverlay(
+      { stepIndex: MEMBER_GUIDE_STEPS.findIndex((s) => s.id === "member-new-doc") },
+      "/history",
+    );
     const dialog = screen.getByRole("dialog");
     expect(dialog.className).toContain("-translate-x-1/2");
     expect(dialog.className).toContain("-translate-y-1/2");
+  });
+
+  it("doc-timeline 스텝은 PI·CI·PL 타임라인을 렌더한다(#54)", () => {
+    renderOverlay({ stepIndex: MEMBER_GUIDE_STEPS.findIndex((s) => s.id === "member-doc-types") });
+    expect(screen.getByRole("list")).toBeDefined();
+    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+    expect(screen.getByText(/Proforma Invoice/i)).toBeDefined();
+    expect(screen.getByText(/Packing List/i)).toBeDefined();
   });
 });
