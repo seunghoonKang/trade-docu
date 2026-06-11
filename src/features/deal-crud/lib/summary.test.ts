@@ -19,10 +19,10 @@ describe("buildDealSummaries", () => {
       [deal("d1"), deal("d2")],
       ["d1", "d1", "d2"],
       [
-        { dealId: "d1", docType: "PI", docNo: "INV-001" },
-        { dealId: "d1", docType: "CI", docNo: "INV-001-1" },
-        { dealId: "d1", docType: "PL", docNo: "INV-001-1" },
-        { dealId: "d2", docType: "PI", docNo: "INV-002" },
+        { dealId: "d1", docType: "PI", docNo: "INV-001", status: "issued" },
+        { dealId: "d1", docType: "CI", docNo: "INV-001-1", status: "issued" },
+        { dealId: "d1", docType: "PL", docNo: "INV-001-1", status: "issued" },
+        { dealId: "d2", docType: "PI", docNo: "INV-002", status: "issued" },
       ],
     );
 
@@ -39,6 +39,34 @@ describe("buildDealSummaries", () => {
     expect(s.shipmentCount).toBe(0);
     expect(s.issuedCount).toEqual({ PI: 0, CI: 0, PL: 0 });
   });
+
+  it("draft는 발행 수에 세지 않는다 — PI 미발행 거래(#51)", () => {
+    const [s] = buildDealSummaries(
+      [deal("d1")],
+      ["d1"],
+      [{ dealId: "d1", docType: "PI", docNo: "INV-001", status: "draft" }],
+    );
+    expect(s.issuedCount).toEqual({ PI: 0, CI: 0, PL: 0 });
+  });
+
+  it("행 제목용 PI 번호는 발행본 우선, 없으면 draft 번호를 쓴다", () => {
+    const [draftOnly] = buildDealSummaries(
+      [deal("d1")],
+      [],
+      [{ dealId: "d1", docType: "PI", docNo: "INV-DRAFT", status: "draft" }],
+    );
+    expect(draftOnly.piNo).toBe("INV-DRAFT");
+
+    const [issuedWins] = buildDealSummaries(
+      [deal("d1")],
+      [],
+      [
+        { dealId: "d1", docType: "PI", docNo: "INV-DRAFT", status: "draft" },
+        { dealId: "d1", docType: "PI", docNo: "INV-ISSUED", status: "issued" },
+      ],
+    );
+    expect(issuedWins.piNo).toBe("INV-ISSUED");
+  });
 });
 
 describe("matchesDealSummary", () => {
@@ -50,7 +78,7 @@ describe("matchesDealSummary", () => {
       }),
     ],
     [],
-    [{ dealId: "d1", docType: "PI", docNo: "INV-001" }],
+    [{ dealId: "d1", docType: "PI", docNo: "INV-001", status: "issued" }],
   );
 
   it("PI 번호·PO 번호·구매자명으로 대소문자 무시 검색", () => {

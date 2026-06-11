@@ -93,15 +93,22 @@ export function ExportToolbar({ formData, page = "documents", docType = "PI" }: 
     setLastDocType(docType);
   }
 
-  const canSave = docType === "PI";
+  // 저장 = 거래 건 보존(#51) — PI뿐 아니라 CI/PL 단건도 거래 건으로 영속한다.
+  const canSave = true;
 
   async function handleSave() {
-    if (!user || !canSave || !passesValidation()) return;
-    // ADR-0002: 첫 명시적 저장 시에만 서버에 거래 건(+PI 문서)이 생성된다.
-    const dealId = await saveDeal(user.id, data);
+    if (!user || !canSave) return;
+    // 저장은 관대, 발행은 엄격(#51): 차단 검증 없이 식별 가능성만 확인한다.
+    if (!data.invoiceNo.trim() && !data.buyerSnapshot.companyName.trim()) {
+      toast.error(t("history.saveNeedsIdentity"));
+      return;
+    }
+    // ADR-0002: 첫 명시적 저장 시에만 서버에 거래 건(+작성 양식 draft)이 생성된다.
+    const dealId = await saveDeal(user.id, data, docType);
     clearDraft();
     toast.success(t("history.saved"));
-    navigate(`/deals/${dealId}`);
+    // PI는 거래 상세로, CI/PL은 곧바로 해당 양식 발행 플로우로 이어간다.
+    navigate(docType === "PI" ? `/deals/${dealId}` : `/deals/${dealId}/issue/${docType}`);
   }
 
   const iconButtonClass =

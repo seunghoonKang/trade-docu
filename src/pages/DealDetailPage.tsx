@@ -67,10 +67,29 @@ export function DealDetailPage() {
     void loadBundle();
   }, [loadBundle]);
 
-  const pi = useMemo(() => bundle?.documents.find((d) => d.docType === "PI") ?? null, [bundle]);
+  // PI 데이터 원본: 발행본이 있으면 발행본, 없으면 저장 시 박제된 draft(#51).
+  const pi = useMemo(
+    () =>
+      bundle?.documents.find((d) => d.docType === "PI" && d.status === "issued") ??
+      bundle?.documents.find((d) => d.docType === "PI") ??
+      null,
+    [bundle],
+  );
   const dealForm = useMemo(() => (bundle ? dealToForm(bundle.deal, pi) : null), [bundle, pi]);
   const balance = useMemo(
     () => (bundle ? computeBalance(bundle.deal, bundle.shipments) : null),
+    [bundle],
+  );
+
+  // 발행된 문서만 리스트에 노출 — draft는 미발행 카드가 담당한다(#51).
+  const issuedDocuments = useMemo(
+    () => bundle?.documents.filter((d) => d.status === "issued") ?? [],
+    [bundle],
+  );
+
+  // PI 미발행 여부(거래 건 레벨, #51) — PI는 선택 문서라 발행 전 거래도 유효하다.
+  const piUnissued = useMemo(
+    () => Boolean(bundle) && !bundle!.documents.some((d) => d.docType === "PI" && d.status === "issued"),
     [bundle],
   );
 
@@ -80,7 +99,9 @@ export function DealDetailPage() {
     return ISSUABLE.map((docType) => ({
       docType,
       issuedShipments: new Set(
-        bundle.documents.filter((d) => d.docType === docType && d.shipmentId).map((d) => d.shipmentId),
+        bundle.documents
+          .filter((d) => d.docType === docType && d.status === "issued" && d.shipmentId)
+          .map((d) => d.shipmentId),
       ).size,
     })).filter(({ issuedShipments }) => issuedShipments < bundle.shipments.length);
   }, [bundle]);
@@ -238,18 +259,36 @@ export function DealDetailPage() {
             {/* '한 거래 = 여러 문서' 각인 — 발행 흐름 1회 안내(#28). */}
             <Coachmark id="doc-tabs" />
 
-            {/* 발행된 문서 — 클릭하면 박제 스냅샷 보기로 이동. */}
+            {/* 발행된 문서 — 클릭하면 박제 스냅샷 보기로 이동. draft는 제외. */}
             <DealDocumentList
-              documents={bundle.documents}
+              documents={issuedDocuments}
               shipments={bundle.shipments}
               onOpen={(doc) => navigate(`/deals/${bundle.deal.id}/docs/${doc.id}`)}
             />
 
             {/* 미발행 문서 — 양식별 발행 현황 + 발행 플로우 유도. 전부 발행되거나 거래 완료면 숨김. */}
-            {bundle.deal.status === "open" && unissued.length > 0 && (
+            {bundle.deal.status === "open" && (piUnissued || unissued.length > 0) && (
               <div className="rounded-lg border border-border p-4">
                 <h3 className="mb-3 text-sm font-semibold">{t("deal.unissuedDocuments")}</h3>
                 <ul className="divide-y divide-border/60">
+                  {/* PI는 거래 건 레벨 1장 — 선적 카운트 대신 미발행 상태만 보여준다(#51). */}
+                  {piUnissued && (
+                    <li className="flex items-center gap-3 py-2">
+                      <span className="inline-flex items-center rounded border border-border px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                        PI
+                      </span>
+                      <span className="text-sm text-muted-foreground">{t("deal.notIssuedYet")}</span>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="ml-auto gap-1.5"
+                        onClick={() => navigate(`/deals/${bundle.deal.id}/issue/PI`)}
+                      >
+                        <FolderInput className="size-4" aria-hidden />
+                        {t("deal.goIssue")}
+                      </Button>
+                    </li>
+                  )}
                   {unissued.map(({ docType, issuedShipments }) => (
                     <li key={docType} className="flex items-center gap-3 py-2">
                       <span className="inline-flex items-center rounded border border-border px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">

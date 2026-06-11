@@ -4,7 +4,7 @@ import type { InvoiceDraft } from "@/entities/invoice";
 import type { Deal } from "@/entities/deal";
 import { createEmptyDeal } from "@/entities/deal";
 import type { TradeDocument } from "@/entities/document";
-import { dealToForm, formToDeal } from "./mapping";
+import { dealToForm, formToDeal, splitChargesForDocType } from "./mapping";
 
 function sampleForm(): InvoiceDraft {
   return {
@@ -114,5 +114,30 @@ describe("dealToForm", () => {
     const form = dealToForm(sampleDeal(), null);
     expect(form.orderNo).toBe("PO-42");
     expect(form.items).toHaveLength(1);
+  });
+});
+
+describe("splitChargesForDocType", () => {
+  const charges = [{ type: "freight" as const, label: "Ocean freight", amount: 100 }];
+
+  it("CI는 비용을 선적 레벨로 보낸다(#51)", () => {
+    expect(splitChargesForDocType(charges, "CI")).toEqual({
+      dealCharges: [],
+      shipmentCharges: charges,
+    });
+  });
+
+  it("PI는 비용을 거래 건 레벨에 둔다", () => {
+    expect(splitChargesForDocType(charges, "PI")).toEqual({
+      dealCharges: charges,
+      shipmentCharges: [],
+    });
+  });
+
+  it("PL은 비용이 선적으로 가지 않는다(가격 숨김 양식)", () => {
+    expect(splitChargesForDocType(charges, "PL")).toEqual({
+      dealCharges: charges,
+      shipmentCharges: [],
+    });
   });
 });
