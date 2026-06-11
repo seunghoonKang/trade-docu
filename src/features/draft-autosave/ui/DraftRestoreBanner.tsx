@@ -9,8 +9,8 @@ interface Props {
 export function DraftRestoreBanner({ onRestore, onDiscard }: Props) {
   const { t } = useTranslation();
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-blue-50 border-b border-blue-200 px-4 py-3">
-      <span className="text-sm text-blue-900">{t("draft.title")}</span>
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-accent/60 border-b border-accent-foreground/20 px-4 py-3">
+      <span className="text-sm text-accent-foreground">{t("draft.title")}</span>
       <div className="flex gap-2 shrink-0">
         <Button variant="secondary" size="sm" onClick={onRestore}>
           {t("draft.restore")}
