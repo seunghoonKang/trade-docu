@@ -5,7 +5,7 @@ export const editorLabelClassName =
   "text-xs font-semibold uppercase tracking-wider text-secondary-foreground";
 
 export const editorInputClassName =
-  "w-full h-11 px-4 text-sm bg-background border border-input rounded-lg transition-colors hover:border-ring/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-muted-foreground/50 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:hover:border-input";
+  "w-full h-11 px-4 text-sm bg-background border border-input rounded-lg transition-colors hover:border-ring/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-muted-foreground/50 disabled:cursor-not-allowed disabled:bg-foreground/10 disabled:text-muted-foreground disabled:hover:border-input";
 
 export const editorInlineInputClassName =
   "w-full h-9 px-2 text-sm bg-background border border-input rounded-lg transition-colors hover:border-ring/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary";
