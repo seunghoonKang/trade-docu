@@ -57,6 +57,17 @@ DOM capture util `invoiceCapture` → `shared/lib`; nav config `mainNavItems` �
 - A `shared` component that needs domain data stays dumb: inject the data via props
   (e.g. `Layout`'s `showSidebar`) rather than importing upward.
 
+## File naming (ESLint-enforced: `check-file/filename-naming-convention`)
+
+- **Components** (`pages/*.tsx`, `widgets/**/ui/*.tsx`, `features/**/ui/*.tsx`) → **PascalCase**
+  (`HomePage.tsx`, `BuyerFormModal.tsx`).
+- **`shared/ui`** → **kebab-case** end to end (`confirm-dialog.tsx`, `app-header-brand.tsx`) —
+  shadcn CLI generates kebab-case files here, so hand-written shared UI follows the same
+  convention instead of mixing two styles in one folder.
+- **`lib/` modules** (utils, hooks) → **camelCase** (`invoiceCapture.ts`, `useInvoiceForm.ts`).
+- FSD segment standards stay lowercase single words: `api.ts`, `model.ts`, `lib.ts`, `index.ts`.
+- Tests mirror their subject's name with `.test` inserted (`confirm-dialog.test.tsx`).
+
 ## Checking
 
 ```bash
