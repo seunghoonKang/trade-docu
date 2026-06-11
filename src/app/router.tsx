@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { AppLayout } from "@/app/layouts/AppLayout";
+import { BuyersPage } from "@/pages/BuyersPage";
 import { DealDetailPage } from "@/pages/DealDetailPage";
 import { DealDocumentPage } from "@/pages/DealDocumentPage";
 import { DealIssuePage } from "@/pages/DealIssuePage";
@@ -23,6 +24,7 @@ export function AppRouter() {
         <Route path="/" element={<HomePage />} />
         <Route path="/new" element={<InvoicePage />} />
         <Route path="/history" element={<HistoryPage />} />
+        <Route path="/buyers" element={<BuyersPage />} />
         <Route path="/history/:invoiceId" element={<InvoiceDetailPage />} />
         <Route path="/deals/:dealId" element={<DealDetailPage />} />
         <Route path="/deals/:dealId/issue/:docType" element={<DealIssuePage />} />

@@ -26,6 +26,7 @@ export function InvoiceForm({
       <SellerSection companyName={form.sellerCompanyName} address={form.sellerAddress} tel={form.sellerTel} fax={form.sellerFax} representative={form.sellerRepresentative} onUpdate={updateTextField} />
       <BuyerSection companyName={form.buyerSnapshot.companyName} address={form.buyerSnapshot.address} tel={form.buyerSnapshot.tel} contactPerson={form.buyerSnapshot.contactPerson} onUpdate={(key, value) => updateBuyer(key as keyof FormValues["buyerSnapshot"], value)} />
       <PartiesPaymentSection
+        buyer={form.buyerSnapshot}
         consignee={form.consignee ?? null}
         notify={form.notify ?? null}
         paymentMethod={form.paymentMethod ?? ""}

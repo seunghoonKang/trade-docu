@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import type { Invoice, InvoiceItem, AdditionalCharge, BuyerSnapshot, LcInfoForm } from "@/entities/invoice";
 import { createEmptyInvoice, createEmptyItem, createEmptyParty } from "@/entities/invoice";
 import { calcItemAmount, calcTotalAmount } from "@/entities/invoice";
+import { createSeparatedParty } from "./partyMirror";
 
 type PartyKind = "consignee" | "notify";
 
@@ -22,9 +23,9 @@ export function useInvoiceForm() {
     setForm((prev) => ({ ...prev, bankInfo: { ...prev.bankInfo, [key]: value } }));
   }, []);
 
-  // 당사자(수하인/착하통지처): null = 구매자와 동일.
+  // 당사자(수하인/착하통지처): null = 구매자와 동일. 분리 시 구매자 값 복사로 시작(#49).
   const toggleParty = useCallback((party: PartyKind, separate: boolean) => {
-    setForm((prev) => ({ ...prev, [party]: separate ? createEmptyParty() : null }));
+    setForm((prev) => ({ ...prev, [party]: separate ? createSeparatedParty(prev.buyerSnapshot) : null }));
   }, []);
 
   const updateParty = useCallback((party: PartyKind, key: keyof BuyerSnapshot, value: string) => {
