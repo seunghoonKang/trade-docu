@@ -95,21 +95,31 @@ export function ExportToolbar({ formData, page = "documents", docType = "PI" }: 
 
   // 저장 = 거래 건 보존(#51) — PI뿐 아니라 CI/PL 단건도 거래 건으로 영속한다.
   const canSave = true;
+  const [saving, setSaving] = useState(false);
 
   async function handleSave() {
-    if (!user || !canSave) return;
+    if (!user || !canSave || saving) return;
     // 저장은 관대, 발행은 엄격(#51): 차단 검증 없이 식별 가능성만 확인한다.
     if (!data.invoiceNo.trim() && !data.buyerSnapshot.companyName.trim()) {
       toast.error(t("history.saveNeedsIdentity"));
       return;
     }
-    // ADR-0002: 첫 명시적 저장 시에만 서버에 거래 건(+작성 양식 draft)이 생성된다.
-    const dealId = await saveDeal(user.id, data, docType);
-    clearDraft();
-    toast.success(t("history.saved"));
-    // PI는 거래 상세로, CI/PL은 곧바로 해당 양식 발행 플로우로 이어간다.
-    navigate(docType === "PI" ? `/deals/${dealId}` : `/deals/${dealId}/issue/${docType}`);
+    setSaving(true);
+    try {
+      // ADR-0002: 첫 명시적 저장 시에만 서버에 거래 건(+작성 양식 draft)이 생성된다.
+      const dealId = await saveDeal(user.id, data, docType);
+      clearDraft();
+      toast.success(t("history.savedAsDeal"));
+      // 전 양식 공통: 거래 상세로 — 발행은 미발행 카드 CTA에서(저장≠발행 동선 통일).
+      navigate(`/deals/${dealId}`);
+    } catch {
+      toast.error(t("history.saveFailed"));
+    } finally {
+      setSaving(false);
+    }
   }
+
+  const saveLabel = saving ? t("history.saving") : t("history.saveAsDeal");
 
   const iconButtonClass =
     "flex items-center justify-center size-10 rounded-full text-muted-foreground hover:text-primary hover:bg-accent transition-colors active:opacity-80";
@@ -199,12 +209,13 @@ export function ExportToolbar({ formData, page = "documents", docType = "PI" }: 
               variant="default"
               size="sm"
               className="w-full justify-start md:hidden"
+              disabled={saving}
               onClick={() => {
                 handleSave();
                 setMenuOpen(false);
               }}
             >
-              {t("history.save")}
+              {saveLabel}
             </Button>
           )}
         </>
@@ -303,8 +314,14 @@ export function ExportToolbar({ formData, page = "documents", docType = "PI" }: 
             </div>
 
             {user && canSave && (
-              <Button variant="default" size="sm" className="font-semibold text-xs tracking-wide shadow-sm" onClick={handleSave}>
-                {t("history.save")}
+              <Button
+                variant="default"
+                size="sm"
+                className="font-semibold text-xs tracking-wide shadow-sm"
+                disabled={saving}
+                onClick={handleSave}
+              >
+                {saveLabel}
               </Button>
             )}
           </>

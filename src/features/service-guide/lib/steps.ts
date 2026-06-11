@@ -11,6 +11,7 @@ export type GuideStepId =
   | "guest-form"
   | "guest-export"
   | "member-welcome"
+  | "member-doc-types"
   | "member-new-doc"
   | "member-save-deal"
   | "member-history"
@@ -20,11 +21,15 @@ export type GuidePlacement = "center" | "right" | "bottom" | "left" | "top";
 
 export type GuideFlow = "guest" | "member";
 
+/** 본문 텍스트 외 추가 비주얼 — 현재는 PI→CI→PL 타임라인 1종(#54). */
+export type GuideVisual = "doc-timeline";
+
 export interface GuideStep {
   id: GuideStepId;
   route?: string;
   target?: string;
   placement: GuidePlacement;
+  visual?: GuideVisual;
 }
 
 export const GUEST_GUIDE_STEPS: GuideStep[] = [
@@ -35,6 +40,8 @@ export const GUEST_GUIDE_STEPS: GuideStep[] = [
 
 export const MEMBER_GUIDE_STEPS: GuideStep[] = [
   { id: "member-welcome", placement: "center" },
+  // PI·CI·PL이 같은 거래의 다른 렌즈임을 타임라인으로 가르친다 — "왜 한 번만 입력하면 되는가".
+  { id: "member-doc-types", placement: "center", visual: "doc-timeline" },
   { id: "member-new-doc", route: "/new", target: '[data-guide="invoice-form"]', placement: "right" },
   { id: "member-save-deal", route: "/new", target: '[data-guide="export-toolbar"]', placement: "left" },
   { id: "member-history", route: "/history", target: '[data-guide="history-actions"]', placement: "right" },
