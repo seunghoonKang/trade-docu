@@ -1,6 +1,7 @@
 import { FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { DocType } from "@/entities/document";
+import { KineticTitle } from "@/shared/ui";
 
 interface Props {
   onSelect: (docType: DocType) => void;
@@ -20,16 +21,19 @@ export function TemplateGallery({ onSelect, lastDocType = null }: Props) {
   return (
     <section data-guide="template-gallery">
       <div className="mb-6 space-y-1">
-        <h2 className="font-serif text-xl md:text-2xl font-semibold text-primary">{t("home.galleryTitle")}</h2>
-        <p className="text-sm text-muted-foreground">{t("home.gallerySubtitle")}</p>
+        <KineticTitle
+          text={t("home.galleryTitle")}
+          className="font-serif text-xl md:text-2xl font-semibold text-primary"
+        />
+        <p className="reveal text-sm text-muted-foreground">{t("home.gallerySubtitle")}</p>
       </div>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+      <div className="reveal-group grid grid-cols-1 gap-5 sm:grid-cols-3">
         {TEMPLATES.map((docType) => (
           <button
             key={docType}
             type="button"
             onClick={() => onSelect(docType)}
-            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all hover:border-primary/40 hover:shadow-md"
+            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
           >
             <div className="relative flex items-center justify-center bg-accent/60 py-7 transition-colors group-hover:bg-accent">
               {docType === lastDocType && (
@@ -62,12 +66,12 @@ export function TemplateGallery({ onSelect, lastDocType = null }: Props) {
 /** 양식별 미니 문서 목업 — 잉크 네이비 블록 + 웜스톤 라인 + 버밀리언 도장. */
 function PaperThumbnail({ docType }: { docType: DocType }) {
   const paper =
-    "relative flex h-40 w-[7.5rem] flex-col gap-1.5 rounded-sm bg-white p-3 shadow-md ring-1 ring-black/5 transition-transform group-hover:-translate-y-0.5";
+    "relative flex h-40 w-[7.5rem] flex-col gap-1.5 rounded-sm bg-white p-3 shadow-md ring-1 ring-black/5 transition-transform duration-300 ease-out group-hover:-translate-y-1";
 
   if (docType === "PI") {
-    // 다크 타이틀 바 + 텍스트 라인 + 점선 본문 영역(Proforma Invoice)
+    // 다크 타이틀 바 + 텍스트 라인 + 점선 본문 영역(Proforma Invoice) — 호버 시 종이가 펴진다
     return (
-      <div className={`${paper} -rotate-2`}>
+      <div className={`${paper} -rotate-2 group-hover:rotate-0`}>
         <div className="h-2.5 w-3/4 rounded-[2px] bg-primary" />
         <div className="h-1.5 w-1/2 rounded-full bg-stone-300" />
         <div className="h-1.5 w-2/3 rounded-full bg-stone-200" />
@@ -92,9 +96,9 @@ function PaperThumbnail({ docType }: { docType: DocType }) {
         <div className="h-2 w-3/5 self-center rounded-[2px] bg-primary" />
         <span
           aria-hidden
-          className="absolute bottom-6 right-2.5 flex size-7 rotate-12 items-center justify-center rounded-full border-[1.5px] border-accent-foreground/50"
+          className="seal-stamp absolute bottom-6 right-2.5 flex size-7 rotate-12 items-center justify-center rounded-full border-[1.5px] border-accent-foreground/60"
         >
-          <span className="size-5 rounded-full border border-accent-foreground/40" />
+          <span className="size-5 rounded-full border border-accent-foreground/50" />
         </span>
       </div>
     );
