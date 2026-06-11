@@ -92,7 +92,7 @@ export function InvoicePage() {
           <DraftRestoreBanner onRestore={restorePendingDraft} onDiscard={discardPendingDraft} />
         )}
         <div className="flex min-h-0 flex-1 flex-col xl:flex-row">
-          <div className="editor-container w-full overflow-y-auto border-b border-border bg-[#cbdbf5] xl:w-1/2 xl:border-b-0 xl:border-r">
+          <div className="editor-container w-full overflow-y-auto border-b border-border bg-secondary xl:w-1/2 xl:border-b-0 xl:border-r">
             <InvoiceForm {...invoiceForm} />
           </div>
           <div

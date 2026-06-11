@@ -15,6 +15,9 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",
+    "@fontsource-variable/hahmlet": "^5.2.9",
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "@fontsource/ibm-plex-sans-kr": "^5.2.8",
     "@supabase/supabase-js": "^2.103.0",
     "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",

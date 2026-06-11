@@ -57,7 +57,7 @@ export function HomePage() {
             {user && openDeals.length > 0 && (
             <section>
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl md:text-2xl font-bold text-primary">
+                <h2 className="font-serif text-xl md:text-2xl font-semibold text-primary">
                   {t("home.continueTitle")}
                 </h2>
                 <Button
@@ -78,7 +78,7 @@ export function HomePage() {
                     onClick={() => navigate(`/deals/${summary.deal.id}`)}
                     className="flex flex-col gap-2 rounded-xl border border-border bg-card/80 p-5 text-left transition-colors hover:border-primary/40 hover:bg-accent/40"
                   >
-                    <span className="text-sm font-bold text-primary">
+                    <span className="font-mono text-sm font-semibold tracking-tight text-primary">
                       {summary.piNo || t("history.noNumber")}
                     </span>
                     <span className="text-sm text-foreground truncate">
@@ -90,8 +90,8 @@ export function HomePage() {
                           key={docType}
                           className={
                             summary.issuedCount[docType] > 0
-                              ? "inline-flex items-center rounded border border-primary/30 bg-accent px-1.5 py-0.5 text-[11px] font-semibold text-primary"
-                              : "inline-flex items-center rounded border border-border px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground/50"
+                              ? "inline-flex items-center rounded-sm border border-accent-foreground/30 bg-accent px-1.5 py-0.5 font-mono text-[11px] font-semibold text-accent-foreground"
+                              : "inline-flex items-center rounded-sm border border-border px-1.5 py-0.5 font-mono text-[11px] font-semibold text-muted-foreground/50"
                           }
                         >
                           {docType}

@@ -535,7 +535,7 @@ export function DealIssuePage() {
 
         <div className="flex min-h-0 flex-1 flex-col xl:flex-row">
           {/* 좌: 편집(선적/배분 → 양식 옵션) — 서류 작성 폼과 같은 에디터 영역 */}
-          <div className="editor-container w-full overflow-y-auto border-b border-border bg-[#cbdbf5] xl:w-1/2 xl:border-b-0 xl:border-r">
+          <div className="editor-container w-full overflow-y-auto border-b border-border bg-secondary xl:w-1/2 xl:border-b-0 xl:border-r">
             <div className="space-y-6 p-6">
               {/* PI: 거래 건 레벨 — 선적/배분 없이 문서번호·발행일만 확정하고 발행한다(#51). */}
               {variant === "PI" && (
