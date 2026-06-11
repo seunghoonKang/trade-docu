@@ -35,7 +35,7 @@ export function Select({ label, required, options, className, id, variant = "def
               : [
                   "w-full px-3 pr-9 py-2 text-base bg-card border border-input rounded-md transition-colors appearance-none",
                   "hover:border-ring/60",
-                  "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                  "focus:outline-none focus:ring-2 focus:ring-ring/25 focus:border-ring",
                 ],
             className,
           )}

@@ -9,7 +9,7 @@ import { listDealSummaries } from "@/features/deal-crud";
 import type { DealSummary } from "@/features/deal-crud";
 import { TemplateGallery } from "@/widgets/TemplateGallery";
 import { ExportToolbar } from "@/widgets/ExportToolbar";
-import { Button, Layout, Skeleton } from "@/shared/ui";
+import { Button, KineticTitle, Layout, Skeleton } from "@/shared/ui";
 
 const CONTINUE_LIMIT = 3;
 const DOC_BADGES: DocType[] = ["PI", "CI", "PL"];
@@ -57,9 +57,10 @@ export function HomePage() {
             {user && openDeals.length > 0 && (
             <section>
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-serif text-xl md:text-2xl font-semibold text-primary">
-                  {t("home.continueTitle")}
-                </h2>
+                <KineticTitle
+                  text={t("home.continueTitle")}
+                  className="font-serif text-xl md:text-2xl font-semibold text-primary"
+                />
                 <Button
                   variant="ghost"
                   size="sm"
@@ -70,13 +71,13 @@ export function HomePage() {
                   <ArrowRight className="size-4" aria-hidden />
                 </Button>
               </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="reveal-group grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {openDeals.map((summary) => (
                   <button
                     key={summary.deal.id}
                     type="button"
                     onClick={() => navigate(`/deals/${summary.deal.id}`)}
-                    className="flex flex-col gap-2 rounded-xl border border-border bg-card/80 p-5 text-left transition-colors hover:border-primary/40 hover:bg-accent/40"
+                    className="flex flex-col gap-2 rounded-xl border border-border bg-card/80 p-5 text-left transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:bg-accent/40 hover:shadow-md"
                   >
                     <span className="font-mono text-sm font-semibold tracking-tight text-primary">
                       {summary.piNo || t("history.noNumber")}
@@ -112,7 +113,7 @@ export function HomePage() {
             <TemplateGallery onSelect={startDoc} lastDocType={lastDocType} />
 
             {!user && (
-              <section className="flex flex-col items-start gap-3 rounded-xl border border-primary/20 bg-accent/50 p-6 sm:flex-row sm:items-center sm:justify-between">
+              <section className="reveal flex flex-col items-start gap-3 rounded-xl border border-primary/20 bg-accent/50 p-6 sm:flex-row sm:items-center sm:justify-between" style={{ animationDelay: "300ms" }}>
                 <div className="space-y-1">
                   <h3 className="text-base font-semibold text-foreground">
                     {t("home.guestCtaTitle")}

@@ -5,6 +5,7 @@ export { Input, editorInlineInputClassName, editorInputClassName, editorInlineDi
 export { Textarea } from "./textarea";
 export { Select } from "./select";
 export { FormSection } from "./form-section";
+export { KineticTitle } from "./kinetic-title";
 export { Layout } from "./layout";
 export { ConfirmDialog } from "./confirm-dialog";
 export { DatePicker } from "./date-picker";

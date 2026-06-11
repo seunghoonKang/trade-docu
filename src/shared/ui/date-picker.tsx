@@ -63,8 +63,8 @@ export function DatePicker({ label, required, value, onChange, className, varian
             "w-full text-left bg-background border border-input transition-colors",
             "flex h-11 items-center justify-between cursor-pointer rounded-lg px-4 text-sm",
             "hover:border-ring/60",
-            "focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary",
-            !isEditor && "rounded-md bg-card px-3 py-2 text-base focus:ring-2 focus:ring-primary/20",
+            "focus:outline-none focus:ring-2 focus:ring-ring/25 focus:border-ring",
+            !isEditor && "rounded-md bg-card px-3 py-2 text-base focus:ring-2 focus:ring-ring/25",
             !displayValue && "text-muted-foreground/50",
           )}
         >

@@ -163,6 +163,92 @@ body {
     0 12px 32px -8px rgba(29, 39, 52, 0.14);
 }
 
+/* ===== Motion layer =====
+   기준 이징: cubic-bezier(0.22, 1, 0.36, 1) — 빠르게 출발해 부드럽게 정착.
+   compositor 친화(transform/opacity만 애니메이션). */
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+input,
+textarea {
+  caret-color: var(--ring);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 로드 안무 — 섹션/카드가 아래에서 떠올라 정착 */
+  .reveal,
+  .reveal-group > * {
+    animation: rise-settle 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .reveal-group > :nth-child(1) { animation-delay: 70ms; }
+  .reveal-group > :nth-child(2) { animation-delay: 140ms; }
+  .reveal-group > :nth-child(3) { animation-delay: 210ms; }
+  .reveal-group > :nth-child(4) { animation-delay: 280ms; }
+  .reveal-group > :nth-child(5) { animation-delay: 350ms; }
+  .reveal-group > :nth-child(n + 6) { animation-delay: 420ms; }
+
+  /* 키네틱 타이틀 — 단어 단위 스태거(.kinetic-title > span) */
+  .kinetic-title > span {
+    display: inline-block;
+    animation: rise-settle 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--word-index, 0) * 55ms);
+  }
+
+  /* 서류 정착 — A4 한 장이 책상 위로 내려앉는다 */
+  .paper-settle {
+    animation: paper-settle 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* 도장 — 갤러리 카드 호버 시 인장이 눌리며 찍힌다 */
+  .seal-stamp {
+    opacity: 0.45;
+    transform: rotate(12deg) scale(1.18);
+    transition:
+      opacity 0.3s ease-out,
+      transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .group:hover .seal-stamp {
+    opacity: 1;
+    transform: rotate(8deg) scale(1);
+  }
+}
+
+@keyframes rise-settle {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes paper-settle {
+  from {
+    opacity: 0;
+    transform: translateY(22px) rotate(0.5deg) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 종이 결 — 화면 전체에 아주 옅은 그레인(인쇄물의 질감) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
