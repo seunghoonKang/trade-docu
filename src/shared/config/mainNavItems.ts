@@ -13,7 +13,7 @@ export const mainNavItems: MainNavItem[] = [
   { id: "invoices", icon: FileText, labelKey: "nav.invoices", href: "/" },
   { id: "history", icon: History, labelKey: "nav.history", href: "/history" },
   { id: "buyers", icon: BookUser, labelKey: "nav.buyers", href: "/buyers" },
-  { id: "tools", icon: Wrench, labelKey: "nav.tools", href: "/tools/pdf-to-excel", section: "secondary" },
+  { id: "tools", icon: Wrench, labelKey: "nav.tools", href: "/tools", section: "secondary" },
 ];
 
 export type AppPageId = "home" | "documents" | "history" | "historyDetail" | "buyers" | "tools";
