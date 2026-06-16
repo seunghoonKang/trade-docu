@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   HelpCircle,
-  LayoutDashboard,
   LogOut,
   type LucideIcon,
 } from "lucide-react";
@@ -34,14 +33,12 @@ const navGuideTargets: Record<string, string> = {
   history: "nav-history",
 };
 
-const activeItems: SidebarItem[] = mainNavItems.map((item) => ({
-  ...item,
-  guideTarget: navGuideTargets[item.id],
-}));
+// 본 콘텐츠(상단)와 보조 도구(하단)를 구역으로 분리해 배치한다.
+const primaryItems: SidebarItem[] = mainNavItems
+  .filter((item) => item.section !== "secondary")
+  .map((item) => ({ ...item, guideTarget: navGuideTargets[item.id] }));
 
-const comingSoonItems: SidebarItem[] = [
-  { id: "dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard", disabled: true },
-];
+const toolItems: SidebarItem[] = mainNavItems.filter((item) => item.section === "secondary");
 
 const bottomItems: SidebarItem[] = [
   { id: "userGuide", icon: HelpCircle, labelKey: "nav.userGuide", action: "guide" },
@@ -179,7 +176,7 @@ export function AppSidebar() {
         onMouseLeave={() => setExpanded(false)}
       >
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-2 py-4">
-          {activeItems.map((item) => (
+          {primaryItems.map((item) => (
             <SidebarNavButton
               key={item.id}
               item={item}
@@ -193,38 +190,21 @@ export function AppSidebar() {
         </nav>
 
         <div className="mt-auto shrink-0">
-          <div className="space-y-1 border-t border-border/60 px-2 pb-3 pt-3">
-            <div
-              className={cn(
-                "space-y-1 rounded-lg border transition-[background-color,border-color,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                expanded
-                  ? "border-dashed border-border/70 bg-muted/25 px-1 py-2"
-                  : "border-transparent px-0 py-1",
-              )}
-            >
-              <div
-                className={cn(
-                  "overflow-hidden transition-[max-height,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                  expanded ? "max-h-6 opacity-100" : "max-h-0 opacity-0",
-                )}
-              >
-                <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  {t("nav.comingSoonSection")}
-                </p>
-              </div>
-            {comingSoonItems.map((item) => (
-              <SidebarNavButton
-                key={item.id}
-                item={item}
-                active={isActive(item)}
-                expanded={expanded}
-                onNavigate={navigate}
-                onLogout={handleLogout}
-                onOpenGuide={openGuide}
-              />
-            ))}
+          {toolItems.length > 0 && (
+            <div className="space-y-1 border-t border-border/60 px-2 py-3">
+              {toolItems.map((item) => (
+                <SidebarNavButton
+                  key={item.id}
+                  item={item}
+                  active={isActive(item)}
+                  expanded={expanded}
+                  onNavigate={navigate}
+                  onLogout={handleLogout}
+                  onOpenGuide={openGuide}
+                />
+              ))}
             </div>
-          </div>
+          )}
 
           <div className="space-y-1 border-t border-border px-2 py-4">
             {bottomItems.map((item) => (
