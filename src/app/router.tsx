@@ -9,6 +9,7 @@ import { HomePage } from "@/pages/HomePage";
 import { InvoiceDetailPage } from "@/pages/InvoiceDetailPage";
 import { InvoicePage } from "@/pages/InvoicePage";
 import { LoginPage } from "@/pages/LoginPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
 import { PdfToExcelPage } from "@/pages/PdfToExcelPage";
 import { ToolsPage } from "@/pages/ToolsPage";
@@ -40,6 +41,7 @@ export function AppRouter() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
       </Route>
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
