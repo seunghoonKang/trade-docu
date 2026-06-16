@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Trash2 } from "lucide-react";
-import { Button, editorInputClassName } from "@/shared/ui";
+import { Button, Input, Select } from "@/shared/ui";
 import { cn } from "@/shared/lib/utils";
 import type { CartonRow, LengthUnit } from "../model/types";
 import { containerFill, sumTotals } from "../lib/calc";
@@ -39,12 +39,12 @@ export function CbmCalculator() {
     setRows((prev) => (prev.length <= 1 ? [emptyRow(String(idRef.current++))] : prev.filter((r) => r.id !== id)));
   }
 
-  const fields: { key: keyof CartonRow; labelKey: string }[] = [
-    { key: "length", labelKey: "cbm.length" },
-    { key: "width", labelKey: "cbm.width" },
-    { key: "height", labelKey: "cbm.height" },
-    { key: "qty", labelKey: "cbm.qty" },
-    { key: "weight", labelKey: "cbm.weight" },
+  const fields: { key: keyof CartonRow; labelKey: string; suffix: string }[] = [
+    { key: "length", labelKey: "cbm.length", suffix: ` (${unit})` },
+    { key: "width", labelKey: "cbm.width", suffix: ` (${unit})` },
+    { key: "height", labelKey: "cbm.height", suffix: ` (${unit})` },
+    { key: "qty", labelKey: "cbm.qty", suffix: "" },
+    { key: "weight", labelKey: "cbm.weight", suffix: " (kg)" },
   ];
 
   return (
@@ -54,25 +54,19 @@ export function CbmCalculator() {
           <h1 className="text-xl font-semibold text-foreground">{t("tools.cbm.title")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{t("tools.cbm.desc")}</p>
         </div>
-        {/* 단위 토글 */}
-        <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
-          {UNITS.map((u) => (
-            <button
-              key={u}
-              type="button"
-              onClick={() => setUnit(u)}
-              className={cn(
-                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                unit === u ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {u}
-            </button>
-          ))}
+        {/* 단위 — 공용 Select */}
+        <div className="w-28">
+          <Select
+            variant="editor"
+            label={t("cbm.unit")}
+            options={UNITS.map((u) => ({ value: u, label: u }))}
+            value={unit}
+            onChange={(e) => setUnit(e.target.value as LengthUnit)}
+          />
         </div>
       </div>
 
-      {/* 입력 테이블 */}
+      {/* 입력 테이블 — 공용 Input */}
       <div className="overflow-x-auto rounded-lg border border-border bg-card">
         <table className="w-full text-sm">
           <thead>
@@ -80,7 +74,7 @@ export function CbmCalculator() {
               {fields.map((f) => (
                 <th key={f.key} className="px-2 py-2">
                   {t(f.labelKey)}
-                  {f.key !== "qty" && f.key !== "weight" ? ` (${unit})` : f.key === "weight" ? " (kg)" : ""}
+                  {f.suffix}
                 </th>
               ))}
               <th className="w-10 px-2 py-2" />
@@ -90,12 +84,12 @@ export function CbmCalculator() {
             {rows.map((r) => (
               <tr key={r.id} className="border-b border-border last:border-b-0">
                 {fields.map((f) => (
-                  <td key={f.key} className="p-1">
-                    <input
+                  <td key={f.key} className="min-w-[6rem] p-1">
+                    <Input
+                      variant="editor"
                       inputMode="decimal"
                       value={r[f.key]}
                       onChange={(e) => setCell(r.id, f.key, e.target.value)}
-                      className={cn(editorInputClassName, "min-w-[5rem]")}
                     />
                   </td>
                 ))}

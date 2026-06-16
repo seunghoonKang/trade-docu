@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AlertTriangle, Loader2 } from "lucide-react";
-import { Select } from "@/shared/ui";
+import { AlertTriangle } from "lucide-react";
+import { DatePicker, Input, Select, Skeleton } from "@/shared/ui";
 import { CURRENCY_OPTIONS } from "@/shared/config";
-import { cn } from "@/shared/lib/utils";
 import type { FxResponse, FxType } from "../model/types";
 import { fetchFxRates } from "../api/rates";
 import { convert } from "../lib/convert";
 
-/** YYYYMMDD → YYYY-MM-DD (date input 표시용). */
+/** YYYYMMDD → YYYY-MM-DD (DatePicker 표시용). */
 function toDateInput(yyyymmdd: string): string {
-  return /^\d{8}$/.test(yyyymmdd) ? `${yyyymmdd.slice(0, 4)}-${yyyymmdd.slice(4, 6)}-${yyyymmdd.slice(6, 8)}` : "";
+  return /^\d{8}$/.test(yyyymmdd)
+    ? `${yyyymmdd.slice(0, 4)}-${yyyymmdd.slice(4, 6)}-${yyyymmdd.slice(6, 8)}`
+    : "";
 }
 
 /**
@@ -20,7 +21,7 @@ function toDateInput(yyyymmdd: string): string {
 export function CustomsFxTool() {
   const { t } = useTranslation();
   const [type, setType] = useState<FxType>("export");
-  const [date, setDate] = useState<string>(""); // YYYYMMDD, ""=최근
+  const [date, setDate] = useState<string>(""); // YYYY-MM-DD, ""=최근
   const [data, setData] = useState<FxResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -34,7 +35,7 @@ export function CustomsFxTool() {
     let alive = true;
     setLoading(true);
     setError(false);
-    fetchFxRates(type, date || undefined)
+    fetchFxRates(type, date ? date.replace(/-/g, "") : undefined)
       .then((res) => {
         if (alive) setData(res);
       })
@@ -56,6 +57,11 @@ export function CustomsFxTool() {
     return convert(n, from, to, data.rates);
   }, [amount, from, to, data]);
 
+  const typeOptions = [
+    { value: "export", label: t("fx.export") },
+    { value: "import", label: t("fx.import") },
+  ];
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 md:p-8 space-y-6 pb-12">
       <div>
@@ -63,32 +69,25 @@ export function CustomsFxTool() {
         <p className="mt-1 text-sm text-muted-foreground">{t("tools.fx.desc")}</p>
       </div>
 
-      {/* 수출/수입 토글 + 기준일 */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
-          {(["export", "import"] as FxType[]).map((ty) => (
-            <button
-              key={ty}
-              type="button"
-              onClick={() => setType(ty)}
-              className={cn(
-                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                type === ty ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t(`fx.${ty}`)}
-            </button>
-          ))}
-        </div>
-        <label className="flex items-center gap-2 text-sm text-muted-foreground">
-          {t("fx.baseDate")}
-          <input
-            type="date"
-            value={data ? toDateInput(date || data.baseDate) : toDateInput(date)}
-            onChange={(e) => setDate(e.target.value.replace(/-/g, ""))}
-            className="rounded-md border border-input bg-card px-2 py-1 text-foreground"
+      {/* 수출/수입 + 기준일 (공용 Select·DatePicker) */}
+      <div className="flex flex-wrap items-end gap-3">
+        <div className="w-36">
+          <Select
+            variant="editor"
+            label={t("fx.type")}
+            options={typeOptions}
+            value={type}
+            onChange={(e) => setType(e.target.value as FxType)}
           />
-        </label>
+        </div>
+        <div className="w-48">
+          <DatePicker
+            variant="editor"
+            label={t("fx.baseDate")}
+            value={date || toDateInput(data?.baseDate ?? "")}
+            onChange={(v) => setDate(v)}
+          />
+        </div>
       </div>
 
       {data?.source === "fixture" && (
@@ -98,21 +97,31 @@ export function CustomsFxTool() {
         </p>
       )}
 
-      {/* 환산기 */}
+      {/* 환산기 (공용 Input·Select) */}
       <div className="rounded-xl border border-border bg-card p-4">
         <h2 className="mb-3 text-sm font-semibold text-foreground">{t("fx.converter")}</h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto]">
-          <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-            {t("fx.amount")}
-            <input
-              inputMode="decimal"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="rounded-md border border-input bg-card px-3 py-2 text-base text-foreground"
-            />
-          </label>
-          <Select label={t("fx.from")} options={CURRENCY_OPTIONS} value={from} onChange={(e) => setFrom(e.target.value)} />
-          <Select label={t("fx.to")} options={CURRENCY_OPTIONS} value={to} onChange={(e) => setTo(e.target.value)} />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <Input
+            variant="editor"
+            label={t("fx.amount")}
+            inputMode="decimal"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          <Select
+            variant="editor"
+            label={t("fx.from")}
+            options={CURRENCY_OPTIONS}
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+          />
+          <Select
+            variant="editor"
+            label={t("fx.to")}
+            options={CURRENCY_OPTIONS}
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+          />
         </div>
         <div className="mt-3 border-t border-border pt-3">
           <p className="text-xs text-muted-foreground">{t("fx.result")}</p>
@@ -135,11 +144,18 @@ export function CustomsFxTool() {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan={2} className="px-4 py-10 text-center text-muted-foreground">
-                  <Loader2 className="mx-auto size-5 animate-spin" aria-hidden />
-                </td>
-              </tr>
+              Array.from({ length: 6 }).map((_, i) => (
+                <tr key={i} className="border-b border-border last:border-b-0">
+                  <td className="px-4 py-2.5">
+                    <Skeleton className="h-4 w-28" />
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <div className="flex justify-end">
+                      <Skeleton className="h-4 w-20" />
+                    </div>
+                  </td>
+                </tr>
+              ))
             ) : error ? (
               <tr>
                 <td colSpan={2} className="px-4 py-8 text-center text-destructive">
