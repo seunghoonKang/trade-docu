@@ -4,6 +4,7 @@ export type FxType = "export" | "import";
 export interface FxRate {
   currency: string;
   rate: number; // KRW per 1 unit
+  name?: string; // 화폐단위명 (e.g., "US Dollar")
 }
 
 export interface FxResponse {

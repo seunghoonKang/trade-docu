@@ -149,7 +149,10 @@ export function CustomsFxTool() {
             ) : (
               data?.rates.map((r) => (
                 <tr key={r.currency} className="border-b border-border last:border-b-0">
-                  <td className="px-4 py-2 font-medium text-foreground">{r.currency}</td>
+                  <td className="px-4 py-2 font-medium text-foreground">
+                    {r.currency}
+                    {r.name ? <span className="ml-2 text-xs text-muted-foreground">{r.name}</span> : null}
+                  </td>
                   <td className="px-4 py-2 text-right font-mono text-foreground">
                     {r.rate.toLocaleString(undefined, { maximumFractionDigits: 4 })}
                   </td>
