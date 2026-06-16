@@ -3,18 +3,13 @@ import { useTranslation } from "react-i18next";
 import { Input } from "@/shared/ui";
 import { Select } from "@/shared/ui";
 import { FormSection } from "@/shared/ui";
+import { CURRENCY_OPTIONS } from "@/shared/config";
 
 interface Props {
   commodity: string; currency: string; paymentTerms: string; incoterms: string;
   delivery: string; packing: string; remarks: string; originCountry: string;
   onUpdate: (key: string, value: string) => void;
 }
-
-const CURRENCY_OPTIONS = [
-  { value: "USD", label: "USD" }, { value: "EUR", label: "EUR" },
-  { value: "KRW", label: "KRW" }, { value: "JPY", label: "JPY" },
-  { value: "CNY", label: "CNY" }, { value: "GBP", label: "GBP" },
-];
 
 const INCOTERMS_OPTIONS = [
   { value: "FOB", label: "FOB" }, { value: "CIF", label: "CIF" },
