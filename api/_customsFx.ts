@@ -1,14 +1,14 @@
-import { XMLParser } from "fast-xml-parser";
-
 /**
  * 관세청 관세환율 조회 코어 — Vercel 함수(customs-fx.ts)와 Vite dev 미들웨어가 공유한다.
  * `src` 밖이라 FSD/Steiger 비대상. 프런트는 이 파일을 import하지 않고 JSON 계약만 맞춘다.
+ *
+ * 의존성 0 (XML은 평탄한 고정 구조라 수동 파싱) — Vercel 함수 콜드스타트 모듈 로드 실패를 피한다.
  *
  * data.go.kr "관세청_관세환율정보(GW)" (검증 완료):
  *   GET .../getRetrieveTrifFxrtInfo?serviceKey=&aplyBgnDt=YYYYMMDD&weekFxrtTpcd=1|2
  *   - aplyBgnDt: 적용개시일(주간환율은 일요일 시작 → 해당 주 일요일로 스냅)
  *   - weekFxrtTpcd: 수출=1, 수입=2
- *   - 응답 item: currSgn(통화부호), fxrt(환율, KRW/1단위), mtryUtNm(화폐단위명), aplyBgnDt
+ *   - 응답 item: currSgn(통화부호), fxrt(환율, KRW/1단위), mtryUtNm(화폐단위명)
  */
 
 export type FxType = "export" | "import";
@@ -44,27 +44,22 @@ const FIXTURE: Record<FxType, CustomsFxRate[]> = {
   ],
 };
 
-function isRecord(v: unknown): v is Record<string, unknown> {
-  return typeof v === "object" && v !== null;
+/** <name>값</name> 첫 매치 추출. */
+function tag(block: string, name: string): string {
+  const m = block.match(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`));
+  return m ? m[1].trim() : "";
 }
 
-/** 트리에서 환율 행처럼 보이는(currSgn을 가진) 첫 배열을 찾는다. */
-function findItems(node: unknown): Record<string, unknown>[] {
-  if (Array.isArray(node)) {
-    if (node.some((n) => isRecord(n) && "currSgn" in n)) return node.filter(isRecord);
-    for (const n of node) {
-      const found = findItems(n);
-      if (found.length) return found;
-    }
-    return [];
-  }
-  if (isRecord(node)) {
-    for (const v of Object.values(node)) {
-      const found = findItems(v);
-      if (found.length) return found;
-    }
-  }
-  return [];
+/** 평탄한 <item>…</item> 반복 구조를 수동 파싱 → 환율 목록. */
+function parseRates(xml: string): CustomsFxRate[] {
+  const items = xml.match(/<item\b[\s\S]*?<\/item>/g) ?? [];
+  return items
+    .map((block) => ({
+      currency: tag(block, "currSgn").toUpperCase(),
+      rate: Number(tag(block, "fxrt")),
+      name: tag(block, "mtryUtNm") || undefined,
+    }))
+    .filter((r) => r.currency && Number.isFinite(r.rate) && r.rate > 0);
 }
 
 function ymd(d: Date): string {
@@ -106,15 +101,5 @@ export async function fetchCustomsFxRates(opts: {
   });
   const res = await fetch(`${ENDPOINT}?${params.toString()}`);
   const xml = await res.text();
-  const parsed: unknown = new XMLParser().parse(xml);
-
-  const rates: CustomsFxRate[] = findItems(parsed)
-    .map((it) => ({
-      currency: String(it.currSgn ?? "").trim().toUpperCase(),
-      rate: Number(it.fxrt ?? 0),
-      name: it.mtryUtNm != null ? String(it.mtryUtNm) : undefined,
-    }))
-    .filter((r) => r.currency && Number.isFinite(r.rate) && r.rate > 0);
-
-  return { baseDate, type, source: "customs", rates };
+  return { baseDate, type, source: "customs", rates: parseRates(xml) };
 }
