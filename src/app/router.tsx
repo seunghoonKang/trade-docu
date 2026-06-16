@@ -10,6 +10,7 @@ import { InvoiceDetailPage } from "@/pages/InvoiceDetailPage";
 import { InvoicePage } from "@/pages/InvoicePage";
 import { LoginPage } from "@/pages/LoginPage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
+import { PdfToExcelPage } from "@/pages/PdfToExcelPage";
 import { PrivacyPage } from "@/pages/PrivacyPage";
 import { ProfilePage } from "@/pages/ProfilePage";
 import { TermsPage } from "@/pages/TermsPage";
@@ -25,6 +26,7 @@ export function AppRouter() {
         <Route path="/new" element={<InvoicePage />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/buyers" element={<BuyersPage />} />
+        <Route path="/tools/pdf-to-excel" element={<PdfToExcelPage />} />
         <Route path="/history/:invoiceId" element={<InvoiceDetailPage />} />
         <Route path="/deals/:dealId" element={<DealDetailPage />} />
         <Route path="/deals/:dealId/issue/:docType" element={<DealIssuePage />} />
